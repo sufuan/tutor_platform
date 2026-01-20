@@ -179,8 +179,8 @@ export default function JobDetail({ auth, job, jobType }) {
                                             )}
                                             {job.preferred_gender && (
                                                 <div>
-                                                    <p className="text-sm text-gray-500">Gender Preference</p>
-                                                    <Badge variant="secondary" className="capitalize">{job.preferred_gender} students preferred</Badge>
+                                                    <p className="text-sm text-gray-500">Tutor Gender</p>
+                                                    <Badge variant="secondary" className="capitalize">{job.preferred_gender} tutor</Badge>
                                                 </div>
                                             )}
                                         </div>
@@ -251,16 +251,6 @@ export default function JobDetail({ auth, job, jobType }) {
                                                 </div>
                                             </div>
                                         </>
-                                    )}
-
-                                    {jobType === 'tutor' && job.education_level && (
-                                        <div className="flex items-center gap-3">
-                                            <GraduationCap className="h-5 w-5 text-slate-500" />
-                                            <div>
-                                                <p className="text-sm text-gray-500">Education Level</p>
-                                                <p className="font-medium capitalize">{job.education_level}</p>
-                                            </div>
-                                        </div>
                                     )}
 
                                     <div className="flex items-center gap-3">

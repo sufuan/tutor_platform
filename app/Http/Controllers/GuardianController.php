@@ -130,8 +130,7 @@ class GuardianController extends Controller
 
         // Check if profile is complete
         if ($guardian->profile_completion_status !== 'completed') {
-            return redirect()->route('guardian.profile.complete')
-                ->with('error', 'Please complete your profile before posting a job.');
+            return back()->with('error', 'Please complete your profile before posting a job.');
         }
 
         $validated = $request->validate([
@@ -161,10 +160,14 @@ class GuardianController extends Controller
         
         unset($validated['sessions_per_week'], $validated['session_duration'], $validated['tutor_gender_preference']);
 
-        $job = Job::create($validated);
+        try {
+            $job = Job::create($validated);
 
-        return redirect()->route('guardian.jobs.index')
-            ->with('success', 'Job posted successfully and is pending admin approval.');
+            return redirect()->route('guardian.jobs.index')
+                ->with('success', 'Job posted successfully and is pending admin approval.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating job: ' . $e->getMessage());
+        }
     }
 
     public function jobsShow(Job $job)

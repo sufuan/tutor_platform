@@ -120,6 +120,18 @@ class PublicController extends Controller
         ]);
     }
 
+    public function tutorJobShow(TutorJobRequest $jobRequest)
+    {
+        $jobRequest->load(['tutor.user']);
+
+        // Increment views
+        $jobRequest->increment('views');
+
+        return Inertia::render('Public/TutorJobDetails', [
+            'job' => $jobRequest,
+        ]);
+    }
+
     public function tutors(Request $request)
     {
         $query = Tutor::with(['location', 'user'])

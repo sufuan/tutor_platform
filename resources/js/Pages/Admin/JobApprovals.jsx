@@ -188,10 +188,9 @@ export default function JobApprovals({ auth, jobs, stats }) {
 
                 {job.job_type === 'tutor' && (
                     <div className="flex gap-2 items-center text-xs">
-                        <Badge variant="outline">{job.education_level}</Badge>
                         <Badge variant="outline">{job.teaching_mode}</Badge>
                         {job.preferred_gender && (
-                            <Badge variant="outline" className="capitalize">{job.preferred_gender} students</Badge>
+                            <Badge variant="outline" className="capitalize">{job.preferred_gender} tutor</Badge>
                         )}
                     </div>
                 )}

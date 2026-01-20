@@ -13,6 +13,7 @@ use Inertia\Inertia;
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/jobs', [PublicController::class, 'jobs'])->name('jobs.index');
 Route::get('/jobs/{job}', [PublicController::class, 'jobShow'])->name('jobs.show');
+Route::get('/tutor-jobs/{jobRequest}', [PublicController::class, 'tutorJobShow'])->name('tutor-jobs.show');
 Route::get('/tutors', [PublicController::class, 'tutors'])->name('tutors.index');
 Route::get('/tutors/{tutor}', [PublicController::class, 'tutorShow'])->name('tutors.show');
 

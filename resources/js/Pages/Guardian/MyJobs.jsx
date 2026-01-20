@@ -20,7 +20,8 @@ import {
     CheckCircle,
     XCircle,
     Plus,
-    Search
+    Search,
+    User
 } from 'lucide-react';
 
 export default function MyJobs({ auth, jobs, stats }) {

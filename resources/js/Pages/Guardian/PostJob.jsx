@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import LocationDropdown from '@/Components/LocationDropdown';
+import SubjectSelector from '@/Components/SubjectSelector';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, CheckCircle2, ChevronLeft, ChevronRight, Briefcase, Clock, DollarSign, FileText, User, AlertCircle, Eye, ArrowLeft, MapPin } from 'lucide-react';
 
@@ -38,7 +39,7 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
     const classLevels = [
         'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
         'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10',
-        'O-Level', 'A-Level', 'Undergraduate', 'Graduate'
+        'O-Level', 'A-Level', 'HSC', 'Undergraduate', 'Graduate'
     ];
 
     const tuitionTypes = [
@@ -102,14 +103,6 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
         });
     };
 
-    const handleSubjectToggle = (subjectId) => {
-        setData('subjects', 
-            data.subjects.includes(subjectId)
-                ? data.subjects.filter(id => id !== subjectId)
-                : [...data.subjects, subjectId]
-        );
-    };
-
     if (showPreview) {
         return (
             <AuthenticatedLayout>
@@ -134,30 +127,37 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div>
-                                    <h3 className="text-xl font-bold mb-2">{data.title}</h3>
-                                    <div className="flex gap-2 mb-4">
-                                        <Badge variant="secondary">{data.education_medium}</Badge>
-                                        <Badge variant="secondary">{data.tuition_type}</Badge>
-                                        <Badge variant="secondary">{data.preferred_tutor_gender}</Badge>
-                                    </div>
+                                    <h3 className="text-xl font-bold mb-4">{data.title}</h3>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="flex items-center gap-2 text-gray-600">
-                                        <User className="h-4 w-4" />
-                                        <span>Class: {data.class_level}</span>
+                                <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <p className="text-xs text-gray-500">Class Level</p>
+                                        <p className="font-semibold">{data.class_level}</p>
                                     </div>
-                                    <div className="flex items-center gap-2 text-gray-600">
-                                        <CalendarIcon className="h-4 w-4" />
-                                        <span>{data.days_per_week} days/week</span>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Education Medium</p>
+                                        <p className="font-semibold capitalize">{data.education_medium.replace('_', ' ')}</p>
                                     </div>
-                                    <div className="flex items-center gap-2 text-gray-600">
-                                        <Clock className="h-4 w-4" />
-                                        <span>{data.duration_per_session} mins/session</span>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Tuition Type</p>
+                                        <p className="font-semibold capitalize">{data.tuition_type}</p>
                                     </div>
-                                    <div className="flex items-center gap-2 text-gray-600">
-                                        <DollarSign className="h-4 w-4" />
-                                        <span>৳{data.salary}/month</span>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Preferred Tutor Gender</p>
+                                        <p className="font-semibold capitalize">{data.tutor_gender_preference}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Sessions per Week</p>
+                                        <p className="font-semibold">{data.sessions_per_week} days</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">Session Duration</p>
+                                        <p className="font-semibold">{data.session_duration} minutes</p>
+                                    </div>
+                                    <div className="col-span-2">
+                                        <p className="text-xs text-gray-500">Monthly Salary</p>
+                                        <p className="font-semibold text-green-600 text-lg">৳{data.salary}</p>
                                     </div>
                                 </div>
 
@@ -225,6 +225,20 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
             <Head title="Post a Job" />
             <div className="py-12">
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                    {/* Error/Success Messages */}
+                    {auth.flash?.error && (
+                        <Alert variant="destructive" className="mb-6">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>{auth.flash.error}</AlertDescription>
+                        </Alert>
+                    )}
+                    {auth.flash?.success && (
+                        <Alert className="mb-6 bg-green-50 text-green-800 border-green-200">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <AlertDescription>{auth.flash.success}</AlertDescription>
+                        </Alert>
+                    )}
+                    
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl flex items-center gap-2">
@@ -268,24 +282,13 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
 
                                 {/* Subjects */}
                                 <div className="space-y-2">
-                                    <Label>Subjects Required *</Label>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg">
-                                        {subjects.map(subject => (
-                                            <div key={subject.id} className="flex items-center space-x-2">
-                                                <Checkbox
-                                                    id={`subject-${subject.id}`}
-                                                    checked={data.subjects.includes(subject.id.toString())}
-                                                    onCheckedChange={() => handleSubjectToggle(subject.id.toString())}
-                                                />
-                                                <Label 
-                                                    htmlFor={`subject-${subject.id}`}
-                                                    className="cursor-pointer font-normal"
-                                                >
-                                                    {subject.name}
-                                                </Label>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <SubjectSelector
+                                        subjects={subjects}
+                                        selectedSubjects={data.subjects}
+                                        onSubjectsChange={(selected) => setData('subjects', selected)}
+                                        label="Subjects Required *"
+                                        placeholder="Search subjects..."
+                                    />
                                     {errors.subjects && (
                                         <p className="text-sm text-red-500">{errors.subjects}</p>
                                     )}

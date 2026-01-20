@@ -142,7 +142,7 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                             <span>
                                                 {job.job_type === 'tutor' 
                                                     ? `${job.district || 'N/A'}, ${job.division || 'N/A'}`
-                                                    : job.location?.city || 'N/A'}
+                                                    : (job.district && job.division ? `${job.district}, ${job.division}` : 'N/A')}
                                             </span>
                                         </div>
                                         
@@ -150,9 +150,7 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                             <BookOpen className="h-4 w-4 mr-2 text-primary-blue mt-0.5" />
                                             <div className="flex flex-wrap gap-1">
                                                 {(() => {
-                                                    const subjects = job.job_type === 'tutor' 
-                                                        ? (job.subject_names || [])
-                                                        : (Array.isArray(job.subjects) ? job.subjects : []);
+                                                    const subjects = job.subject_names || [];
                                                     return subjects.slice(0, 3).map((subject, idx) => (
                                                         <Badge key={idx} variant="secondary" className="text-xs">
                                                             {subject}
@@ -160,9 +158,7 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                                     ));
                                                 })()}
                                                 {(() => {
-                                                    const subjects = job.job_type === 'tutor' 
-                                                        ? (job.subject_names || [])
-                                                        : (Array.isArray(job.subjects) ? job.subjects : []);
+                                                    const subjects = job.subject_names || [];
                                                     return subjects.length > 3 && (
                                                         <Badge variant="secondary" className="text-xs">
                                                             +{subjects.length - 3}
@@ -190,19 +186,21 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                             </div>
                                         )}
 
-                                        {job.job_type === 'tutor' && job.education_level && (
+                                        {job.job_type === 'tutor' && job.preferred_gender && (
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <GraduationCap className="h-4 w-4 mr-2 text-primary-blue" />
-                                                <div className="flex gap-2">
-                                                    <Badge variant="outline" className="text-xs capitalize">
-                                                        {job.education_level}
-                                                    </Badge>
-                                                    {job.preferred_gender && (
-                                                        <Badge variant="outline" className="text-xs capitalize">
-                                                            {job.preferred_gender} students
-                                                        </Badge>
-                                                    )}
-                                                </div>
+                                                <Badge variant="outline" className="text-xs capitalize">
+                                                    {job.preferred_gender} tutor
+                                                </Badge>
+                                            </div>
+                                        )}
+
+                                        {job.job_type === 'guardian' && job.preferred_tutor_gender && (
+                                            <div className="flex items-center text-sm text-gray-600">
+                                                <GraduationCap className="h-4 w-4 mr-2 text-primary-blue" />
+                                                <Badge variant="outline" className="text-xs capitalize">
+                                                    {job.preferred_tutor_gender === 'any' ? 'All' : job.preferred_tutor_gender} tutor preferred
+                                                </Badge>
                                             </div>
                                         )}
 
@@ -211,14 +209,14 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                             <span className="font-semibold text-green-600">
                                                 {job.job_type === 'tutor' 
                                                     ? `৳${job.monthly_salary}/month`
-                                                    : `৳${job.salary_min} - ৳${job.salary_max} / ${job.salary_period || 'month'}`}
+                                                    : `৳${parseFloat(job.salary).toLocaleString()}/month`}
                                             </span>
                                         </div>
 
-                                        {job.job_type === 'guardian' && (
+                                        {job.job_type === 'guardian' && job.days_per_week && (
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <Clock className="h-4 w-4 mr-2 text-primary-blue" />
-                                                <span>{job.sessions_per_week} sessions/week ({job.session_duration})</span>
+                                                <span>{job.days_per_week} days/week • {job.duration_per_session} mins/session</span>
                                             </div>
                                         )}
 
