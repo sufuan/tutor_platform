@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Input } from '@/Components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Badge } from '@/Components/ui/badge';
-import { MapPin, Search, DollarSign, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Search, DollarSign, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
 
 export default function Jobs({ jobs, locations, subjects, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -188,7 +188,7 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
 
                                         {job.job_type === 'tutor' && job.preferred_gender && (
                                             <div className="flex items-center text-sm text-gray-600">
-                                                <GraduationCap className="h-4 w-4 mr-2 text-primary-blue" />
+                                                <User className="h-4 w-4 mr-2 text-primary-blue" />
                                                 <Badge variant="outline" className="text-xs capitalize">
                                                     {job.preferred_gender} tutor
                                                 </Badge>
@@ -197,9 +197,9 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
 
                                         {job.job_type === 'guardian' && job.preferred_tutor_gender && (
                                             <div className="flex items-center text-sm text-gray-600">
-                                                <GraduationCap className="h-4 w-4 mr-2 text-primary-blue" />
+                                                <User className="h-4 w-4 mr-2 text-primary-blue" />
                                                 <Badge variant="outline" className="text-xs capitalize">
-                                                    {job.preferred_tutor_gender === 'any' ? 'All' : job.preferred_tutor_gender} tutor preferred
+                                                    {job.preferred_tutor_gender} tutor
                                                 </Badge>
                                             </div>
                                         )}
