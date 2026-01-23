@@ -7,6 +7,8 @@ use App\Models\Tutor;
 use App\Models\TutorJobRequest;
 use App\Models\Location;
 use App\Models\Subject;
+use App\Models\Blog;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -178,5 +180,83 @@ class PublicController extends Controller
             'tutor' => $tutor,
             'subjectNames' => $subjectNames,
         ]);
+    }
+
+    public function howItWorks(Request $request)
+    {
+        $query = Blog::with('author')->published();
+
+        // Filter by category
+        if ($request->category && $request->category !== 'all') {
+            $query->where('category', $request->category);
+        }
+
+        // Search
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                  ->orWhere('excerpt', 'like', '%' . $request->search . '%')
+                  ->orWhere('content', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Sort by
+        $sortBy = $request->sort ?? 'latest';
+        if ($sortBy === 'popular') {
+            $query->orderBy('views', 'desc');
+        } else {
+            $query->latest('published_at');
+        }
+
+        $blogs = $query->paginate(12);
+
+        // Get popular blogs for sidebar
+        $popularBlogs = Blog::published()
+            ->orderBy('views', 'desc')
+            ->take(5)
+            ->get();
+
+        // Get latest blogs for sidebar
+        $latestBlogs = Blog::published()
+            ->latest('published_at')
+            ->take(5)
+            ->get();
+
+        return Inertia::render('Public/HowItWorks', [
+            'blogs' => $blogs,
+            'popularBlogs' => $popularBlogs,
+            'latestBlogs' => $latestBlogs,
+            'filters' => [
+                'category' => $request->category ?? 'all',
+                'search' => $request->search ?? '',
+                'sort' => $sortBy,
+            ],
+        ]);
+    }
+
+    public function contact()
+    {
+        return Inertia::render('Public/Contact');
+    }
+
+    public function contactStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:2000',
+        ]);
+
+        $validated['status'] = 'new';
+
+        try {
+            Contact::create($validated);
+
+            return back()->with('success', 'Thank you for contacting us! We will get back to you soon.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error sending message. Please try again.');
+        }
     }
 }

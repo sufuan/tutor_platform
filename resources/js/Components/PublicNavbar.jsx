@@ -20,7 +20,7 @@ export default function PublicNavbar() {
         { name: 'Home', href: '/' },
         { name: 'Find Tutors', href: '/tutors' },
         { name: 'Find Jobs', href: '/jobs' },
-        { name: 'How It Works', href: '/how-it-works' },
+        { name: 'Blog', href: '/how-it-works' },
         { name: 'About', href: '/about' },
         { name: 'Contact', href: '/contact' },
     ];

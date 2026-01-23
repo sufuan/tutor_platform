@@ -18,6 +18,8 @@ import {
     BarChart,
     ChevronUp,
     LogOut,
+    BookOpen,
+    Mail,
 } from 'lucide-react';
 import UserAvatar from '@/Components/UserAvatar';
 import { Badge } from '@/Components/ui/badge';
@@ -219,8 +221,16 @@ export default function AuthenticatedLayout({ children, header }) {
                     title: 'Job Applications',
                     url: route('admin.job-applications.index'),
                     icon: FileText,
+                },                {
+                    title: 'Blogs',
+                    url: route('admin.blogs.index'),
+                    icon: BookOpen,
                 },
-            ];
+                {
+                    title: 'Contact Messages',
+                    url: route('admin.contacts.index'),
+                    icon: Mail,
+                },            ];
         }
 
         return [];

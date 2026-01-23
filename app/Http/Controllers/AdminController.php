@@ -11,8 +11,11 @@ use App\Models\Application;
 use App\Models\Location;
 use App\Models\Subject;
 use App\Models\Category;
+use App\Models\Blog;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class AdminController extends Controller
@@ -419,5 +422,164 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return back()->withInput()->with('error', 'Error creating job: ' . $e->getMessage());
         }
+    }
+
+    // Blog Management Methods
+    public function blogsList()
+    {
+        $blogs = Blog::with('author')->latest()->paginate(20);
+
+        return Inertia::render('Admin/Blogs/Index', [
+            'blogs' => $blogs,
+        ]);
+    }
+
+    public function blogsCreate()
+    {
+        return Inertia::render('Admin/Blogs/CreateEdit', [
+            'blog' => null,
+        ]);
+    }
+
+    public function blogsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'nullable|string|max:500',
+            'content' => 'required|string',
+            'image' => 'nullable|string',
+            'status' => 'required|in:draft,published',
+            'category' => 'required|in:academic,career,technologies,skills,study_hacks',
+        ]);
+
+        $validated['author_id'] = auth()->id();
+        $validated['slug'] = Str::slug($validated['title']);
+        
+        if ($validated['status'] === 'published') {
+            $validated['published_at'] = now();
+        }
+
+        try {
+            $blog = Blog::create($validated);
+
+            return redirect()->route('admin.blogs.index')
+                ->with('success', 'Blog post created successfully.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating blog: ' . $e->getMessage());
+        }
+    }
+
+    public function blogsEdit(Blog $blog)
+    {
+        return Inertia::render('Admin/Blogs/CreateEdit', [
+            'blog' => $blog,
+        ]);
+    }
+
+    public function blogsUpdate(Request $request, Blog $blog)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'excerpt' => 'nullable|string|max:500',
+            'content' => 'required|string',
+            'image' => 'nullable|string',
+            'status' => 'required|in:draft,published',
+            'category' => 'required|in:academic,career,technologies,skills,study_hacks',
+        ]);
+
+        $validated['slug'] = Str::slug($validated['title']);
+        
+        if ($validated['status'] === 'published' && !$blog->published_at) {
+            $validated['published_at'] = now();
+        }
+
+        try {
+            $blog->update($validated);
+
+            return redirect()->route('admin.blogs.index')
+                ->with('success', 'Blog post updated successfully.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error updating blog: ' . $e->getMessage());
+        }
+    }
+
+    public function blogsDestroy(Blog $blog)
+    {
+        try {
+            $blog->delete();
+
+            return redirect()->route('admin.blogs.index')
+                ->with('success', 'Blog post deleted successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error deleting blog: ' . $e->getMessage());
+        }
+    }
+
+    public function blogsUploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        try {
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                
+                // Store in public/storage/blog-images
+                $path = $image->storeAs('blog-images', $filename, 'public');
+                
+                return response()->json([
+                    'url' => asset('storage/' . $path),
+                ]);
+            }
+
+            return response()->json(['error' => 'No image file uploaded'], 400);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Upload failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // Contact Messages Management Methods
+    public function contactsList()
+    {
+        $contacts = Contact::latest()->paginate(20);
+        $newCount = Contact::where('status', 'new')->count();
+
+        return Inertia::render('Admin/Contacts/Index', [
+            'contacts' => $contacts,
+            'newCount' => $newCount,
+        ]);
+    }
+
+    public function contactsShow(Contact $contact)
+    {
+        // Mark as read if it's new
+        if ($contact->status === 'new') {
+            $contact->update([
+                'status' => 'read',
+                'read_at' => now(),
+            ]);
+        }
+
+        return Inertia::render('Admin/Contacts/Show', [
+            'contact' => $contact,
+        ]);
+    }
+
+    public function contactsUpdateStatus(Request $request, Contact $contact)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:new,read,replied',
+            'admin_notes' => 'nullable|string',
+        ]);
+
+        if ($validated['status'] === 'replied') {
+            $validated['replied_at'] = now();
+        }
+
+        $contact->update($validated);
+
+        return back()->with('success', 'Contact status updated successfully.');
     }
 }

@@ -8,13 +8,13 @@ export default function PublicFooter() {
         'For Guardians': [
             { name: 'Post a Job', href: '/guardian/post-job' },
             { name: 'Find Tutors', href: '/tutors' },
-            { name: 'How It Works', href: '/how-it-works#guardians' },
+            { name: 'Blog', href: '/how-it-works#guardians' },
             { name: 'Pricing', href: '/pricing' },
         ],
         'For Tutors': [
             { name: 'Find Jobs', href: '/jobs' },
             { name: 'Create Profile', href: '/register?role=tutor' },
-            { name: 'How It Works', href: '/how-it-works#tutors' },
+            { name: 'Blog', href: '/how-it-works#tutors' },
             { name: 'Success Stories', href: '/success-stories' },
         ],
         Company: [

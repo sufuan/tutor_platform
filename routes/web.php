@@ -16,6 +16,9 @@ Route::get('/jobs/{job}', [PublicController::class, 'jobShow'])->name('jobs.show
 Route::get('/tutor-jobs/{jobRequest}', [PublicController::class, 'tutorJobShow'])->name('tutor-jobs.show');
 Route::get('/tutors', [PublicController::class, 'tutors'])->name('tutors.index');
 Route::get('/tutors/{tutor}', [PublicController::class, 'tutorShow'])->name('tutors.show');
+Route::get('/how-it-works', [PublicController::class, 'howItWorks'])->name('how-it-works');
+Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
+Route::post('/contact', [PublicController::class, 'contactStore'])->name('contact.store');
 
 // Dashboard Route - Role-based redirection handled by middleware
 Route::get('/dashboard', function () {
@@ -131,6 +134,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Job Applications Management
         Route::get('/job-applications', [AdminController::class, 'jobApplications'])->name('job-applications.index');
         Route::post('/applications/{application}/update-status', [AdminController::class, 'updateApplicationStatus'])->name('applications.update-status');
+
+        // Blog Management
+        Route::get('/blogs', [AdminController::class, 'blogsList'])->name('blogs.index');
+        Route::get('/blogs/create', [AdminController::class, 'blogsCreate'])->name('blogs.create');
+        Route::post('/blogs', [AdminController::class, 'blogsStore'])->name('blogs.store');
+        Route::post('/blogs/upload-image', [AdminController::class, 'blogsUploadImage'])->name('blogs.upload-image');
+        Route::get('/blogs/{blog}/edit', [AdminController::class, 'blogsEdit'])->name('blogs.edit');
+        Route::put('/blogs/{blog}', [AdminController::class, 'blogsUpdate'])->name('blogs.update');
+        Route::delete('/blogs/{blog}', [AdminController::class, 'blogsDestroy'])->name('blogs.destroy');
+
+        // Contact Messages Management
+        Route::get('/contacts', [AdminController::class, 'contactsList'])->name('contacts.index');
+        Route::get('/contacts/{contact}', [AdminController::class, 'contactsShow'])->name('contacts.show');
+        Route::post('/contacts/{contact}/update-status', [AdminController::class, 'contactsUpdateStatus'])->name('contacts.update-status');
 
         // Admin Logout
         Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'destroy'])->name('logout');
