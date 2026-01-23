@@ -206,6 +206,11 @@ export default function AuthenticatedLayout({ children, header }) {
                         : null,
                 },
                 {
+                    title: 'Post New Job',
+                    url: route('admin.jobs.create'),
+                    icon: PlusCircle,
+                },
+                {
                     title: 'Tutor Job Requests',
                     url: route('admin.tutor-job-requests.index'),
                     icon: Briefcase,

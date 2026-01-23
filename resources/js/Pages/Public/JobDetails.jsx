@@ -117,7 +117,7 @@ export default function JobDetails({ job }) {
                                     <div className="space-y-4">
                                         <div>
                                             <h3 className="font-semibold mb-2">Description</h3>
-                                            <p className="text-slate-700 leading-relaxed">{job.description}</p>
+                                            <p className="text-slate-700 leading-relaxed whitespace-pre-wrap break-words">{job.description}</p>
                                         </div>
 
                                         <div>

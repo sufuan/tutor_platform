@@ -113,6 +113,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Job Approvals
         Route::get('/jobs/approvals', [AdminController::class, 'jobApprovals'])->name('jobs.approvals');
+        
+        // Admin Post Job (must be before /jobs/{job} to avoid route conflict)
+        Route::get('/jobs/create', [AdminController::class, 'jobsCreate'])->name('jobs.create');
+        Route::post('/jobs', [AdminController::class, 'jobsStore'])->name('jobs.store');
+        
         Route::get('/jobs/{job}', [AdminController::class, 'viewJob'])->name('jobs.view');
         Route::post('/jobs/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
         Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');

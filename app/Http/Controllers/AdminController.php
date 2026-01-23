@@ -8,6 +8,9 @@ use App\Models\Guardian;
 use App\Models\User;
 use App\Models\TutorJobRequest;
 use App\Models\Application;
+use App\Models\Location;
+use App\Models\Subject;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -363,5 +366,58 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Application status updated successfully.');
+    }
+
+    public function jobsCreate()
+    {
+        $locations = Location::orderBy('city')->get();
+        $subjects = Subject::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
+
+        return Inertia::render('Admin/PostJob', [
+            'locations' => $locations,
+            'subjects' => $subjects,
+            'categories' => $categories,
+        ]);
+    }
+
+    public function jobsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'subjects' => 'required|array|min:1',
+            'subjects.*' => 'exists:subjects,id',
+            'class_level' => 'required|string',
+            'education_medium' => 'required|in:bangla,english,english_version',
+            'tuition_type' => 'required|in:home,online,group',
+            'sessions_per_week' => 'required|integer|min:1|max:7',
+            'session_duration' => 'required|integer|min:30|max:180',
+            'salary' => 'required|numeric|min:0',
+            'division' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'tutor_gender_preference' => 'nullable|in:any,male,female',
+        ]);
+
+        // Admin jobs don't need a guardian_id, so we set it to null or a placeholder
+        $validated['guardian_id'] = null; // or you could create a system guardian
+        $validated['job_code'] = 'ADM-' . strtoupper(uniqid());
+        $validated['approval_status'] = 'approved'; // Admin jobs are auto-approved
+        $validated['status'] = 'open';
+        $validated['days_per_week'] = $validated['sessions_per_week'];
+        $validated['duration_per_session'] = $validated['session_duration'];
+        $validated['preferred_tutor_gender'] = $validated['tutor_gender_preference'] ?? 'any';
+        $validated['detailed_address'] = '';
+        
+        unset($validated['sessions_per_week'], $validated['session_duration'], $validated['tutor_gender_preference']);
+
+        try {
+            $job = Job::create($validated);
+
+            return redirect()->route('admin.jobs.approvals')
+                ->with('success', 'Job posted successfully.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error creating job: ' . $e->getMessage());
+        }
     }
 }
