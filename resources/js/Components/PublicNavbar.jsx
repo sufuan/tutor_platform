@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, X, ChevronDown, UserCircle, LogOut } from 'lucide-react';
+import { Menu, X, ChevronDown, UserCircle, LogOut, Phone, Mail } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import {
     DropdownMenu,
@@ -34,17 +34,35 @@ export default function PublicNavbar() {
     };
 
     return (
-        <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <>
+            {/* Top Bar */}
+            <div className="bg-[#0675C1] text-white">
+                <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center text-sm">
+                    <div className="flex items-center gap-4 text-sm">
+                        <a href="tel:+8801234567890" className="flex items-center gap-1 hover:text-yellow-300 transition">
+                            <Phone className="h-4 w-4" />
+                            <span className="hidden md:inline">+880 1234-567890</span>
+                        </a>
+                        <a href="mailto:support@caretutors.com" className="flex items-center gap-1 hover:text-yellow-300 transition">
+                            <Mail className="h-4 w-4" />
+                            <span className="hidden md:inline">Support</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {/* Main Navbar */}
+            <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
-                        <div className="bg-primary-blue rounded-lg p-2">
+                        <div className="bg-[#0675C1] rounded-lg p-2">
                             <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                         </div>
-                        <span className="text-xl font-bold font-heading text-primary-blue">CareTutors</span>
+                        <span className="text-xl font-bold font-heading text-[#0675C1]">CareTutors</span>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -53,7 +71,7 @@ export default function PublicNavbar() {
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary-blue hover:bg-gray-50 rounded-md transition-colors"
+                                className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0675C1] hover:bg-gray-50 rounded-md transition-colors"
                             >
                                 {item.name}
                             </Link>
@@ -93,7 +111,7 @@ export default function PublicNavbar() {
                                     <Button variant="ghost">Login</Button>
                                 </Link>
                                 <Link href="/tutor/signup">
-                                    <Button className="bg-primary-blue hover:bg-primary-blue/90">
+                                    <Button className="bg-[#0675C1] hover:bg-[#0675C1]/90 text-white">
                                         Become a Tutor
                                     </Button>
                                 </Link>
@@ -139,7 +157,7 @@ export default function PublicNavbar() {
                                             <Button className="w-full" variant="outline">Login</Button>
                                         </Link>
                                         <Link href="/tutor/signup" onClick={() => setMobileMenuOpen(false)}>
-                                            <Button className="w-full bg-primary-blue hover:bg-primary-blue/90">
+                                            <Button className="w-full bg-[#0675C1] hover:bg-[#0675C1]/90 text-white">
                                                 Become a Tutor
                                             </Button>
                                         </Link>
@@ -153,7 +171,7 @@ export default function PublicNavbar() {
                                             key={item.name}
                                             href={item.href}
                                             onClick={() => setMobileMenuOpen(false)}
-                                            className="px-3 py-2 text-base font-medium text-gray-700 hover:text-primary-blue hover:bg-gray-50 rounded-md transition-colors"
+                                            className="px-3 py-2 text-base font-medium text-gray-700 hover:text-[#0675C1] hover:bg-gray-50 rounded-md transition-colors"
                                         >
                                             {item.name}
                                         </Link>
@@ -165,5 +183,6 @@ export default function PublicNavbar() {
                 </div>
             </div>
         </nav>
+        </>
     );
 }

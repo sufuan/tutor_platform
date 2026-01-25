@@ -283,4 +283,9 @@ class PublicController extends Controller
             return back()->withInput()->with('error', 'Error sending message. Please try again.');
         }
     }
+
+    public function terms()
+    {
+        return Inertia::render('Public/Terms');
+    }
 }

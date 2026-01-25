@@ -20,6 +20,7 @@ Route::get('/blog', [PublicController::class, 'howItWorks'])->name('blog');
 Route::get('/blog/{blog}', [PublicController::class, 'blogShow'])->name('blog.show');
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
 Route::post('/contact', [PublicController::class, 'contactStore'])->name('contact.store');
+Route::get('/terms', [PublicController::class, 'terms'])->name('terms');
 
 // Dashboard Route - Role-based redirection handled by middleware
 Route::get('/dashboard', function () {
