@@ -92,9 +92,9 @@ export default function PublicNavbar() {
                                 <Link href="/login">
                                     <Button variant="ghost">Login</Button>
                                 </Link>
-                                <Link href="/register">
+                                <Link href="/tutor/signup">
                                     <Button className="bg-primary-blue hover:bg-primary-blue/90">
-                                        Sign Up
+                                        Become a Tutor
                                     </Button>
                                 </Link>
                             </>
@@ -138,9 +138,9 @@ export default function PublicNavbar() {
                                         <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                                             <Button className="w-full" variant="outline">Login</Button>
                                         </Link>
-                                        <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                                        <Link href="/tutor/signup" onClick={() => setMobileMenuOpen(false)}>
                                             <Button className="w-full bg-primary-blue hover:bg-primary-blue/90">
-                                                Sign Up
+                                                Become a Tutor
                                             </Button>
                                         </Link>
                                     </div>

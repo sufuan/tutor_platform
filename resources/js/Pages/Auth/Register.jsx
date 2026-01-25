@@ -8,13 +8,13 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { GraduationCap, Users, CheckCircle, Mail, Lock, User, Shield } from 'lucide-react';
 
-export default function Register() {
+export default function Register({ defaultRole = 'guardian', tutorOnly = false }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
-        role: 'guardian',
+        role: defaultRole,
     });
 
     const submit = (e) => {
@@ -44,7 +44,7 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Register" />
+            <Head title={defaultRole === 'tutor' ? 'Become a Tutor' : 'Register'} />
 
             <div className="min-h-screen flex">
                 {/* LEFT SIDE - Branding */}
@@ -106,54 +106,62 @@ export default function Register() {
                         </div>
 
                         <div className="mb-8">
-                            <h2 className="text-3xl font-bold text-slate-900">Create Account</h2>
-                            <p className="mt-2 text-slate-600">Get started with your free account</p>
+                            <h2 className="text-3xl font-bold text-slate-900">
+                                {defaultRole === 'tutor' ? 'Become a Tutor' : 'Create Account'}
+                            </h2>
+                            <p className="mt-2 text-slate-600">
+                                {defaultRole === 'tutor' 
+                                    ? 'Join our community of expert tutors' 
+                                    : 'Get started with your free account'}
+                            </p>
                         </div>
 
                         <form onSubmit={submit} className="space-y-6">
-                            {/* Role Selection */}
-                            <div className="space-y-3">
-                                <Label className="text-base font-semibold text-slate-900">Choose your role</Label>
-                                <RadioGroup 
-                                    value={data.role} 
-                                    onValueChange={(value) => setData('role', value)}
-                                    className="grid grid-cols-2 gap-4"
-                                >
-                                    {roles.map(role => {
-                                        const Icon = role.icon;
-                                        return (
-                                            <div key={role.value}>
-                                                <RadioGroupItem
-                                                    value={role.value}
-                                                    id={role.value}
-                                                    className="peer sr-only"
-                                                />
-                                                <Label
-                                                    htmlFor={role.value}
-                                                    className={`flex flex-col items-center justify-center rounded-xl border-2 p-5 cursor-pointer transition-all hover:shadow-md ${
-                                                        data.role === role.value
-                                                            ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
-                                                            : 'border-slate-200 bg-white hover:border-slate-300'
-                                                    }`}
-                                                >
-                                                    <Icon className={`h-10 w-10 mb-3 ${
-                                                        data.role === role.value ? 'text-white' : 'text-slate-600'
-                                                    }`} />
-                                                    <span className="font-semibold text-sm">{role.label}</span>
-                                                    <span className={`text-xs text-center mt-1 ${
-                                                        data.role === role.value ? 'text-slate-200' : 'text-slate-500'
-                                                    }`}>
-                                                        {role.description}
-                                                    </span>
-                                                </Label>
-                                            </div>
-                                        );
-                                    })}
-                                </RadioGroup>
-                                {errors.role && (
-                                    <p className="text-sm text-red-500">{errors.role}</p>
-                                )}
-                            </div>
+                            {/* Role Selection - Only show if not tutor-only page */}
+                            {!tutorOnly && (
+                                <div className="space-y-3">
+                                    <Label className="text-base font-semibold text-slate-900">Choose your role</Label>
+                                    <RadioGroup 
+                                        value={data.role} 
+                                        onValueChange={(value) => setData('role', value)}
+                                        className="grid grid-cols-2 gap-4"
+                                    >
+                                        {roles.map(role => {
+                                            const Icon = role.icon;
+                                            return (
+                                                <div key={role.value}>
+                                                    <RadioGroupItem
+                                                        value={role.value}
+                                                        id={role.value}
+                                                        className="peer sr-only"
+                                                    />
+                                                    <Label
+                                                        htmlFor={role.value}
+                                                        className={`flex flex-col items-center justify-center rounded-xl border-2 p-5 cursor-pointer transition-all hover:shadow-md ${
+                                                            data.role === role.value
+                                                                ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
+                                                                : 'border-slate-200 bg-white hover:border-slate-300'
+                                                        }`}
+                                                    >
+                                                        <Icon className={`h-10 w-10 mb-3 ${
+                                                            data.role === role.value ? 'text-white' : 'text-slate-600'
+                                                        }`} />
+                                                        <span className="font-semibold text-sm">{role.label}</span>
+                                                        <span className={`text-xs text-center mt-1 ${
+                                                            data.role === role.value ? 'text-slate-200' : 'text-slate-500'
+                                                        }`}>
+                                                            {role.description}
+                                                        </span>
+                                                    </Label>
+                                                </div>
+                                            );
+                                        })}
+                                    </RadioGroup>
+                                    {errors.role && (
+                                        <p className="text-sm text-red-500">{errors.role}</p>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="space-y-2">
                                 <Label htmlFor="name" className="text-slate-900 font-medium">Full Name</Label>

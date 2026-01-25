@@ -24,6 +24,17 @@ class RegisteredUserController extends Controller
     }
 
     /**
+     * Display the tutor registration view.
+     */
+    public function createTutor(): Response
+    {
+        return Inertia::render('Auth/Register', [
+            'defaultRole' => 'tutor',
+            'tutorOnly' => true,
+        ]);
+    }
+
+    /**
      * Handle an incoming registration request.
      *
      * @throws \Illuminate\Validation\ValidationException
