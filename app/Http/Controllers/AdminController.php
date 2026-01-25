@@ -14,6 +14,7 @@ use App\Models\Category;
 use App\Models\Blog;
 use App\Models\Contact;
 use App\Models\GuardianFeedback;
+use App\Models\TutorFeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -618,6 +619,44 @@ class AdminController extends Controller
     public function feedbacksDestroy(GuardianFeedback $feedback)
     {
         $feedback->delete();
+
+        return back()->with('success', 'Feedback deleted successfully.');
+    }
+
+    public function tutorFeedbacksIndex()
+    {
+        $feedbacks = TutorFeedback::with('tutor')
+            ->latest()
+            ->paginate(15);
+
+        return Inertia::render('Admin/TutorFeedbacks/Index', [
+            'feedbacks' => $feedbacks,
+        ]);
+    }
+
+    public function tutorFeedbacksApprove(TutorFeedback $tutorFeedback)
+    {
+        $tutorFeedback->update([
+            'status' => 'approved',
+            'approved_at' => now(),
+            'approved_by' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Feedback approved successfully.');
+    }
+
+    public function tutorFeedbacksReject(TutorFeedback $tutorFeedback)
+    {
+        $tutorFeedback->update([
+            'status' => 'rejected',
+        ]);
+
+        return back()->with('success', 'Feedback rejected successfully.');
+    }
+
+    public function tutorFeedbacksDestroy(TutorFeedback $tutorFeedback)
+    {
+        $tutorFeedback->delete();
 
         return back()->with('success', 'Feedback deleted successfully.');
     }

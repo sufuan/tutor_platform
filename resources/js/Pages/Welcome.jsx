@@ -362,19 +362,12 @@ export default function Welcome({
                         ]}
                     >
                         <CarouselContent>
-                            {(tutorTestimonials.length > 0 ? tutorTestimonials : [
-                                { name: 'Dr. Hasan Mahmud', subject: 'Physics', feedback: 'CareTutors platform has been a game-changer for my tutoring career. I now have a steady stream of students and can focus on what I love - teaching!' },
-                                { name: 'Sadia Rahman', subject: 'English', feedback: 'As a part-time tutor, this platform helps me manage my schedule efficiently. The payment system is transparent and I always get paid on time.' },
-                                { name: 'Rafiq Ahmed', subject: 'Mathematics', feedback: 'I\'ve been tutoring through CareTutors for 2 years now. The quality of students and guardians is excellent. Highly professional platform!' },
-                                { name: 'Ayesha Begum', subject: 'Chemistry', feedback: 'The verification badge has really helped me attract more students. Parents trust the platform and that makes my job easier. Thank you!' },
-                                { name: 'Khalid Islam', subject: 'Computer Science', feedback: 'Online tutoring through this platform is seamless. The technology works great and I can teach students from anywhere in Bangladesh.' },
-                                { name: 'Nasrin Akter', subject: 'Biology', feedback: 'Best decision I made was joining CareTutors. The support team is amazing and I love the flexibility it gives me to earn while doing what I love.' },
-                            ]).map((testimonial, idx) => (
+                            {tutorTestimonials.map((testimonial, idx) => (
                                 <CarouselItem key={idx} className="md:basis-1/2 lg:basis-1/3">
                                     <div className="p-2">
                                         <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-shadow h-full">
                                             <div className="flex items-center gap-1 mb-4">
-                                                {[...Array(5)].map((_, i) => (
+                                                {[...Array(testimonial.rating)].map((_, i) => (
                                                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                                                 ))}
                                             </div>
@@ -388,7 +381,7 @@ export default function Welcome({
                                                 </div>
                                                 <div>
                                                     <div className="font-bold text-slate-900">{testimonial.name}</div>
-                                                    <div className="text-sm text-slate-600">Tutor - {testimonial.subject}</div>
+                                                    <div className="text-sm text-slate-600">Tutor</div>
                                                 </div>
                                             </div>
                                         </div>

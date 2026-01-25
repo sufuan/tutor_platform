@@ -17,7 +17,8 @@ import {
     XCircle,
     Clock,
     Eye,
-    Send
+    Send,
+    MessageSquare
 } from 'lucide-react';
 import { 
     LineChart, 
@@ -191,6 +192,28 @@ export default function Dashboard({
                             </Card>
                         ))}
                     </div>
+
+                    {/* Quick Action - Share Feedback */}
+                    <Card className="shadow-lg border-0 bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-xl transition-all duration-300">
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-md">
+                                        <MessageSquare className="h-6 w-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <CardTitle className="text-xl">Share Your Experience</CardTitle>
+                                        <CardDescription>Help others by sharing your tutor journey with us</CardDescription>
+                                    </div>
+                                </div>
+                                <Link href={route('tutor.feedback.create')}>
+                                    <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700">
+                                        Give Feedback
+                                    </Button>
+                                </Link>
+                            </div>
+                        </CardHeader>
+                    </Card>
 
                     {/* Recent Job Matches */}
                     <Card className="shadow-lg border-0 bg-white hover:shadow-xl transition-shadow duration-300">

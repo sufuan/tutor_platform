@@ -236,6 +236,11 @@ export default function AuthenticatedLayout({ children, header }) {
                     title: 'Guardian Feedbacks',
                     url: route('admin.feedbacks.index'),
                     icon: MessageSquare,
+                },
+                {
+                    title: 'Tutor Feedbacks',
+                    url: route('admin.tutor-feedbacks.index'),
+                    icon: MessageSquare,
                 },            ];
         }
 

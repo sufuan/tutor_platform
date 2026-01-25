@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\Location;
 use App\Models\Subject;
 use App\Models\TutorJobRequest;
+use App\Models\TutorFeedback;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -513,5 +514,27 @@ class TutorController extends Controller
         $jobRequest->increment('views');
         
         return response()->json(['success' => true, 'views' => $jobRequest->views]);
+    }
+
+    public function feedbackCreate()
+    {
+        return Inertia::render('Tutor/FeedbackCreate');
+    }
+
+    public function feedbackStore(Request $request)
+    {
+        $validated = $request->validate([
+            'feedback' => 'required|string|max:1000',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        TutorFeedback::create([
+            'tutor_id' => auth()->id(),
+            'feedback' => $validated['feedback'],
+            'rating' => $validated['rating'],
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Feedback submitted successfully! It will be visible after admin approval.');
     }
 }

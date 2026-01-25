@@ -88,6 +88,10 @@ Route::middleware(['auth', 'verified'])->prefix('tutor')->name('tutor.')->group(
     Route::post('/job-request', [TutorController::class, 'storeJobRequest'])->name('job-request.store');
     Route::get('/job-requests', [TutorController::class, 'myJobRequests'])->name('job-requests');
     Route::post('/job-requests/{jobRequest}/view', [TutorController::class, 'viewJobRequest'])->name('job-requests.view');
+    
+    // Feedback
+    Route::get('/feedback/create', [TutorController::class, 'feedbackCreate'])->name('feedback.create');
+    Route::post('/feedback', [TutorController::class, 'feedbackStore'])->name('feedback.store');
 });
 
 // Admin Routes
@@ -160,6 +164,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/feedbacks/{feedback}/approve', [AdminController::class, 'feedbacksApprove'])->name('feedbacks.approve');
         Route::post('/feedbacks/{feedback}/reject', [AdminController::class, 'feedbacksReject'])->name('feedbacks.reject');
         Route::delete('/feedbacks/{feedback}', [AdminController::class, 'feedbacksDestroy'])->name('feedbacks.destroy');
+
+        // Tutor Feedbacks Management
+        Route::get('/tutor-feedbacks', [AdminController::class, 'tutorFeedbacksIndex'])->name('tutor-feedbacks.index');
+        Route::post('/tutor-feedbacks/{tutorFeedback}/approve', [AdminController::class, 'tutorFeedbacksApprove'])->name('tutor-feedbacks.approve');
+        Route::post('/tutor-feedbacks/{tutorFeedback}/reject', [AdminController::class, 'tutorFeedbacksReject'])->name('tutor-feedbacks.reject');
+        Route::delete('/tutor-feedbacks/{tutorFeedback}', [AdminController::class, 'tutorFeedbacksDestroy'])->name('tutor-feedbacks.destroy');
 
         // Admin Logout
         Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'destroy'])->name('logout');
