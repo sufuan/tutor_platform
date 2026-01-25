@@ -308,19 +308,12 @@ export default function Welcome({
                         ]}
                     >
                         <CarouselContent>
-                            {(guardianTestimonials.length > 0 ? guardianTestimonials : [
-                                { name: 'Sarah Ahmed', feedback: 'CareTutors helped my daughter improve her math grades significantly. The tutor was professional, punctual, and really knew how to engage her in learning.' },
-                                { name: 'Kamal Hassan', feedback: 'Finding a qualified English tutor was so easy through this platform. My son\'s communication skills have improved remarkably in just 3 months!' },
-                                { name: 'Fatima Khan', feedback: 'Excellent service! The verification process gave me confidence, and the tutor we found has been amazing for our children\'s preparation for admission tests.' },
-                                { name: 'Rahman Ali', feedback: 'The online tutoring option was perfect for us during the pandemic. Quality education delivered right to our home. Highly recommend!' },
-                                { name: 'Nadia Islam', feedback: 'Very satisfied with the package tutoring option. My son completed his HSC preparation well ahead of schedule. Thank you CareTutors!' },
-                                { name: 'Imran Hossain', feedback: 'Professional platform with verified tutors. The customer support team is also very responsive and helpful. Great experience overall!' },
-                            ]).map((testimonial, idx) => (
+                            {guardianTestimonials.map((testimonial, idx) => (
                                 <CarouselItem key={idx} className="md:basis-1/2 lg:basis-1/3">
                                     <div className="p-2">
                                         <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200 h-full">
                                             <div className="flex items-center gap-1 mb-4">
-                                                {[...Array(5)].map((_, i) => (
+                                                {[...Array(testimonial.rating || 5)].map((_, i) => (
                                                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                                                 ))}
                                             </div>

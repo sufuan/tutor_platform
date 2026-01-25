@@ -13,7 +13,8 @@ import {
     Eye, 
     Calendar,
     TrendingUp,
-    AlertCircle
+    AlertCircle,
+    MessageSquare
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -235,7 +236,7 @@ export default function Dashboard({
                     </Card>
 
                     {/* Quick Actions Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-blue-50 to-indigo-50 cursor-pointer">
                             <CardHeader>
                                 <div className="flex items-center space-x-3">
@@ -294,6 +295,27 @@ export default function Dashboard({
                                 <Link href={route('guardian.jobs.index')}>
                                     <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700">
                                         View Bookings
+                                    </Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-amber-50 to-orange-50 cursor-pointer">
+                            <CardHeader>
+                                <div className="flex items-center space-x-3">
+                                    <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-md">
+                                        <MessageSquare className="h-6 w-6 text-white" />
+                                    </div>
+                                    <CardTitle className="text-lg">Share Feedback</CardTitle>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-gray-600 mb-4">
+                                    Share your experience and help others make informed decisions
+                                </p>
+                                <Link href={route('guardian.feedback.create')}>
+                                    <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700">
+                                        Give Feedback
                                     </Button>
                                 </Link>
                             </CardContent>

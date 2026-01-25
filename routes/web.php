@@ -57,6 +57,10 @@ Route::middleware(['auth', 'verified'])->prefix('guardian')->name('guardian.')->
     Route::post('/applications/{application}/shortlist', [GuardianController::class, 'applicationShortlist'])->name('applications.shortlist');
     Route::post('/applications/{application}/hire', [GuardianController::class, 'applicationHire'])->name('applications.hire');
     Route::post('/applications/{application}/reject', [GuardianController::class, 'applicationReject'])->name('applications.reject');
+    
+    // Feedback Management
+    Route::get('/feedback/create', [GuardianController::class, 'feedbackCreate'])->name('feedback.create');
+    Route::post('/feedback', [GuardianController::class, 'feedbackStore'])->name('feedback.store');
 });
 
 // Tutor Routes
@@ -150,6 +154,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/contacts', [AdminController::class, 'contactsList'])->name('contacts.index');
         Route::get('/contacts/{contact}', [AdminController::class, 'contactsShow'])->name('contacts.show');
         Route::post('/contacts/{contact}/update-status', [AdminController::class, 'contactsUpdateStatus'])->name('contacts.update-status');
+
+        // Guardian Feedbacks Management
+        Route::get('/feedbacks', [AdminController::class, 'feedbacksIndex'])->name('feedbacks.index');
+        Route::post('/feedbacks/{feedback}/approve', [AdminController::class, 'feedbacksApprove'])->name('feedbacks.approve');
+        Route::post('/feedbacks/{feedback}/reject', [AdminController::class, 'feedbacksReject'])->name('feedbacks.reject');
+        Route::delete('/feedbacks/{feedback}', [AdminController::class, 'feedbacksDestroy'])->name('feedbacks.destroy');
 
         // Admin Logout
         Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'destroy'])->name('logout');

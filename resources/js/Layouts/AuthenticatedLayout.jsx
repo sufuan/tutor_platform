@@ -20,6 +20,7 @@ import {
     LogOut,
     BookOpen,
     Mail,
+    MessageSquare,
 } from 'lucide-react';
 import UserAvatar from '@/Components/UserAvatar';
 import { Badge } from '@/Components/ui/badge';
@@ -230,6 +231,11 @@ export default function AuthenticatedLayout({ children, header }) {
                     title: 'Contact Messages',
                     url: route('admin.contacts.index'),
                     icon: Mail,
+                },
+                {
+                    title: 'Guardian Feedbacks',
+                    url: route('admin.feedbacks.index'),
+                    icon: MessageSquare,
                 },            ];
         }
 

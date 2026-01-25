@@ -13,6 +13,7 @@ use App\Models\Subject;
 use App\Models\Category;
 use App\Models\Blog;
 use App\Models\Contact;
+use App\Models\GuardianFeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -581,5 +582,43 @@ class AdminController extends Controller
         $contact->update($validated);
 
         return back()->with('success', 'Contact status updated successfully.');
+    }
+
+    public function feedbacksIndex()
+    {
+        $feedbacks = GuardianFeedback::with('guardian')
+            ->latest()
+            ->paginate(20);
+
+        return Inertia::render('Admin/Feedbacks/Index', [
+            'feedbacks' => $feedbacks,
+        ]);
+    }
+
+    public function feedbacksApprove(GuardianFeedback $feedback)
+    {
+        $feedback->update([
+            'status' => 'approved',
+            'approved_at' => now(),
+            'approved_by' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Feedback approved successfully.');
+    }
+
+    public function feedbacksReject(GuardianFeedback $feedback)
+    {
+        $feedback->update([
+            'status' => 'rejected',
+        ]);
+
+        return back()->with('success', 'Feedback rejected successfully.');
+    }
+
+    public function feedbacksDestroy(GuardianFeedback $feedback)
+    {
+        $feedback->delete();
+
+        return back()->with('success', 'Feedback deleted successfully.');
     }
 }

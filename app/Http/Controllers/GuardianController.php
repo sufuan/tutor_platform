@@ -9,6 +9,7 @@ use App\Models\Application;
 use App\Models\Booking;
 use App\Models\Location;
 use App\Models\Subject;
+use App\Models\GuardianFeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -329,4 +330,27 @@ class GuardianController extends Controller
         $guardian->updateProfileCompletion();
 
         return redirect()->route('guardian.dashboard')->with('success', 'Profile completed successfully!');
-    }}
+    }
+
+    public function feedbackCreate()
+    {
+        return Inertia::render('Guardian/FeedbackCreate');
+    }
+
+    public function feedbackStore(Request $request)
+    {
+        $validated = $request->validate([
+            'feedback' => 'required|string|max:1000',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        GuardianFeedback::create([
+            'guardian_id' => auth()->id(),
+            'feedback' => $validated['feedback'],
+            'rating' => $validated['rating'],
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Feedback submitted successfully! It will be visible after admin approval.');
+    }
+}

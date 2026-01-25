@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Subject;
 use App\Models\Blog;
 use App\Models\Contact;
+use App\Models\GuardianFeedback;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -36,10 +37,24 @@ class PublicController extends Controller
             'totalGuardians' => \App\Models\Guardian::count(),
         ];
 
+        $guardianTestimonials = GuardianFeedback::with('guardian')
+            ->where('status', 'approved')
+            ->latest('approved_at')
+            ->take(6)
+            ->get()
+            ->map(function ($feedback) {
+                return [
+                    'name' => $feedback->guardian->name,
+                    'feedback' => $feedback->feedback,
+                    'rating' => $feedback->rating,
+                ];
+            });
+
         return Inertia::render('Welcome', [
             'featuredTutors' => $featuredTutors,
             'recentJobs' => $recentJobs,
             'stats' => $stats,
+            'guardianTestimonials' => $guardianTestimonials,
         ]);
     }
 
