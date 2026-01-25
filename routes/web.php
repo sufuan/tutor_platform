@@ -16,7 +16,8 @@ Route::get('/jobs/{job}', [PublicController::class, 'jobShow'])->name('jobs.show
 Route::get('/tutor-jobs/{jobRequest}', [PublicController::class, 'tutorJobShow'])->name('tutor-jobs.show');
 Route::get('/tutors', [PublicController::class, 'tutors'])->name('tutors.index');
 Route::get('/tutors/{tutor}', [PublicController::class, 'tutorShow'])->name('tutors.show');
-Route::get('/how-it-works', [PublicController::class, 'howItWorks'])->name('how-it-works');
+Route::get('/blog', [PublicController::class, 'howItWorks'])->name('blog');
+Route::get('/blog/{blog}', [PublicController::class, 'blogShow'])->name('blog.show');
 Route::get('/contact', [PublicController::class, 'contact'])->name('contact');
 Route::post('/contact', [PublicController::class, 'contactStore'])->name('contact.store');
 

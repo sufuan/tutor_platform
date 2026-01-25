@@ -234,6 +234,30 @@ class PublicController extends Controller
         ]);
     }
 
+    public function blogShow(Blog $blog)
+    {
+        // Only show published blogs
+        if ($blog->status !== 'published' || $blog->published_at > now()) {
+            abort(404);
+        }
+
+        // Increment views
+        $blog->increment('views');
+
+        // Get related blogs (same category, exclude current)
+        $relatedBlogs = Blog::published()
+            ->where('category', $blog->category)
+            ->where('id', '!=', $blog->id)
+            ->orderBy('views', 'desc')
+            ->take(3)
+            ->get();
+
+        return Inertia::render('Public/BlogShow', [
+            'blog' => $blog->load('author'),
+            'relatedBlogs' => $relatedBlogs,
+        ]);
+    }
+
     public function contact()
     {
         return Inertia::render('Public/Contact');

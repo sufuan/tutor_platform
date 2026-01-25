@@ -38,9 +38,11 @@ export default function CreateEdit({ auth, blog }) {
         return (
             <AuthenticatedLayout>
                 <Head title="Preview Blog" />
-                <div className="py-12">
-                    <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                        <div className="mb-4">
+                
+                {/* Preview matches frontend BlogShow.jsx design */}
+                <div className="py-12 bg-slate-50">
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="mb-6">
                             <Button
                                 variant="outline"
                                 onClick={() => setShowPreview(false)}
@@ -49,22 +51,92 @@ export default function CreateEdit({ auth, blog }) {
                                 Back to Edit
                             </Button>
                         </div>
+
+                        {/* Hero Section */}
+                        <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white rounded-lg overflow-hidden mb-8">
+                            <div className="absolute inset-0 bg-black/20"></div>
+                            {data.image && (
+                                <div 
+                                    className="absolute inset-0 bg-cover bg-center opacity-20" 
+                                    style={{ backgroundImage: `url(${data.image})` }}
+                                ></div>
+                            )}
+                            <div className="relative px-8 py-12">
+                                <div className="inline-block px-3 py-1 bg-white text-blue-600 rounded-full text-sm font-medium mb-4">
+                                    {data.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                </div>
+                                
+                                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                                    {data.title || 'Untitled Blog Post'}
+                                </h1>
+                                
+                                {data.excerpt && (
+                                    <p className="text-xl text-blue-100 mb-6 max-w-3xl">
+                                        {data.excerpt}
+                                    </p>
+                                )}
+                                
+                                <div className="flex flex-wrap items-center gap-6 text-blue-100">
+                                    <div className="flex items-center gap-2">
+                                        <User className="h-5 w-5" />
+                                        <span className="font-medium">{auth.name || 'Admin'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-5 w-5" />
+                                        <span>
+                                            {new Date().toLocaleDateString('en-US', { 
+                                                month: 'long', 
+                                                day: 'numeric', 
+                                                year: 'numeric' 
+                                            })}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Eye className="h-5 w-5" />
+                                        <span>0 views</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <Card>
-                            <CardContent className="pt-6">
-                                {data.image && (
+                        {/* Article Content */}
+                        <Card className="overflow-hidden">
+                            {data.image && (
+                                <div className="relative h-96 overflow-hidden">
                                     <img
                                         src={data.image}
                                         alt={data.title}
-                                        className="w-full h-64 object-cover rounded-lg mb-6"
+                                        className="w-full h-full object-cover"
                                     />
-                                )}
-                                <h1 className="text-4xl font-bold mb-4">{data.title}</h1>
-                                {data.excerpt && (
-                                    <p className="text-xl text-slate-600 mb-6">{data.excerpt}</p>
-                                )}
-                                <div className="prose prose-sm sm:prose lg:prose-lg max-w-none">
-                                    <div dangerouslySetInnerHTML={{ __html: data.content }} />
+                                </div>
+                            )}
+                            <CardContent className="p-8">
+                                <article className="prose prose-slate prose-lg max-w-none
+                                    prose-headings:font-bold prose-headings:text-slate-900
+                                    prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl
+                                    prose-p:text-slate-700 prose-p:leading-relaxed
+                                    prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+                                    prose-strong:text-slate-900 prose-strong:font-semibold
+                                    prose-ul:list-disc prose-ol:list-decimal
+                                    prose-li:text-slate-700
+                                    prose-blockquote:border-l-4 prose-blockquote:border-blue-500 
+                                    prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-600
+                                    prose-code:text-blue-600 prose-code:bg-blue-50 prose-code:px-1 prose-code:rounded
+                                    prose-img:rounded-lg prose-img:shadow-lg">
+                                    {data.content ? (
+                                        <div dangerouslySetInnerHTML={{ __html: data.content }} />
+                                    ) : (
+                                        <p className="text-slate-400">No content yet...</p>
+                                    )}
+                                </article>
+                                
+                                {/* Preview Badge */}
+                                <div className="mt-8 pt-8 border-t border-slate-200">
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                                        <p className="text-blue-800 font-medium">
+                                            📝 This is a preview of how your blog post will appear on the frontend
+                                        </p>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
