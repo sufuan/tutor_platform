@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Subject;
 use App\Models\TutorJobRequest;
 use App\Models\TutorFeedback;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 

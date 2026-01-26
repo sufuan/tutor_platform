@@ -165,6 +165,11 @@ export default function AuthenticatedLayout({ children, header }) {
                     icon: User,
                 },
                 {
+                    title: 'Share Feedback',
+                    url: route('tutor.feedback.create'),
+                    icon: MessageSquare,
+                },
+                {
                     type: 'status-badge',
                     status: verificationStatus,
                     statusColor: statusColors[verificationStatus],

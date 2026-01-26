@@ -36,16 +36,29 @@ class ProfileCompletionService
     public static function calculateTutorCompletion(Tutor $tutor): int
     {
         $filledCount = 0;
-        $totalFields = 8;
+        $totalFields = 14; // Match actual frontend fields
         
-        if ($tutor->first_name) $filledCount++;
-        if ($tutor->last_name) $filledCount++;
+        // Basic Info (5 fields)
+        if ($tutor->user && $tutor->user->name) $filledCount++;
+        if ($tutor->phone) $filledCount++;
+        if ($tutor->gender) $filledCount++;
+        if ($tutor->address) $filledCount++;
+        if ($tutor->preferred_locations) $filledCount++; // Using preferred_locations as location
+        
+        // Education (2 fields)
         if ($tutor->institution) $filledCount++;
         if ($tutor->education_level) $filledCount++;
+        
+        // Teaching Info (5 fields)
         if (is_array($tutor->subjects) && count($tutor->subjects) >= 1) $filledCount++;
-        if ($tutor->experience_years) $filledCount++;
+        if ($tutor->experience_years !== null && $tutor->experience_years >= 0) $filledCount++;
+        if ($tutor->experience_details) $filledCount++;
+        if ($tutor->hourly_rate) $filledCount++;
         if ($tutor->bio) $filledCount++;
-        if ($tutor->location_id) $filledCount++;
+        
+        // Teaching Preferences (2 fields)
+        if ($tutor->tutoring_method) $filledCount++;
+        if ($tutor->tutoring_styles) $filledCount++;
         
         return round(($filledCount / $totalFields) * 100);
     }
