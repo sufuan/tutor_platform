@@ -28,15 +28,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tutor_jobs', function (Blueprint $table) {
-            // Drop the foreign key constraint
-            $table->dropForeign(['guardian_id']);
-            
-            // Make the column not nullable again
-            $table->foreignId('guardian_id')->nullable(false)->change();
-            
-            // Re-add the foreign key constraint
-            $table->foreign('guardian_id')->references('id')->on('guardians')->onDelete('cascade');
-        });
+        // For rollback, just keep the column as is to avoid data issues
+        // The original state can be maintained in the initial migration
     }
 };

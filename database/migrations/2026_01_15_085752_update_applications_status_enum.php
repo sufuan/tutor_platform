@@ -33,6 +33,17 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // First, convert to string temporarily
+        Schema::table('applications', function (Blueprint $table) {
+            $table->string('status', 50)->default('pending')->change();
+        });
+
+        // Update 'accepted' back to 'confirmed'
+        DB::table('applications')
+            ->where('status', 'accepted')
+            ->update(['status' => 'confirmed']);
+
+        // Then change to the old enum
         Schema::table('applications', function (Blueprint $table) {
             $table->enum('status', ['pending', 'shortlisted', 'rejected', 'confirmed'])->default('pending')->change();
         });

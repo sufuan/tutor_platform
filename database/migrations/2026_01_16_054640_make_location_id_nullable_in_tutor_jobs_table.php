@@ -21,8 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tutor_jobs', function (Blueprint $table) {
-            $table->foreignId('location_id')->nullable(false)->change();
-        });
+        // Keep nullable to avoid data truncation on rollback
     }
 };
