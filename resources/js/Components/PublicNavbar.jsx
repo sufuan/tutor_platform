@@ -13,7 +13,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/Components/ui/sheet';
 import UserAvatar from '@/Components/UserAvatar';
 
 export default function PublicNavbar() {
-    const { auth } = usePage().props;
+    const { auth, footerSettings } = usePage().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const navigation = [
@@ -32,15 +32,19 @@ export default function PublicNavbar() {
         return '/dashboard';
     };
 
+    const phoneNumber = footerSettings?.contact_phone || '+880 1234-567890';
+    const phoneLink = phoneNumber.replace(/\s/g, '');
+    const phoneDisplay = phoneNumber;
+
     return (
         <>
             {/* Top Bar */}
             <div className="bg-[#0675C1] text-white">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center text-sm">
                     <div className="flex items-center gap-4 text-sm">
-                        <a href="tel:+8801234567890" className="flex items-center gap-1 hover:text-yellow-300 transition">
+                        <a href={`tel:${phoneLink}`} className="flex items-center gap-1 hover:text-yellow-300 transition">
                             <Phone className="h-4 w-4" />
-                            <span className="hidden md:inline">+880 1234-567890</span>
+                            <span className="hidden md:inline">{phoneDisplay}</span>
                         </a>
                         <a href="mailto:support@caretutors.com" className="flex items-center gap-1 hover:text-yellow-300 transition">
                             <Mail className="h-4 w-4" />

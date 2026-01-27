@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Button } from '@/Components/ui/button';
+import PromotionalModal from '@/Components/PromotionalModal';
 import Autoplay from 'embla-carousel-autoplay';
 import {
     Carousel,
@@ -39,6 +40,9 @@ export default function Welcome({
     stats = {}, 
     guardianTestimonials = [],
     tutorTestimonials = [],
+    heroImage = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop',
+    promoBannerImage = '',
+    showPromoBanner = false,
 }) {
 
     const displayStats = {
@@ -65,6 +69,12 @@ export default function Welcome({
 
     return (
         <PublicLayout title="Welcome">
+            {/* Promotional Modal */}
+            <PromotionalModal 
+                imageUrl={promoBannerImage} 
+                enabled={showPromoBanner}
+            />
+
             {/* Hero Section - Simplified */}
             <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-[#0675C1]/5">
                 {/* Decorative Elements */}
@@ -106,7 +116,7 @@ export default function Welcome({
                         <div className="relative">
                             <div className="absolute inset-0 bg-[#0675C1] rounded-3xl rotate-3"></div>
                             <img 
-                                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop" 
+                                src={heroImage} 
                                 alt="Students Learning" 
                                 className="relative rounded-3xl shadow-2xl w-full h-[500px] object-cover"
                             />

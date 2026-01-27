@@ -100,6 +100,19 @@ class HandleInertiaRequests extends Middleware
                 'info' => $request->session()->get('info'),
                 'warning' => $request->session()->get('warning'),
             ],
+            'footerSettings' => [
+                'contact_title' => \App\Models\SiteSetting::get('contact_title', 'Contact Us'),
+                'contact_description' => \App\Models\SiteSetting::get('contact_description', 'Have any questions or need a tutor? We are here to help!'),
+                'contact_address' => \App\Models\SiteSetting::get('contact_address', 'Salmanpur, Kotbari, Comilla, Bangladesh'),
+                'contact_phone' => \App\Models\SiteSetting::get('contact_phone', '+880 1818 420012'),
+                'contact_email' => \App\Models\SiteSetting::get('contact_email', 'tuitionbarta@gmail.com'),
+                'contact_hours' => \App\Models\SiteSetting::get('contact_hours', 'Sat - Thu, 10:00 AM - 8:00 PM'),
+                'social_facebook' => \App\Models\SiteSetting::get('social_facebook', 'https://facebook.com/tuitionbarta'),
+                'social_linkedin' => \App\Models\SiteSetting::get('social_linkedin', 'https://linkedin.com/company/tuitionbarta'),
+                'social_twitter' => \App\Models\SiteSetting::get('social_twitter', 'https://x.com/tuitionbarta'),
+                'social_youtube' => \App\Models\SiteSetting::get('social_youtube', 'https://youtube.com/@tuitionbarta'),
+                'social_whatsapp' => \App\Models\SiteSetting::get('social_whatsapp', 'https://wa.me/8801818420012'),
+            ],
         ];
     }
 }

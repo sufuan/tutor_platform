@@ -171,6 +171,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/tutor-feedbacks/{tutorFeedback}/reject', [AdminController::class, 'tutorFeedbacksReject'])->name('tutor-feedbacks.reject');
         Route::delete('/tutor-feedbacks/{tutorFeedback}', [AdminController::class, 'tutorFeedbacksDestroy'])->name('tutor-feedbacks.destroy');
 
+        // Frontend Settings Management
+        Route::get('/frontend-settings', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'index'])->name('frontend-settings.index');
+        Route::post('/frontend-settings', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'update'])->name('frontend-settings.update');
+
         // Admin Logout
         Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'destroy'])->name('logout');
     });

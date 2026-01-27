@@ -1,15 +1,16 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Facebook, Twitter, Linkedin, Youtube, Mail, Phone, MapPin, MessageCircle, Clock } from 'lucide-react';
 
 export default function PublicFooter() {
     const currentYear = new Date().getFullYear();
+    const { footerSettings } = usePage().props;
 
     const socialLinks = [
-        { icon: Facebook, href: 'https://facebook.com/tuitionbarta', label: 'Facebook' },
-        { icon: Linkedin, href: 'https://linkedin.com/company/tuitionbarta', label: 'LinkedIn' },
-        { icon: Twitter, href: 'https://x.com/tuitionbarta', label: 'X (Twitter)' },
-        { icon: Youtube, href: 'https://youtube.com/@tuitionbarta', label: 'YouTube' },
-        { icon: MessageCircle, href: 'https://wa.me/8801818420012', label: 'WhatsApp' },
+        { icon: Facebook, href: footerSettings?.social_facebook || 'https://facebook.com/tuitionbarta', label: 'Facebook' },
+        { icon: Linkedin, href: footerSettings?.social_linkedin || 'https://linkedin.com/company/tuitionbarta', label: 'LinkedIn' },
+        { icon: Twitter, href: footerSettings?.social_twitter || 'https://x.com/tuitionbarta', label: 'X (Twitter)' },
+        { icon: Youtube, href: footerSettings?.social_youtube || 'https://youtube.com/@tuitionbarta', label: 'YouTube' },
+        { icon: MessageCircle, href: footerSettings?.social_whatsapp || 'https://wa.me/8801818420012', label: 'WhatsApp' },
     ];
 
     return (
@@ -64,30 +65,30 @@ export default function PublicFooter() {
 
                     {/* Contact Information Column */}
                     <div>
-                        <h3 className="text-white font-semibold mb-4">Contact Us</h3>
+                        <h3 className="text-white font-semibold mb-4">{footerSettings?.contact_title || 'Contact Us'}</h3>
                         <p className="text-sm mb-4 text-white">
-                            Have any questions or need a tutor? We are here to help!
+                            {footerSettings?.contact_description || 'Have any questions or need a tutor? We are here to help!'}
                         </p>
                         <div className="space-y-3">
                             <div className="flex items-start space-x-2 text-sm">
                                 <MapPin className="h-5 w-5 text-[#0675C1] mt-0.5 flex-shrink-0" />
-                                <span>Salmanpur, Kotbari, Comilla, Bangladesh</span>
+                                <span>{footerSettings?.contact_address || 'Salmanpur, Kotbari, Comilla, Bangladesh'}</span>
                             </div>
                             <div className="flex items-center space-x-2 text-sm">
                                 <Phone className="h-5 w-5 text-[#0675C1]" />
-                                <a href="tel:+8801818420012" className="hover:text-[#0675C1] transition-colors">
-                                    +880 1818 420012
+                                <a href={`tel:${footerSettings?.contact_phone?.replace(/\s/g, '') || '+8801818420012'}`} className="hover:text-[#0675C1] transition-colors">
+                                    {footerSettings?.contact_phone || '+880 1818 420012'}
                                 </a>
                             </div>
                             <div className="flex items-center space-x-2 text-sm">
                                 <Mail className="h-5 w-5 text-[#0675C1]" />
-                                <a href="mailto:tuitionbarta@gmail.com" className="hover:text-[#0675C1] transition-colors">
-                                    tuitionbarta@gmail.com
+                                <a href={`mailto:${footerSettings?.contact_email || 'tuitionbarta@gmail.com'}`} className="hover:text-[#0675C1] transition-colors">
+                                    {footerSettings?.contact_email || 'tuitionbarta@gmail.com'}
                                 </a>
                             </div>
                             <div className="flex items-start space-x-2 text-sm">
                                 <Clock className="h-5 w-5 text-[#0675C1] mt-0.5" />
-                                <span>Sat - Thu, 10:00 AM - 8:00 PM</span>
+                                <span>{footerSettings?.contact_hours || 'Sat - Thu, 10:00 AM - 8:00 PM'}</span>
                             </div>
                         </div>
                     </div>

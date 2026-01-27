@@ -264,7 +264,13 @@ export default function AuthenticatedLayout({ children, header }) {
                     badge: badgeCounts?.pendingTutorFeedbacks
                         ? { value: badgeCounts.pendingTutorFeedbacks, variant: 'default' }
                         : null,
-                },            ];
+                },
+                {
+                    title: 'Frontend Settings',
+                    url: route('admin.frontend-settings.index'),
+                    icon: Settings,
+                },
+            ];
         }
 
         return [];

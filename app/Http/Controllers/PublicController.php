@@ -11,6 +11,7 @@ use App\Models\Blog;
 use App\Models\Contact;
 use App\Models\GuardianFeedback;
 use App\Models\TutorFeedback;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -70,6 +71,22 @@ class PublicController extends Controller
             'stats' => $stats,
             'guardianTestimonials' => $guardianTestimonials,
             'tutorTestimonials' => $tutorTestimonials,
+            'heroImage' => SiteSetting::get('hero_image', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop'),
+            'promoBannerImage' => SiteSetting::get('promo_banner_image', ''),
+            'showPromoBanner' => SiteSetting::get('show_promo_banner', '0') === '1',
+            'footerSettings' => [
+                'contact_title' => SiteSetting::get('contact_title', 'Contact Us'),
+                'contact_description' => SiteSetting::get('contact_description', 'Have any questions or need a tutor? We are here to help!'),
+                'contact_address' => SiteSetting::get('contact_address', 'Salmanpur, Kotbari, Comilla, Bangladesh'),
+                'contact_phone' => SiteSetting::get('contact_phone', '+880 1818 420012'),
+                'contact_email' => SiteSetting::get('contact_email', 'tuitionbarta@gmail.com'),
+                'contact_hours' => SiteSetting::get('contact_hours', 'Sat - Thu, 10:00 AM - 8:00 PM'),
+                'social_facebook' => SiteSetting::get('social_facebook', 'https://facebook.com/tuitionbarta'),
+                'social_linkedin' => SiteSetting::get('social_linkedin', 'https://linkedin.com/company/tuitionbarta'),
+                'social_twitter' => SiteSetting::get('social_twitter', 'https://x.com/tuitionbarta'),
+                'social_youtube' => SiteSetting::get('social_youtube', 'https://youtube.com/@tuitionbarta'),
+                'social_whatsapp' => SiteSetting::get('social_whatsapp', 'https://wa.me/8801818420012'),
+            ],
         ]);
     }
 
