@@ -222,30 +222,48 @@ export default function AuthenticatedLayout({ children, header }) {
                     title: 'Tutor Job Requests',
                     url: route('admin.tutor-job-requests.index'),
                     icon: Briefcase,
+                    badge: badgeCounts?.tutorJobRequests
+                        ? { value: badgeCounts.tutorJobRequests, variant: 'default' }
+                        : null,
                 },
                 {
                     title: 'Job Applications',
                     url: route('admin.job-applications.index'),
                     icon: FileText,
+                    badge: badgeCounts?.jobApplications
+                        ? { value: badgeCounts.jobApplications, variant: 'default' }
+                        : null,
                 },                {
                     title: 'Blogs',
                     url: route('admin.blogs.index'),
                     icon: BookOpen,
+                    badge: badgeCounts?.totalBlogs
+                        ? { value: badgeCounts.totalBlogs, variant: 'default' }
+                        : null,
                 },
                 {
                     title: 'Contact Messages',
                     url: route('admin.contacts.index'),
                     icon: Mail,
+                    badge: badgeCounts?.unreadContactMessages
+                        ? { value: badgeCounts.unreadContactMessages, variant: 'default' }
+                        : null,
                 },
                 {
                     title: 'Guardian Feedbacks',
                     url: route('admin.feedbacks.index'),
                     icon: MessageSquare,
+                    badge: badgeCounts?.pendingGuardianFeedbacks
+                        ? { value: badgeCounts.pendingGuardianFeedbacks, variant: 'default' }
+                        : null,
                 },
                 {
                     title: 'Tutor Feedbacks',
                     url: route('admin.tutor-feedbacks.index'),
                     icon: MessageSquare,
+                    badge: badgeCounts?.pendingTutorFeedbacks
+                        ? { value: badgeCounts.pendingTutorFeedbacks, variant: 'default' }
+                        : null,
                 },            ];
         }
 

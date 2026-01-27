@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\{Tutor, Job, Application};
+use App\Models\{Tutor, Job, Application, TutorJobRequest, Blog, Contact, GuardianFeedback, TutorFeedback};
 
 class BadgeCountService
 {
@@ -39,5 +39,36 @@ class BadgeCountService
     public static function getTutorTotalApplicationsCount(int $tutorId): int
     {
         return Application::where('tutor_id', $tutorId)->count();
+    }
+    
+    // Admin badge counts
+    public static function getTutorJobRequestsCount(): int
+    {
+        return TutorJobRequest::where('approval_status', 'pending')->count();
+    }
+    
+    public static function getJobApplicationsCount(): int
+    {
+        return Application::where('status', 'pending')->count();
+    }
+    
+    public static function getTotalBlogsCount(): int
+    {
+        return Blog::count();
+    }
+    
+    public static function getUnreadContactMessagesCount(): int
+    {
+        return Contact::where('status', 'unread')->count();
+    }
+    
+    public static function getPendingGuardianFeedbacksCount(): int
+    {
+        return GuardianFeedback::where('status', 'pending')->count();
+    }
+    
+    public static function getPendingTutorFeedbacksCount(): int
+    {
+        return TutorFeedback::where('status', 'pending')->count();
     }
 }

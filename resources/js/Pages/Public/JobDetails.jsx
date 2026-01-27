@@ -17,7 +17,10 @@ import {
     Briefcase
 } from 'lucide-react';
 
-export default function JobDetails({ job }) {
+export default function JobDetails({ job, auth }) {
+    const isAuthenticated = auth?.user !== null;
+    const isTutor = auth?.user?.role === 'tutor';
+    
     const getStatusColor = (status) => {
         const colors = {
             pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -171,18 +174,38 @@ export default function JobDetails({ job }) {
                                     <CardTitle>Posted By</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {job.guardian && (
+                                    {job.guardian_id ? (
+                                        job.guardian && (
+                                            <>
+                                                <div>
+                                                    <p className="text-sm text-slate-500">Guardian Name</p>
+                                                    <p className="font-medium">
+                                                        {job.guardian.user?.name || `${job.guardian.first_name || ''} ${job.guardian.last_name || ''}`.trim() || 'Not specified'}
+                                                    </p>
+                                                </div>
+                                                {job.guardian.phone && (
+                                                    <div>
+                                                        <p className="text-sm text-slate-500">Contact</p>
+                                                        <p className="font-medium">{job.guardian.phone}</p>
+                                                    </div>
+                                                )}
+                                                {job.guardian.location && (
+                                                    <div>
+                                                        <p className="text-sm text-slate-500">Location</p>
+                                                        <p className="font-medium">{job.guardian.location.city}</p>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )
+                                    ) : (
                                         <>
                                             <div>
-                                                <p className="text-sm text-slate-500">Guardian Name</p>
-                                                <p className="font-medium">{job.guardian.first_name} {job.guardian.last_name}</p>
+                                                <p className="text-sm text-slate-500">Posted By</p>
+                                                <p className="font-medium">Platform Administrator</p>
                                             </div>
-                                            {job.guardian.phone && (
-                                                <div>
-                                                    <p className="text-sm text-slate-500">Contact</p>
-                                                    <p className="font-medium">{job.guardian.phone}</p>
-                                                </div>
-                                            )}
+                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                                                <p>This is an official job posted by the platform admin team.</p>
+                                            </div>
                                         </>
                                     )}
 
@@ -213,14 +236,38 @@ export default function JobDetails({ job }) {
                                     )}
 
                                     <div className="pt-4">
-                                        <Button className="w-full" size="lg" asChild>
-                                            <Link href={route('login')}>
-                                                Apply for This Job
-                                            </Link>
-                                        </Button>
-                                        <p className="text-xs text-center text-slate-500 mt-2">
-                                            Login as a tutor to apply
-                                        </p>
+                                        {!isAuthenticated ? (
+                                            <>
+                                                <Button className="w-full" size="lg" asChild>
+                                                    <Link href={route('login')}>
+                                                        Apply for This Job
+                                                    </Link>
+                                                </Button>
+                                                <p className="text-xs text-center text-slate-500 mt-2">
+                                                    Login as a tutor to apply
+                                                </p>
+                                            </>
+                                        ) : isTutor ? (
+                                            <>
+                                                <Button className="w-full bg-[#0675C1] hover:bg-blue-700" size="lg" asChild>
+                                                    <Link href={route('tutor.jobs.show', job.id)}>
+                                                        Apply for This Job
+                                                    </Link>
+                                                </Button>
+                                                <p className="text-xs text-center text-green-600 mt-2">
+                                                    Click to view details and apply
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Button className="w-full" size="lg" disabled>
+                                                    Only Tutors Can Apply
+                                                </Button>
+                                                <p className="text-xs text-center text-slate-500 mt-2">
+                                                    You need a tutor account to apply
+                                                </p>
+                                            </>
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>

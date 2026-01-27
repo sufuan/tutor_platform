@@ -79,6 +79,12 @@ class HandleInertiaRequests extends Middleware
                 $badgeCounts = [
                     'pendingVerifications' => \App\Services\BadgeCountService::getPendingVerificationsCount(),
                     'pendingJobs' => \App\Services\BadgeCountService::getPendingJobsCount(),
+                    'tutorJobRequests' => \App\Services\BadgeCountService::getTutorJobRequestsCount(),
+                    'jobApplications' => \App\Services\BadgeCountService::getJobApplicationsCount(),
+                    'totalBlogs' => \App\Services\BadgeCountService::getTotalBlogsCount(),
+                    'unreadContactMessages' => \App\Services\BadgeCountService::getUnreadContactMessagesCount(),
+                    'pendingGuardianFeedbacks' => \App\Services\BadgeCountService::getPendingGuardianFeedbacksCount(),
+                    'pendingTutorFeedbacks' => \App\Services\BadgeCountService::getPendingTutorFeedbacksCount(),
                 ];
             }
         }

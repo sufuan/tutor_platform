@@ -145,10 +145,13 @@ class PublicController extends Controller
 
     public function jobShow(Job $job)
     {
-        $job->load(['location', 'guardian', 'student']);
+        $job->load(['location', 'guardian.user', 'student', 'approvedBy']);
 
         return Inertia::render('Public/JobDetails', [
             'job' => $job,
+            'auth' => [
+                'user' => auth()->user(),
+            ],
         ]);
     }
 
