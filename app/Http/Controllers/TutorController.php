@@ -387,13 +387,48 @@ class TutorController extends Controller
     public function submitVerification(Request $request)
     {
         $tutor = auth()->user()->tutor;
+        $user = auth()->user();
 
         $validated = $request->validate([
             'documents' => 'required|array',
             'documents.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
-        // Store documents and update verification status
+        // Delete old documents if resubmitting
+        if ($tutor->verification_status === 'rejected') {
+            $oldDocuments = $user->documents;
+            foreach ($oldDocuments as $oldDoc) {
+                // Delete file from storage
+                if (\Storage::exists($oldDoc->file_path)) {
+                    \Storage::delete($oldDoc->file_path);
+                }
+                $oldDoc->delete();
+            }
+        }
+
+        // Store new documents
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $index => $file) {
+                $path = $file->store('documents/verification', 'public');
+                
+                // Determine document type based on file name or default to certificate
+                $type = 'certificate';
+                $filename = strtolower($file->getClientOriginalName());
+                if (str_contains($filename, 'id') || str_contains($filename, 'nid') || str_contains($filename, 'passport')) {
+                    $type = 'id_card';
+                } elseif (str_contains($filename, 'photo') || str_contains($filename, 'image')) {
+                    $type = 'photo';
+                }
+                
+                $user->documents()->create([
+                    'type' => $type,
+                    'file_path' => $path,
+                    'verified' => false,
+                ]);
+            }
+        }
+
+        // Update verification status
         $tutor->update([
             'verification_status' => 'pending',
         ]);

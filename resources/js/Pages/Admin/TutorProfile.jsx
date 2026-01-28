@@ -9,10 +9,10 @@ import {
     User, Mail, Phone, MapPin, GraduationCap, 
     Briefcase, DollarSign, Clock, CheckCircle2, 
     Star, Calendar, FileText, Award, ArrowLeft,
-    Building, BookOpen, Target, Home, Globe
+    Building, BookOpen, Target, Home, Globe, Download, Eye
 } from 'lucide-react';
 
-export default function TutorProfile({ auth, tutor, subjectNames = [] }) {
+export default function TutorProfile({ auth, tutor, subjectNames = [], documents = [] }) {
     const getStatusColor = (status) => {
         const colors = {
             pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -334,6 +334,113 @@ export default function TutorProfile({ auth, tutor, subjectNames = [] }) {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        {/* Verification Documents */}
+                        {documents && documents.length > 0 && (
+                            <Card className="border-purple-200">
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <FileText className="h-5 w-5 text-purple-600" />
+                                        Verification Documents
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Documents submitted by the tutor for verification
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        {documents.map((doc, index) => {
+                                            const docTypeLabels = {
+                                                'id_card': 'ID Card / NID / Passport',
+                                                'certificate': 'Certificate / Credential',
+                                                'photo': 'Photo / Image'
+                                            };
+                                            
+                                            const isPdf = doc.file_path.toLowerCase().endsWith('.pdf');
+                                            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(doc.file_path);
+                                            
+                                            return (
+                                                <div 
+                                                    key={doc.id || index} 
+                                                    className="p-4 border rounded-lg bg-white hover:shadow-md transition-shadow"
+                                                >
+                                                    <div className="flex items-start justify-between mb-3">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="p-2 bg-purple-50 rounded-lg">
+                                                                <FileText className="h-5 w-5 text-purple-600" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-semibold text-sm text-slate-900">
+                                                                    {docTypeLabels[doc.type] || 'Document'}
+                                                                </p>
+                                                                <p className="text-xs text-slate-500">
+                                                                    {new Date(doc.created_at).toLocaleDateString()}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        {doc.verified && (
+                                                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                                                <CheckCircle2 className="h-3 w-3 mr-1" />
+                                                                Verified
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                    
+                                                    {/* Document Preview */}
+                                                    {isImage && (
+                                                        <div className="mb-3 rounded-lg overflow-hidden bg-gray-50">
+                                                            <img 
+                                                                src={doc.document_url} 
+                                                                alt={docTypeLabels[doc.type]}
+                                                                className="w-full h-32 object-cover"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    
+                                                    {isPdf && (
+                                                        <div className="mb-3 p-4 rounded-lg bg-red-50 flex items-center justify-center">
+                                                            <FileText className="h-12 w-12 text-red-400" />
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="flex-1"
+                                                            asChild
+                                                        >
+                                                            <a 
+                                                                href={doc.document_url} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <Eye className="h-4 w-4 mr-1" />
+                                                                View
+                                                            </a>
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="flex-1"
+                                                            asChild
+                                                        >
+                                                            <a 
+                                                                href={doc.document_url} 
+                                                                download
+                                                            >
+                                                                <Download className="h-4 w-4 mr-1" />
+                                                                Download
+                                                            </a>
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
 
                         {/* Admin Notes */}
                         {tutor.verification_notes && (

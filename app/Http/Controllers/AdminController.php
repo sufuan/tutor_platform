@@ -184,7 +184,7 @@ class AdminController extends Controller
 
     public function viewTutor(Tutor $tutor)
     {
-        $tutor->load(['user', 'location']);
+        $tutor->load(['user.documents', 'location']);
         
         // Load subject names
         $subjectNames = [];
@@ -193,9 +193,25 @@ class AdminController extends Controller
             $subjectNames = \App\Models\Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
         }
 
+        // Add document URLs
+        $documents = [];
+        if ($tutor->user && $tutor->user->documents) {
+            $documents = $tutor->user->documents->map(function ($doc) {
+                return [
+                    'id' => $doc->id,
+                    'type' => $doc->type,
+                    'file_path' => $doc->file_path,
+                    'document_url' => \Storage::url($doc->file_path),
+                    'verified' => $doc->verified,
+                    'created_at' => $doc->created_at,
+                ];
+            });
+        }
+
         return Inertia::render('Admin/TutorProfile', [
             'tutor' => $tutor,
             'subjectNames' => $subjectNames,
+            'documents' => $documents,
         ]);
     }
 
