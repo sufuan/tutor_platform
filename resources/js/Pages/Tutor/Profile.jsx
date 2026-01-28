@@ -25,7 +25,7 @@ import SubjectSelector from '@/Components/SubjectSelector';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function Profile({ auth, tutor, subjects, locations, flash }) {
+export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl }) {
     const { toast } = useToast();
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('tuition');
@@ -59,7 +59,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash }) {
     });
 
     const [photoPreview, setPhotoPreview] = useState(
-        tutor.photo ? `/storage/${tutor.photo}` : null
+        photoUrl || null
     );
 
     // Sync form data when tutor prop changes (after save) or when entering edit mode
@@ -208,13 +208,13 @@ export default function Profile({ auth, tutor, subjects, locations, flash }) {
 
                                 {/* Actions */}
                                 <div className="space-y-2">
-                                    {tutor.cv_path && (
+                                    {cvUrl && (
                                         <Button
                                             variant="default"
                                             className="w-full rounded-md bg-slate-900 text-white"
                                             asChild
                                         >
-                                            <a href={`/storage/${tutor.cv_path}`} download>
+                                            <a href={cvUrl} download>
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Download CV
                                             </a>
@@ -620,9 +620,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash }) {
                                                         <Label htmlFor="cv_path" className="text-sm">
                                                             <FileText className="inline h-4 w-4" /> Upload CV
                                                         </Label>
-                                                        {tutor.cv_path && (
+                                                        {cvUrl && (
                                                             <p className="text-xs text-slate-500 mb-2">
-                                                                <a href={`/storage/${tutor.cv_path}`} target="_blank" className="text-blue-600 underline">
+                                                                <a href={cvUrl} target="_blank" className="text-blue-600 underline">
                                                                     View Current CV
                                                                 </a>
                                                             </p>

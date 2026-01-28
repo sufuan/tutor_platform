@@ -21,10 +21,16 @@ class TutorController extends Controller
         $subjects = Subject::with('category')->orderBy('name')->get();
         $locations = Location::orderBy('city')->get();
         
+        // Add storage URLs for CV and photo
+        $cvUrl = $tutor->cv_path ? \Storage::url($tutor->cv_path) : null;
+        $photoUrl = $tutor->photo ? \Storage::url($tutor->photo) : null;
+        
         return Inertia::render('Tutor/Profile', [
             'tutor' => $tutor,
             'subjects' => $subjects,
             'locations' => $locations,
+            'cvUrl' => $cvUrl,
+            'photoUrl' => $photoUrl,
         ]);
     }
 
