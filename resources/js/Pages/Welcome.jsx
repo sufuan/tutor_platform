@@ -86,7 +86,7 @@ export default function Welcome({
                         {/* Left Content */}
                         <div className="space-y-8">
                             <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-tight">
-                                Find the
+                                Find the fucking
                                 <span className="block text-[#0675C1]">
                                     Perfect Tutor
                                 </span>
