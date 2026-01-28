@@ -5,9 +5,10 @@ import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
 import { 
     User, Mail, Phone, MapPin, GraduationCap, 
-    Briefcase, DollarSign, Clock, CheckCircle2, 
+    Briefcase, Clock, CheckCircle2, 
     Star, Calendar, FileText, Award 
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function TutorProfile({ tutor, subjectNames = [] }) {
     return (
@@ -107,7 +108,7 @@ export default function TutorProfile({ tutor, subjectNames = [] }) {
                                         
                                         {tutor.hourly_rate && (
                                             <div className="flex items-center gap-3">
-                                                <DollarSign className="h-5 w-5 text-slate-500 flex-shrink-0" />
+                                                <CurrencyBangladeshiIcon size={20} className=" text-slate-500 flex-shrink-0" />
                                                 <span className="text-sm font-semibold text-slate-900">
                                                     BDT {tutor.hourly_rate}/month
                                                 </span>
@@ -292,3 +293,5 @@ export default function TutorProfile({ tutor, subjectNames = [] }) {
         </GuestLayout>
     );
 }
+
+

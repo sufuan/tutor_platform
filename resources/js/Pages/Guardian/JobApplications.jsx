@@ -12,8 +12,7 @@ import {
     User, 
     MapPin, 
     Star, 
-    GraduationCap, 
-    DollarSign,
+    GraduationCap,
     Calendar,
     CheckCircle,
     XCircle,
@@ -23,6 +22,7 @@ import {
     Phone,
     BookOpen
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobApplications({ auth, job, applications }) {
     const [selectedApplication, setSelectedApplication] = useState(null);
@@ -115,8 +115,8 @@ export default function JobApplications({ auth, job, applications }) {
                                     <span>{tutor.location?.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <DollarSign className="h-4 w-4" />
-                                    <span>৳{tutor.hourly_rate}/hour</span>
+                                    <CurrencyBangladeshiIcon size={16} className="" />
+                                    <span>{tutor.hourly_rate}/hour</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <Calendar className="h-4 w-4" />
@@ -235,7 +235,7 @@ export default function JobApplications({ auth, job, applications }) {
                                     </CardDescription>
                                 </div>
                                 <Badge variant="outline" className="text-lg">
-                                    ৳{job.salary}/month
+                                    {job.salary}/month
                                 </Badge>
                             </div>
                         </CardHeader>
@@ -387,3 +387,5 @@ export default function JobApplications({ auth, job, applications }) {
         </AuthenticatedLayout>
     );
 }
+
+

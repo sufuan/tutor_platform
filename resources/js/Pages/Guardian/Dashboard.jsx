@@ -326,3 +326,4 @@ export default function Dashboard({
         </AuthenticatedLayout>
     );
 }
+

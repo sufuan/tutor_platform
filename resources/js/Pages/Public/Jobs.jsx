@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Input } from '@/Components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Badge } from '@/Components/ui/badge';
-import { MapPin, Search, DollarSign, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { MapPin, Search, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function Jobs({ jobs, locations, subjects, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -205,11 +206,11 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                         )}
 
                                         <div className="flex items-center text-sm text-gray-600">
-                                            <DollarSign className="h-4 w-4 mr-2 text-green-600" />
+                                            <CurrencyBangladeshiIcon size={16} className=" mr-2 text-green-600" />
                                             <span className="font-semibold text-green-600">
                                                 {job.job_type === 'tutor' 
-                                                    ? `৳${job.monthly_salary}/month`
-                                                    : `৳${parseFloat(job.salary).toLocaleString()}/month`}
+                                                    ? `${job.monthly_salary}/month`
+                                                    : `${parseFloat(job.salary).toLocaleString()}/month`}
                                             </span>
                                         </div>
 
@@ -232,18 +233,24 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                             <span>Posted {new Date(job.created_at).toLocaleDateString()}</span>
                                         </div>
 
-                                        <Button 
-                                            className="w-full bg-primary-blue hover:bg-primary-blue/90 mt-4"
-                                            onClick={() => {
-                                                if (job.job_type === 'tutor') {
-                                                    window.location.href = `/tutor-jobs/${job.id}`;
-                                                } else {
-                                                    window.location.href = `/jobs/${job.id}`;
-                                                }
-                                            }}
-                                        >
-                                            View Details
-                                        </Button>
+                                        {job.has_applied ? (
+                                            <Badge className="w-full justify-center py-2 mt-4 bg-green-100 text-green-800 hover:bg-green-100">
+                                                ✓ Applied
+                                            </Badge>
+                                        ) : (
+                                            <Button 
+                                                className="w-full bg-primary-blue hover:bg-primary-blue/90 mt-4"
+                                                onClick={() => {
+                                                    if (job.job_type === 'tutor') {
+                                                        window.location.href = `/tutor-jobs/${job.id}`;
+                                                    } else {
+                                                        window.location.href = `/jobs/${job.id}`;
+                                                    }
+                                                }}
+                                            >
+                                                View Details
+                                            </Button>
+                                        )}
                                     </CardContent>
                                 </Card>
                             ))}
@@ -315,3 +322,5 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
         </PublicLayout>
     );
 }
+
+

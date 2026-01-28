@@ -92,6 +92,11 @@ class PublicController extends Controller
 
     public function jobs(Request $request)
     {
+        $tutor = null;
+        if (auth()->check() && auth()->user()->role === 'tutor') {
+            $tutor = auth()->user()->tutor;
+        }
+
         // Get guardian job posts
         $guardianJobs = Job::with(['location', 'guardian'])
             ->where('approval_status', 'approved')
@@ -112,8 +117,11 @@ class PublicController extends Controller
             });
         }
 
-        $guardianJobs = $guardianJobs->get()->map(function ($job) {
+        $guardianJobs = $guardianJobs->get()->map(function ($job) use ($tutor) {
             $job->job_type = 'guardian';
+            if ($tutor) {
+                $job->has_applied = $job->applications()->where('tutor_id', $tutor->id)->exists();
+            }
             return $job;
         });
 
@@ -164,10 +172,20 @@ class PublicController extends Controller
     {
         $job->load(['location', 'guardian.user', 'student', 'approvedBy']);
 
+        $tutorData = null;
+        if (auth()->check() && auth()->user()->role === 'tutor') {
+            $tutor = auth()->user()->tutor;
+            $tutorData = [
+                'verification_status' => $tutor->verification_status,
+            ];
+            $job->has_applied = $job->applications()->where('tutor_id', $tutor->id)->exists();
+        }
+
         return Inertia::render('Public/JobDetails', [
             'job' => $job,
             'auth' => [
                 'user' => auth()->user(),
+                'tutor' => $tutorData,
             ],
         ]);
     }

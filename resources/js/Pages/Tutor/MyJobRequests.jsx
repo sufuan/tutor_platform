@@ -1,20 +1,40 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
+import { useState } from 'react';
 import { 
     Plus,
     MapPin,
-    DollarSign,
     Calendar,
     Eye,
     Edit,
     Trash2,
     Users
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function MyJobRequests({ auth, jobRequests }) {
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [requestToDelete, setRequestToDelete] = useState(null);
+
+    const handleDelete = (request) => {
+        setRequestToDelete(request);
+        setDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (requestToDelete) {
+            router.delete(route('tutor.job-request.destroy', requestToDelete.id), {
+                onSuccess: () => {
+                    setDeleteDialogOpen(false);
+                    setRequestToDelete(null);
+                }
+            });
+        }
+    };
     const getStatusColor = (status) => {
         switch(status) {
             case 'active': return 'bg-green-100 text-green-800';
@@ -119,10 +139,10 @@ export default function MyJobRequests({ auth, jobRequests }) {
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
                                                 <div>
                                                     <div className="flex items-center text-sm text-gray-600 mb-1">
-                                                        <DollarSign className="h-4 w-4 mr-1" />
+                                                        <CurrencyBangladeshiIcon size={16} className=" mr-1" />
                                                         Monthly Salary
                                                     </div>
-                                                    <div className="font-semibold">৳{request.monthly_salary}/mo</div>
+                                                    <div className="font-semibold">{request.monthly_salary}/mo</div>
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center text-sm text-gray-600 mb-1">
@@ -165,11 +185,29 @@ export default function MyJobRequests({ auth, jobRequests }) {
 
                                             {/* Actions */}
                                             <div className="flex justify-end gap-2 pt-4 border-t">
-                                                <Button variant="outline" size="sm">
-                                                    <Edit className="h-4 w-4 mr-2" />
-                                                    Edit
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm"
+                                                    asChild={request.approval_status !== 'approved'}
+                                                    disabled={request.approval_status === 'approved'}
+                                                >
+                                                    {request.approval_status !== 'approved' ? (
+                                                        <Link href={route('tutor.job-request.edit', request.id)}>
+                                                            <Edit className="h-4 w-4 mr-2" />
+                                                            Edit
+                                                        </Link>
+                                                    ) : (
+                                                        <>
+                                                            <Edit className="h-4 w-4 mr-2" />
+                                                            Edit (Approved)
+                                                        </>
+                                                    )}
                                                 </Button>
-                                                <Button variant="outline" size="sm">
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm"
+                                                    onClick={() => handleDelete(request)}
+                                                >
                                                     <Trash2 className="h-4 w-4 mr-2" />
                                                     Delete
                                                 </Button>
@@ -182,6 +220,28 @@ export default function MyJobRequests({ auth, jobRequests }) {
                     )}
                 </div>
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete Job Request</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete "{requestToDelete?.title}"? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button variant="destructive" onClick={confirmDelete}>
+                            Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AuthenticatedLayout>
     );
 }
+
+

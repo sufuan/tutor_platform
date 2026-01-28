@@ -115,7 +115,7 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
                                     </div>
                                     <div className="col-span-2">
                                         <p className="text-xs text-gray-500">Monthly Salary</p>
-                                        <p className="font-semibold text-green-600 text-lg">৳{data.salary}</p>
+                                        <p className="font-semibold text-green-600 text-lg">{data.salary}</p>
                                     </div>
                                 </div>
 
@@ -432,3 +432,4 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
         </AuthenticatedLayout>
     );
 }
+

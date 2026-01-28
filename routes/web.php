@@ -87,6 +87,9 @@ Route::middleware(['auth', 'verified'])->prefix('tutor')->name('tutor.')->group(
     Route::get('/job-request/create', [TutorController::class, 'createJobRequest'])->name('job-request.create');
     Route::post('/job-request', [TutorController::class, 'storeJobRequest'])->name('job-request.store');
     Route::get('/job-requests', [TutorController::class, 'myJobRequests'])->name('job-requests');
+    Route::get('/job-request/{jobRequest}/edit', [TutorController::class, 'editJobRequest'])->name('job-request.edit');
+    Route::put('/job-request/{jobRequest}', [TutorController::class, 'updateJobRequest'])->name('job-request.update');
+    Route::delete('/job-request/{jobRequest}', [TutorController::class, 'destroyJobRequest'])->name('job-request.destroy');
     Route::post('/job-requests/{jobRequest}/view', [TutorController::class, 'viewJobRequest'])->name('job-requests.view');
     
     // Feedback

@@ -14,7 +14,8 @@ import { Alert, AlertDescription } from '@/Components/ui/alert';
 import LocationDropdown from '@/Components/LocationDropdown';
 import SubjectSelector from '@/Components/SubjectSelector';
 import { cn } from '@/lib/utils';
-import { CalendarIcon, CheckCircle2, ChevronLeft, ChevronRight, Briefcase, Clock, DollarSign, FileText, User, AlertCircle, Eye, ArrowLeft, MapPin } from 'lucide-react';
+import { CalendarIcon, CheckCircle2, ChevronLeft, ChevronRight, Briefcase, Clock, FileText, User, AlertCircle, Eye, ArrowLeft, MapPin } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function PostJob({ auth, locations = [], subjects = [], students = [] }) {
     const [currentStep, setCurrentStep] = useState(1);
@@ -157,7 +158,7 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
                                     </div>
                                     <div className="col-span-2">
                                         <p className="text-xs text-gray-500">Monthly Salary</p>
-                                        <p className="font-semibold text-green-600 text-lg">৳{data.salary}</p>
+                                        <p className="font-semibold text-green-600 text-lg">{data.salary}</p>
                                     </div>
                                 </div>
 
@@ -476,3 +477,5 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
         </AuthenticatedLayout>
     );
 }
+
+

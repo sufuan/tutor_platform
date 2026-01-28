@@ -173,3 +173,4 @@ export default function Index({ auth, feedbacks }) {
         </AuthenticatedLayout>
     );
 }
+

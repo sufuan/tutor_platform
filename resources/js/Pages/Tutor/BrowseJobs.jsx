@@ -16,7 +16,6 @@ import {
     Briefcase, 
     MapPin, 
     Calendar, 
-    DollarSign, 
     Clock,
     BookOpen,
     Search,
@@ -27,6 +26,7 @@ import {
     FileText,
     ExternalLink
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function BrowseJobs({ auth, jobs, locations, subjects, verificationStatus, tutorCv }) {
     const [search, setSearch] = useState('');
@@ -101,8 +101,8 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
                         <span>{job.location?.name}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
-                        <DollarSign className="h-4 w-4" />
-                        <span className="font-semibold text-green-600">৳{job.salary}/month</span>
+                        <CurrencyBangladeshiIcon size={16} className=" " />
+                        <span className="font-semibold text-green-600">{job.salary}/month</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="h-4 w-4" />
@@ -378,3 +378,5 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
         </AuthenticatedLayout>
     );
 }
+
+

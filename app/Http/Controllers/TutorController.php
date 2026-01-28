@@ -545,6 +545,16 @@ class TutorController extends Controller
             ->latest()
             ->get();
 
+        // Load subject names for each job request
+        $jobRequests->each(function ($jobRequest) {
+            if ($jobRequest->subjects && is_array($jobRequest->subjects)) {
+                $subjectIds = array_map('intval', $jobRequest->subjects);
+                $jobRequest->subject_names = \App\Models\Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
+            } else {
+                $jobRequest->subject_names = [];
+            }
+        });
+
         return Inertia::render('Tutor/MyJobRequests', [
             'jobRequests' => $jobRequests,
         ]);
@@ -556,6 +566,85 @@ class TutorController extends Controller
         $jobRequest->increment('views');
         
         return response()->json(['success' => true, 'views' => $jobRequest->views]);
+    }
+
+    public function editJobRequest(TutorJobRequest $jobRequest)
+    {
+        $tutor = auth()->user()->tutor;
+
+        // Check if the job request belongs to the authenticated tutor
+        if ($jobRequest->tutor_id !== $tutor->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Check if job request is approved - cannot edit approved requests
+        if ($jobRequest->approval_status === 'approved') {
+            return redirect()->route('tutor.job-requests')
+                ->with('error', 'Cannot edit approved job requests.');
+        }
+
+        $subjects = \App\Models\Subject::orderBy('name')->get();
+        $levels = \App\Models\Category::orderBy('name')->get();
+
+        return Inertia::render('Tutor/CreateJobRequest', [
+            'jobRequest' => $jobRequest,
+            'subjects' => $subjects,
+            'levels' => $levels,
+            'tutor' => $tutor,
+        ]);
+    }
+
+    public function updateJobRequest(Request $request, TutorJobRequest $jobRequest)
+    {
+        $tutor = auth()->user()->tutor;
+
+        // Check if the job request belongs to the authenticated tutor
+        if ($jobRequest->tutor_id !== $tutor->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Check if job request is approved - cannot edit approved requests
+        if ($jobRequest->approval_status === 'approved') {
+            return redirect()->route('tutor.job-requests')
+                ->with('error', 'Cannot edit approved job requests.');
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string|min:50',
+            'subjects' => 'required|array|min:1',
+            'subjects.*' => 'exists:subjects,id',
+            'education_level' => 'required|string',
+            'monthly_salary' => 'required|numeric|min:0',
+            'available_days' => 'required|array|min:1',
+            'available_days.*' => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
+            'division' => 'required|string|max:255',
+            'district' => 'required|string|max:255',
+            'teaching_mode' => 'required|in:online,in-person,hybrid',
+        ]);
+
+        $validated['preferred_gender'] = $tutor->gender;
+        $validated['approval_status'] = 'pending'; // Reset to pending after edit
+
+        $jobRequest->update($validated);
+
+        return redirect()->route('tutor.job-requests')
+            ->with('success', 'Job request updated and submitted for review.');
+    }
+
+    public function destroyJobRequest(TutorJobRequest $jobRequest)
+    {
+        $tutor = auth()->user()->tutor;
+
+        // Check if the job request belongs to the authenticated tutor
+        if ($jobRequest->tutor_id !== $tutor->id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $jobRequest->delete();
+
+        return redirect()->route('tutor.job-requests')
+            ->with('success', 'Job request deleted successfully.');
     }
 
     public function feedbackCreate()

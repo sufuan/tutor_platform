@@ -7,7 +7,6 @@ import {
     ArrowLeft,
     MapPin, 
     Calendar, 
-    DollarSign, 
     Clock,
     BookOpen,
     User,
@@ -16,10 +15,13 @@ import {
     Home,
     Briefcase
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobDetails({ job, auth }) {
     const isAuthenticated = auth?.user !== null;
     const isTutor = auth?.user?.role === 'tutor';
+    const isVerified = auth?.tutor?.verification_status === 'verified';
+    const verificationStatus = auth?.tutor?.verification_status;
     
     const getStatusColor = (status) => {
         const colors = {
@@ -83,10 +85,10 @@ export default function JobDetails({ job, auth }) {
                                 <CardContent>
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div className="flex items-center gap-2">
-                                            <DollarSign className="h-5 w-5 text-slate-500" />
+                                            <CurrencyBangladeshiIcon size={20} className=" text-slate-500" />
                                             <div>
                                                 <p className="text-xs text-slate-500">Salary</p>
-                                                <p className="font-semibold text-green-600">৳{parseFloat(job.salary).toLocaleString()}/month</p>
+                                                <p className="font-semibold text-green-600">{parseFloat(job.salary).toLocaleString()}/month</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -249,14 +251,47 @@ export default function JobDetails({ job, auth }) {
                                             </>
                                         ) : isTutor ? (
                                             <>
-                                                <Button className="w-full bg-[#0675C1] hover:bg-blue-700" size="lg" asChild>
-                                                    <Link href={route('tutor.jobs.show', job.id)}>
-                                                        Apply for This Job
-                                                    </Link>
-                                                </Button>
-                                                <p className="text-xs text-center text-green-600 mt-2">
-                                                    Click to view details and apply
-                                                </p>
+                                                {job.has_applied ? (
+                                                    <>
+                                                        <Button className="w-full bg-green-600 hover:bg-green-700" size="lg" disabled>
+                                                            ✓ Already Applied
+                                                        </Button>
+                                                        <p className="text-xs text-center text-green-600 mt-2">
+                                                            You have already applied to this job
+                                                        </p>
+                                                    </>
+                                                ) : verificationStatus === 'verified' ? (
+                                                    <>
+                                                        <Button className="w-full bg-[#0675C1] hover:bg-blue-700" size="lg" asChild>
+                                                            <Link href={route('tutor.jobs.show', job.id)}>
+                                                                Apply for This Job
+                                                            </Link>
+                                                        </Button>
+                                                        <p className="text-xs text-center text-green-600 mt-2">
+                                                            Click to view details and apply
+                                                        </p>
+                                                    </>
+                                                ) : verificationStatus === 'pending' ? (
+                                                    <>
+                                                        <Button className="w-full" size="lg" disabled>
+                                                            Verification Pending
+                                                        </Button>
+                                                        <p className="text-xs text-center text-yellow-600 mt-2">
+                                                            Your profile is under verification. You can apply once verified.
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Button className="w-full bg-red-600 hover:bg-red-700" size="lg" asChild>
+                                                            <Link href={route('tutor.verification')}>
+                                                                Complete Verification to Apply
+                                                            </Link>
+                                                        </Button>
+                                                        <p className="text-xs text-center text-red-600 mt-2">
+                                                            You must be verified before applying to jobs
+                                                        </p>
+                                                    </>
+                                                )}
                                             </>
                                         ) : (
                                             <>
@@ -278,3 +313,5 @@ export default function JobDetails({ job, auth }) {
         </GuestLayout>
     );
 }
+
+

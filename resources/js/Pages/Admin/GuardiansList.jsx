@@ -185,3 +185,4 @@ export default function GuardiansList({ auth, guardians, stats }) {
         </AuthenticatedLayout>
     );
 }
+

@@ -160,3 +160,4 @@ export default function ContactsIndex({ auth, contacts, newCount }) {
         </AuthenticatedLayout>
     );
 }
+

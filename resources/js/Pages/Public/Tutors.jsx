@@ -7,7 +7,8 @@ import { Input } from '@/Components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Badge } from '@/Components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
-import { MapPin, Search, BookOpen, GraduationCap, Star, CheckCircle, ChevronLeft, ChevronRight, DollarSign } from 'lucide-react';
+import { MapPin, Search, BookOpen, GraduationCap, Star, CheckCircle, ChevronLeft, ChevronRight,} from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function Tutors({ tutors, locations, subjects, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
@@ -196,7 +197,7 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
 
                                         {tutor.hourly_rate && (
                                             <div className="flex items-center text-sm text-gray-600">
-                                                <DollarSign className="h-4 w-4 mr-2 text-green-600" />
+                                                <CurrencyBangladeshiIcon size={16} className=" mr-2 text-green-600" />
                                                 <span className="font-semibold text-green-600">
                                                     ${tutor.hourly_rate}/hour
                                                 </span>
@@ -285,3 +286,5 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
         </PublicLayout>
     );
 }
+
+

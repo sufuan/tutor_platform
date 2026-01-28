@@ -623,3 +623,4 @@ export default function FrontendSettings({ auth, settings }) {
         </AuthenticatedLayout>
     );
 }
+

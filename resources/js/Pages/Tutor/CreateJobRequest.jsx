@@ -10,34 +10,39 @@ import {
     ArrowLeft, 
     Upload,
     Briefcase,
-    DollarSign,
     Calendar,
     MapPin,
     Info
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import SubjectSelector from '@/Components/SubjectSelector';
 import LocationDropdown from '@/Components/LocationDropdown';
 
-export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
+export default function CreateJobRequest({ auth, subjects, levels, tutor, jobRequest }) {
     // Ensure tutor subjects is an array
     const tutorSubjects = Array.isArray(tutor?.subjects) ? tutor.subjects : [];
+    const isEditing = !!jobRequest;
     
-    const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        description: '',
-        subjects: tutorSubjects,
-        education_level: '',
-        monthly_salary: tutor?.monthly_salary || '',
-        available_days: [],
-        division: tutor?.division || '',
-        district: tutor?.district || '',
-        teaching_mode: 'hybrid',
+    const { data, setData, post, put, processing, errors } = useForm({
+        title: jobRequest?.title || '',
+        description: jobRequest?.description || '',
+        subjects: jobRequest?.subjects || tutorSubjects,
+        education_level: jobRequest?.education_level || '',
+        monthly_salary: jobRequest?.monthly_salary || tutor?.monthly_salary || '',
+        available_days: jobRequest?.available_days || [],
+        division: jobRequest?.division || tutor?.division || '',
+        district: jobRequest?.district || tutor?.district || '',
+        teaching_mode: jobRequest?.teaching_mode || 'hybrid',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('tutor.job-request.store'));
+        if (isEditing) {
+            put(route('tutor.job-request.update', jobRequest.id));
+        } else {
+            post(route('tutor.job-request.store'));
+        }
     };
 
     const toggleSubject = (subjectId) => {
@@ -50,26 +55,32 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Post Job Request" />
+            <Head title={isEditing ? "Edit Job Request" : "Post Job Request"} />
 
             <div className="py-12">
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6">
                         <Button variant="ghost" asChild className="mb-4">
-                            <Link href={route('tutor.applications')}>
+                            <Link href={route('tutor.job-requests')}>
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Applications
+                                Back to Job Requests
                             </Link>
                         </Button>
-                        <h1 className="text-3xl font-bold text-gray-900">Post Job Request</h1>
-                        <p className="text-gray-600">Advertise your tutoring services to guardians</p>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            {isEditing ? 'Edit Job Request' : 'Post Job Request'}
+                        </h1>
+                        <p className="text-gray-600">
+                            {isEditing ? 'Update your tutoring service details' : 'Advertise your tutoring services to guardians'}
+                        </p>
                     </div>
 
                     <Alert className="mb-6">
                         <Info className="h-4 w-4" />
                         <AlertDescription>
-                            Create a job request to showcase your tutoring services. Guardians can browse and contact you directly.
+                            {isEditing 
+                                ? 'After updating, your job request will be submitted for admin review again.'
+                                : 'Create a job request to showcase your tutoring services. Guardians can browse and contact you directly.'}
                         </AlertDescription>
                     </Alert>
 
@@ -92,6 +103,7 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
                                         value={data.title}
                                         onChange={(e) => setData('title', e.target.value)}
                                         className={errors.title && 'border-red-500'}
+                                        required
                                     />
                                     {errors.title && <p className="text-sm text-red-600">{errors.title}</p>}
                                 </div>
@@ -106,6 +118,7 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
                                         className={errors.description && 'border-red-500'}
+                                        required
                                     />
                                     {errors.description && <p className="text-sm text-red-600">{errors.description}</p>}
                                 </div>
@@ -128,6 +141,7 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
                                     <Select
                                         value={data.education_level}
                                         onValueChange={(value) => setData('education_level', value)}
+                                        required
                                     >
                                         <SelectTrigger className={errors.education_level && 'border-red-500'}>
                                             <SelectValue placeholder="Select education level you can teach" />
@@ -146,7 +160,7 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
                                 {/* Monthly Salary */}
                                 <div className="space-y-2">
                                     <Label htmlFor="monthly_salary">
-                                        <DollarSign className="inline mr-2 h-4 w-4" />
+                                        <CurrencyBangladeshiIcon size={16} className="inline mr-2 " />
                                         Monthly Salary (BDT)
                                     </Label>
                                     <Input
@@ -156,6 +170,8 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
                                         value={data.monthly_salary}
                                         onChange={(e) => setData('monthly_salary', e.target.value)}
                                         className={errors.monthly_salary && 'border-red-500'}
+                                        required
+                                        min="1"
                                     />
                                     {errors.monthly_salary && <p className="text-sm text-red-600">{errors.monthly_salary}</p>}
                                 </div>
@@ -226,11 +242,13 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
                                 {/* Submit Button */}
                                 <div className="flex justify-end gap-3 pt-4">
                                     <Button type="button" variant="outline" asChild>
-                                        <Link href={route('tutor.applications')}>Cancel</Link>
+                                        <Link href={route('tutor.job-requests')}>Cancel</Link>
                                     </Button>
                                     <Button type="submit" disabled={processing}>
                                         <Upload className="mr-2 h-4 w-4" />
-                                        {processing ? 'Posting...' : 'Post Job Request'}
+                                        {processing 
+                                            ? (isEditing ? 'Updating...' : 'Posting...') 
+                                            : (isEditing ? 'Update Job Request' : 'Post Job Request')}
                                     </Button>
                                 </div>
                             </CardContent>
@@ -241,3 +259,5 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor }) {
         </AuthenticatedLayout>
     );
 }
+
+

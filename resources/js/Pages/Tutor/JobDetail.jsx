@@ -11,10 +11,11 @@ import { Alert, AlertDescription } from '@/Components/ui/alert';
 import { useToast } from "@/hooks/use-toast";
 import { useState } from 'react';
 import { 
-    MapPin, Calendar, DollarSign, Clock, BookOpen, 
+    MapPin, Calendar, Clock, BookOpen, 
     User, Mail, Phone, Send, ArrowLeft, FileText, 
     ExternalLink, CheckCircle2 
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobDetail({ auth, job }) {
     const [showApplyModal, setShowApplyModal] = useState(false);
@@ -93,10 +94,10 @@ export default function JobDetail({ auth, job }) {
                                 <CardContent>
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div className="flex items-center gap-2">
-                                            <DollarSign className="h-5 w-5 text-slate-500" />
+                                            <CurrencyBangladeshiIcon size={20} className=" text-slate-500" />
                                             <div>
                                                 <p className="text-xs text-slate-500">Salary</p>
-                                                <p className="font-semibold text-green-600">৳{job.salary}/month</p>
+                                                <p className="font-semibold text-green-600">{job.salary}/month</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -342,3 +343,5 @@ export default function JobDetail({ auth, job }) {
         </AuthenticatedLayout>
     );
 }
+
+

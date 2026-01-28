@@ -13,12 +13,12 @@ import {
     MapPin,
     GraduationCap,
     Briefcase,
-    DollarSign,
     CheckCircle2,
     Download,
     Eye,
     FileText
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import LocationDropdown from '@/Components/LocationDropdown';
 import SubjectSelector from '@/Components/SubjectSelector';
@@ -277,7 +277,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                             <p>{tutor.preferred_locations || <span className="text-rose-500">Not Given</span>}</p>
 
                                             <p className="text-slate-500">Expected Salary (Monthly)</p>
-                                            <p>{tutor.hourly_rate ? `৳${tutor.hourly_rate}/month` : <span className="text-rose-500">Not Given</span>}</p>
+                                            <p>{tutor.hourly_rate ? `${tutor.hourly_rate}/month` : <span className="text-rose-500">Not Given</span>}</p>
 
                                             <p className="text-slate-500">Tutoring Styles</p>
                                             <p>{tutor.tutoring_styles || <span className="text-rose-500">Not Given</span>}</p>
@@ -679,3 +679,5 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
         </AuthenticatedLayout>
     );
 }
+
+

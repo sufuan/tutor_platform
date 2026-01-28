@@ -167,9 +167,17 @@ export default function TutorsList({ auth, tutors, stats }) {
                                             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
                                         >
                                             <div className="flex items-center space-x-4 flex-1">
-                                                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
-                                                    {tutor.user?.name?.charAt(0) || 'T'}
-                                                </div>
+                                                {tutor.photo_url ? (
+                                                    <img 
+                                                        src={tutor.photo_url} 
+                                                        alt={tutor.user?.name || 'Tutor'}
+                                                        className="h-12 w-12 rounded-full object-cover flex-shrink-0 border-2 border-gray-200"
+                                                    />
+                                                ) : (
+                                                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
+                                                        {tutor.user?.name?.charAt(0) || 'T'}
+                                                    </div>
+                                                )}
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2">
                                                         <h4 className="font-semibold text-gray-900 text-lg">
@@ -261,3 +269,4 @@ export default function TutorsList({ auth, tutors, stats }) {
         </AuthenticatedLayout>
     );
 }
+

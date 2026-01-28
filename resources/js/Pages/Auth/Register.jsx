@@ -275,3 +275,4 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
         </GuestLayout>
     );
 }
+

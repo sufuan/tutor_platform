@@ -17,6 +17,7 @@ use App\Models\GuardianFeedback;
 use App\Models\TutorFeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -90,6 +91,13 @@ class AdminController extends Controller
             ->latest()
             ->get();
 
+        // Add photo URLs for each tutor
+        $tutors->each(function ($tutor) {
+            if ($tutor->photo) {
+                $tutor->photo_url = Storage::url($tutor->photo);
+            }
+        });
+
         $stats = [
             'total' => $tutors->count(),
             'verified' => $tutors->where('verification_status', 'verified')->count(),
@@ -128,13 +136,17 @@ class AdminController extends Controller
             ->latest()
             ->get();
 
-        // Load subject names for each tutor
+        // Load subject names and photo URLs for each tutor
         $tutors->each(function ($tutor) {
             if ($tutor->subjects && is_array($tutor->subjects)) {
                 $subjectIds = array_map('intval', $tutor->subjects);
                 $tutor->subject_names = \App\Models\Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
             } else {
                 $tutor->subject_names = [];
+            }
+            
+            if ($tutor->photo) {
+                $tutor->photo_url = Storage::url($tutor->photo);
             }
         });
 

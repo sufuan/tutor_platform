@@ -6,7 +6,6 @@ import { Badge } from '@/Components/ui/badge';
 import { 
     ArrowLeft, 
     MapPin, 
-    DollarSign, 
     Calendar,
     Clock,
     User,
@@ -16,6 +15,7 @@ import {
     Mail,
     Briefcase
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobDetail({ auth, job, jobType }) {
     const getStatusColor = (status) => {
@@ -210,13 +210,13 @@ export default function JobDetail({ auth, job, jobType }) {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <DollarSign className="h-5 w-5 text-green-600" />
+                                        <CurrencyBangladeshiIcon size={20} className=" text-green-600" />
                                         <div>
                                             <p className="text-sm text-gray-500">Salary</p>
                                             <p className="font-semibold text-green-600">
                                                 {jobType === 'tutor' 
-                                                    ? `৳${job.monthly_salary}/month`
-                                                    : `৳${job.salary_min} - ৳${job.salary_max}/${job.salary_period || 'month'}`}
+                                                    ? `${job.monthly_salary}/month`
+                                                    : `${job.salary_min} - ${job.salary_max}/${job.salary_period || 'month'}`}
                                             </p>
                                         </div>
                                     </div>
@@ -360,3 +360,5 @@ export default function JobDetail({ auth, job, jobType }) {
         </AuthenticatedLayout>
     );
 }
+
+

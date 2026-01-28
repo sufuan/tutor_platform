@@ -8,7 +8,6 @@ import {
     FileText, 
     ListChecks, 
     Calendar, 
-    DollarSign, 
     MapPin,
     BookOpen,
     TrendingUp,
@@ -20,6 +19,7 @@ import {
     Send,
     MessageSquare
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 import { 
     LineChart, 
     Line, 
@@ -65,7 +65,7 @@ export default function Dashboard({
         {
             title: 'Earnings This Month',
             value: `$${stats.earningsThisMonth}`,
-            icon: DollarSign,
+            icon: CurrencyBangladeshiIcon,
             gradient: 'from-orange-500 to-orange-600',
             bgGradient: 'from-orange-50 to-orange-100',
         },
@@ -383,3 +383,5 @@ export default function Dashboard({
         </AuthenticatedLayout>
     );
 }
+
+

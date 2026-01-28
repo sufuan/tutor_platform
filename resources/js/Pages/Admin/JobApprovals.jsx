@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { 
     FileCheck, 
     MapPin, 
-    DollarSign, 
     Calendar,
     Clock,
     CheckCircle,
@@ -20,6 +19,7 @@ import {
     User,
     Briefcase
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobApprovals({ auth, jobs, stats }) {
     const [selectedJob, setSelectedJob] = useState(null);
@@ -131,9 +131,9 @@ export default function JobApprovals({ auth, jobs, stats }) {
                         </div>
                     )}
                     <div className="flex items-center gap-2 text-gray-600">
-                        <DollarSign className="h-4 w-4" />
+                        <CurrencyBangladeshiIcon size={16} className="" />
                         <span className="font-semibold text-green-600">
-                            ৳{job.job_type === 'tutor' ? job.monthly_salary : job.salary}/month
+                            {job.job_type === 'tutor' ? job.monthly_salary : job.salary}/month
                         </span>
                     </div>
                     {job.job_type === 'guardian' && job.days_per_week && (
@@ -438,3 +438,5 @@ export default function JobApprovals({ auth, jobs, stats }) {
         </AuthenticatedLayout>
     );
 }
+
+

@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { 
     FileCheck, 
     MapPin, 
-    DollarSign, 
     Calendar,
     Eye,
     User,
@@ -20,6 +19,7 @@ import {
     XCircle,
     Clock
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function TutorJobRequests({ auth, jobRequests, stats }) {
     const [selectedRequest, setSelectedRequest] = useState(null);
@@ -101,7 +101,7 @@ export default function TutorJobRequests({ auth, jobRequests, stats }) {
                 <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-slate-500" />
                     <span className="font-medium">
-                        {request.tutor?.user?.first_name} {request.tutor?.user?.last_name}
+                        {request.tutor?.user?.name || 'N/A'}
                     </span>
                 </div>
 
@@ -113,9 +113,9 @@ export default function TutorJobRequests({ auth, jobRequests, stats }) {
                         <span>{request.district}, {request.division}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
-                        <DollarSign className="h-4 w-4" />
+                        <CurrencyBangladeshiIcon size={16} className="" />
                         <span className="font-semibold text-green-600">
-                            ৳{request.monthly_salary}/month
+                            {request.monthly_salary}/month
                         </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
@@ -338,3 +338,5 @@ export default function TutorJobRequests({ auth, jobRequests, stats }) {
         </AuthenticatedLayout>
     );
 }
+
+

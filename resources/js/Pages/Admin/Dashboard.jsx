@@ -7,8 +7,7 @@ import {
     Users, 
     UserCheck, 
     Briefcase, 
-    Calendar, 
-    DollarSign,
+    Calendar,
     TrendingUp,
     CheckCircle,
     XCircle,
@@ -18,6 +17,7 @@ import {
     CalendarDays,
     Sparkles
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 import { 
     AreaChart, 
     Area, 
@@ -513,3 +513,5 @@ export default function Dashboard({
         </AuthenticatedLayout>
     );
 }
+
+

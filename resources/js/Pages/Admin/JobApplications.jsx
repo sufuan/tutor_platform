@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { useState } from 'react';
 import { 
     MapPin, 
-    DollarSign, 
     Calendar,
     Clock,
     User,
@@ -21,6 +20,7 @@ import {
     XCircle,
     ThumbsUp
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobApplications({ auth, applications, stats }) {
     const [processingId, setProcessingId] = useState(null);
@@ -100,7 +100,7 @@ export default function JobApplications({ auth, applications, stats }) {
                                 {tutor?.hourly_rate && (
                                     <div>
                                         <span className="text-gray-600">Hourly Rate:</span>{' '}
-                                        <span className="font-medium text-green-600">৳{tutor.hourly_rate}/hr</span>
+                                        <span className="font-medium text-green-600">{tutor.hourly_rate}/hr</span>
                                     </div>
                                 )}
                                 {tutor?.education && (
@@ -135,7 +135,7 @@ export default function JobApplications({ auth, applications, stats }) {
                                 </div>
                                 <div>
                                     <span className="text-gray-600">Salary:</span>{' '}
-                                    <span className="font-medium text-green-600">৳{job?.salary}/month</span>
+                                    <span className="font-medium text-green-600">{job?.salary}/month</span>
                                 </div>
                                 <div>
                                     <span className="text-gray-600">Location:</span>{' '}
@@ -388,3 +388,5 @@ export default function JobApplications({ auth, applications, stats }) {
         </AuthenticatedLayout>
     );
 }
+
+

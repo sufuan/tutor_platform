@@ -12,8 +12,7 @@ import { useState } from 'react';
 import { 
     UserCheck, 
     MapPin, 
-    GraduationCap, 
-    DollarSign,
+    GraduationCap,
     Calendar,
     CheckCircle,
     XCircle,
@@ -21,6 +20,7 @@ import {
     FileText,
     Award
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function TutorVerifications({ auth, tutors, stats }) {
     const [selectedTutor, setSelectedTutor] = useState(null);
@@ -85,7 +85,7 @@ export default function TutorVerifications({ auth, tutors, stats }) {
             <CardContent className="pt-6">
                 <div className="flex gap-4">
                     <Avatar className="h-20 w-20">
-                        <AvatarImage src={tutor.photo} />
+                        <AvatarImage src={tutor.photo_url} />
                         <AvatarFallback>
                             {tutor.user?.name?.[0] || 'T'}
                         </AvatarFallback>
@@ -118,8 +118,8 @@ export default function TutorVerifications({ auth, tutors, stats }) {
                             )}
                             {tutor.hourly_rate && (
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <DollarSign className="h-4 w-4" />
-                                    <span>৳{tutor.hourly_rate}/month</span>
+                                    <CurrencyBangladeshiIcon size={16} className="" />
+                                    <span>{tutor.hourly_rate}/month</span>
                                 </div>
                             )}
                             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -386,3 +386,5 @@ export default function TutorVerifications({ auth, tutors, stats }) {
         </AuthenticatedLayout>
     );
 }
+
+

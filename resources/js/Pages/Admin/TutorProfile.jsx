@@ -7,10 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Separator } from '@/Components/ui/separator';
 import { 
     User, Mail, Phone, MapPin, GraduationCap, 
-    Briefcase, DollarSign, Clock, CheckCircle2, 
+    Briefcase, Clock, CheckCircle2, 
     Star, Calendar, FileText, Award, ArrowLeft,
     Building, BookOpen, Target, Home, Globe, Download, Eye
 } from 'lucide-react';
+import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function TutorProfile({ auth, tutor, subjectNames = [], documents = [] }) {
     const getStatusColor = (status) => {
@@ -252,7 +253,7 @@ export default function TutorProfile({ auth, tutor, subjectNames = [], documents
                                 <div className="grid md:grid-cols-2 gap-4">
                                     {tutor.hourly_rate && (
                                         <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-                                            <DollarSign className="h-5 w-5 text-slate-500 mt-0.5" />
+                                            <CurrencyBangladeshiIcon size={20} className=" text-slate-500 mt-0.5" />
                                             <div>
                                                 <p className="text-xs text-slate-500 mb-1">Expected Salary</p>
                                                 <p className="font-semibold text-slate-900">BDT {tutor.hourly_rate}/month</p>
@@ -462,3 +463,5 @@ export default function TutorProfile({ auth, tutor, subjectNames = [], documents
         </AuthenticatedLayout>
     );
 }
+
+
