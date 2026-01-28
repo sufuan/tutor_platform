@@ -12,15 +12,15 @@ import { Badge } from '@/Components/ui/badge';
 import { Progress } from '@/Components/ui/progress';
 import { CheckCircle, Circle } from 'lucide-react';
 import LocationDropdown from '@/Components/LocationDropdown';
+import SubjectSelector from '@/Components/SubjectSelector';
 
-export default function GuardianProfileComplete({ guardian = {}, locations = [], subjects = [], categories = [] }) {
+export default function GuardianProfileComplete({ auth, guardian = {}, locations = [], subjects = [], categories = [] }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [canSubmit, setCanSubmit] = useState(false);
     const totalSteps = 4;
 
     const { data, setData, post, processing, errors } = useForm({
-        first_name: guardian?.first_name || '',
-        last_name: guardian?.last_name || '',
+        name: auth?.name || '',
         phone: guardian?.phone || '',
         division: guardian?.division || '',
         district: guardian?.district || '',
@@ -36,15 +36,29 @@ export default function GuardianProfileComplete({ guardian = {}, locations = [],
 
     const calculateProgress = () => {
         let filledFields = 0;
-        if (data.first_name) filledFields++;
-        if (data.last_name) filledFields++;
+        if (data.name) filledFields++;
         if (data.phone) filledFields++;
         if (data.division) filledFields++;
         if (data.district) filledFields++;
         if (data.detailed_address) filledFields++;
         if (data.preferred_subjects.length > 0) filledFields++;
         if (data.preferred_class_levels.length > 0) filledFields++;
-        return Math.round((filledFields / 8) * 100);
+        return Math.round((filledFields / 7) * 100);
+    };
+
+    const isStepValid = (step) => {
+        switch (step) {
+            case 1:
+                return data.name && data.phone;
+            case 2:
+                return data.division && data.district;
+            case 3:
+                return data.detailed_address;
+            case 4:
+                return data.preferred_subjects.length > 0 && data.preferred_class_levels.length > 0;
+            default:
+                return false;
+        }
     };
 
     const handleSubmit = (e) => {
@@ -144,27 +158,17 @@ export default function GuardianProfileComplete({ guardian = {}, locations = [],
                                 {/* Step 1: Personal Info */}
                                 {currentStep === 1 && (
                                     <div className="space-y-4">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <Label htmlFor="first_name">First Name *</Label>
-                                                <Input
-                                                    id="first_name"
-                                                    value={data.first_name}
-                                                    onChange={(e) => setData('first_name', e.target.value)}
-                                                    className="mt-1"
-                                                />
-                                                {errors.first_name && <p className="text-sm text-red-600 mt-1">{errors.first_name}</p>}
-                                            </div>
-                                            <div>
-                                                <Label htmlFor="last_name">Last Name *</Label>
-                                                <Input
-                                                    id="last_name"
-                                                    value={data.last_name}
-                                                    onChange={(e) => setData('last_name', e.target.value)}
-                                                    className="mt-1"
-                                                />
-                                                {errors.last_name && <p className="text-sm text-red-600 mt-1">{errors.last_name}</p>}
-                                            </div>
+                                        <div>
+                                            <Label htmlFor="name">Full Name *</Label>
+                                            <Input
+                                                id="name"
+                                                placeholder={auth?.name || "Enter your full name"}
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                className="mt-1"
+                                                required
+                                            />
+                                            {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
                                         </div>
                                         <div>
                                             <Label htmlFor="phone">Phone Number *</Label>
@@ -175,6 +179,7 @@ export default function GuardianProfileComplete({ guardian = {}, locations = [],
                                                 value={data.phone}
                                                 onChange={(e) => setData('phone', e.target.value)}
                                                 className="mt-1"
+                                                required
                                             />
                                             {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
                                         </div>
@@ -207,6 +212,7 @@ export default function GuardianProfileComplete({ guardian = {}, locations = [],
                                             onChange={(e) => setData('detailed_address', e.target.value)}
                                             rows={4}
                                             className="mt-1"
+                                            required
                                         />
                                         {errors.detailed_address && <p className="text-sm text-red-600 mt-1">{errors.detailed_address}</p>}
                                     </div>
@@ -216,28 +222,13 @@ export default function GuardianProfileComplete({ guardian = {}, locations = [],
                                 {currentStep === 4 && (
                                     <div className="space-y-6">
                                         <div>
-                                            <Label>Preferred Subjects *</Label>
-                                            <p className="text-sm text-slate-600 mb-3">Select subjects you prefer tutors for</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {subjects && subjects.length > 0 ? subjects.map((subject) => (
-                                                    <Badge
-                                                        key={subject.id}
-                                                        variant={data.preferred_subjects.includes(subject.id) ? "default" : "outline"}
-                                                        className="cursor-pointer px-3 py-1.5 transition-colors"
-                                                        onClick={() => {
-                                                            if (data.preferred_subjects.includes(subject.id)) {
-                                                                setData('preferred_subjects', data.preferred_subjects.filter(id => id !== subject.id));
-                                                            } else {
-                                                                setData('preferred_subjects', [...data.preferred_subjects, subject.id]);
-                                                            }
-                                                        }}
-                                                    >
-                                                        {subject.name}
-                                                    </Badge>
-                                                ))
-                                                : <p className="text-sm text-slate-500">No subjects available</p>
-                                                }
-                                            </div>
+                                            <SubjectSelector
+                                                subjects={subjects}
+                                                selectedSubjects={data.preferred_subjects}
+                                                onSubjectsChange={(selected) => setData('preferred_subjects', selected)}
+                                                label="Preferred Subjects *"
+                                                placeholder="Search and select subjects you prefer tutors for..."
+                                            />
                                             {errors.preferred_subjects && <p className="text-sm text-red-600 mt-1">{errors.preferred_subjects}</p>}
                                         </div>
 
@@ -279,13 +270,17 @@ export default function GuardianProfileComplete({ guardian = {}, locations = [],
                                     </div>
                                     <div className="flex gap-3">
                                         {currentStep < totalSteps ? (
-                                            <Button type="button" onClick={nextStep}>
+                                            <Button 
+                                                type="button" 
+                                                onClick={nextStep}
+                                                disabled={!isStepValid(currentStep)}
+                                            >
                                                 Next
                                             </Button>
                                         ) : (
                                             <Button 
                                                 type="submit" 
-                                                disabled={processing} 
+                                                disabled={processing || !isStepValid(currentStep)} 
                                                 className="bg-success hover:bg-success/90"
                                                 onClick={handleCompleteProfile}
                                             >

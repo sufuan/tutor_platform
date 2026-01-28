@@ -83,9 +83,12 @@ export default function JobApplications({ auth, applications, stats }) {
                             <div className="space-y-2 text-sm">
                                 <div>
                                     <span className="text-gray-600">Name:</span>{' '}
-                                    <span className="font-medium">
-                                        {tutor?.user?.first_name} {tutor?.user?.last_name}
-                                    </span>
+                                    <a 
+                                        href={route('admin.tutors.view', tutor?.id)}
+                                        className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                    >
+                                        {tutor?.user?.name || 'N/A'}
+                                    </a>
                                 </div>
                                 <div>
                                     <span className="text-gray-600">Email:</span>{' '}
@@ -99,8 +102,8 @@ export default function JobApplications({ auth, applications, stats }) {
                                 )}
                                 {tutor?.hourly_rate && (
                                     <div>
-                                        <span className="text-gray-600">Hourly Rate:</span>{' '}
-                                        <span className="font-medium text-green-600">{tutor.hourly_rate}/hr</span>
+                                        <span className="text-gray-600">Expected Salary:</span>{' '}
+                                        <span className="font-medium text-green-600">৳{tutor.hourly_rate}/month</span>
                                     </div>
                                 )}
                                 {tutor?.education && (
@@ -127,7 +130,12 @@ export default function JobApplications({ auth, applications, stats }) {
                             <div className="space-y-2 text-sm">
                                 <div>
                                     <span className="text-gray-600">Title:</span>{' '}
-                                    <span className="font-medium">{job?.title}</span>
+                                    <a 
+                                        href={route('admin.jobs.view', job?.id)}
+                                        className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                    >
+                                        {job?.title}
+                                    </a>
                                 </div>
                                 <div>
                                     <span className="text-gray-600">Code:</span>{' '}
@@ -135,20 +143,32 @@ export default function JobApplications({ auth, applications, stats }) {
                                 </div>
                                 <div>
                                     <span className="text-gray-600">Salary:</span>{' '}
-                                    <span className="font-medium text-green-600">{job?.salary}/month</span>
+                                    <span className="font-medium text-green-600">৳{job?.salary}/month</span>
                                 </div>
                                 <div>
                                     <span className="text-gray-600">Location:</span>{' '}
-                                    <span className="font-medium">{job?.location?.name}</span>
+                                    <span className="font-medium">
+                                        {job?.district && job?.division 
+                                            ? `${job.district}, ${job.division}` 
+                                            : 'N/A'}
+                                    </span>
                                 </div>
-                                {guardian && (
-                                    <div>
-                                        <span className="text-gray-600">Guardian:</span>{' '}
+                                <div>
+                                    <span className="text-gray-600">Posted By:</span>{' '}
+                                    {guardian ? (
                                         <span className="font-medium">
-                                            {guardian.user?.first_name} {guardian.user?.last_name}
+                                            Guardian:{' '}
+                                            <a 
+                                                href={route('admin.guardians.view', guardian.id)}
+                                                className="text-blue-600 hover:text-blue-800 hover:underline"
+                                            >
+                                                {guardian.first_name || guardian.user?.name || 'N/A'}
+                                            </a>
                                         </span>
-                                    </div>
-                                )}
+                                    ) : (
+                                        <span className="font-medium">Admin</span>
+                                    )}
+                                </div>
                                 {guardian?.user?.email && (
                                     <div>
                                         <span className="text-gray-600">Guardian Email:</span>{' '}

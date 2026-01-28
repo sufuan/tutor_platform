@@ -314,17 +314,24 @@ class GuardianController extends Controller
         }
 
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'division' => 'required|string|max:255',
             'district' => 'required|string|max:255',
-            'detailed_address' => 'nullable|string',
-            'preferred_subjects' => 'nullable|array',
-            'preferred_class_levels' => 'nullable|array',
+            'detailed_address' => 'required|string',
+            'preferred_subjects' => 'required|array',
+            'preferred_class_levels' => 'required|array',
         ]);
 
-        $guardian->update($validated);
+        // Update user's name
+        auth()->user()->update(['name' => $validated['name']]);
+
+        // Store name in first_name field for backwards compatibility
+        $guardianData = $validated;
+        $guardianData['first_name'] = $validated['name'];
+        unset($guardianData['name']);
+
+        $guardian->update($guardianData);
 
         // Update profile completion status
         $guardian->updateProfileCompletion();

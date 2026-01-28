@@ -219,14 +219,6 @@ export default function AuthenticatedLayout({ children, header }) {
                     icon: PlusCircle,
                 },
                 {
-                    title: 'Tutor Job Requests',
-                    url: route('admin.tutor-job-requests.index'),
-                    icon: Briefcase,
-                    badge: badgeCounts?.tutorJobRequests
-                        ? { value: badgeCounts.tutorJobRequests, variant: 'default' }
-                        : null,
-                },
-                {
                     title: 'Job Applications',
                     url: route('admin.job-applications.index'),
                     icon: FileText,
@@ -292,7 +284,7 @@ export default function AuthenticatedLayout({ children, header }) {
                                 CT
                             </div>
                             <div className="flex flex-col flex-1 min-w-0">
-                                <span className="font-bold text-base truncate">CareTutors</span>
+                                <span className="font-bold text-base truncate">Tuition Barta</span>
                                 <span className="text-xs text-muted-foreground capitalize truncate">
                                     {user.role} Portal
                                 </span>
@@ -402,14 +394,7 @@ export default function AuthenticatedLayout({ children, header }) {
                                                 </div>
                                             </div>
                                         </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem asChild>
-                                            <Link href={route('profile.edit')} className="cursor-pointer">
-                                                <Settings className="mr-2 h-4 w-4" />
-                                                Profile Settings
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
+                                       
                                         <DropdownMenuItem
                                             onClick={handleLogout}
                                             className="cursor-pointer text-red-600 focus:text-red-600"

@@ -62,10 +62,10 @@ class Guardian extends Model
     {
         $requiredFields = [
             'first_name',
-            'last_name',
             'phone',
             'division',
             'district',
+            'detailed_address',
         ];
 
         $filledCount = 0;

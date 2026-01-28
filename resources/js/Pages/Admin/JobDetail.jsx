@@ -74,7 +74,7 @@ export default function JobDetail({ auth, job, jobType }) {
                             </Card>
 
                             {/* Subjects */}
-                            {((jobType === 'tutor' && job.subject_names) || (jobType === 'guardian' && job.subjects)) && (
+                            {((jobType === 'tutor' && job.subject_names) || (jobType === 'guardian' && job.subject_names)) && (
                                 <Card>
                                     <CardHeader>
                                         <CardTitle className="flex items-center gap-2">
@@ -84,24 +84,11 @@ export default function JobDetail({ auth, job, jobType }) {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="flex flex-wrap gap-2">
-                                            {jobType === 'tutor' ? (
-                                                job.subject_names.map((subject, idx) => (
-                                                    <Badge key={idx} variant="secondary">
-                                                        {subject}
-                                                    </Badge>
-                                                ))
-                                            ) : (
-                                                (() => {
-                                                    const subjects = typeof job.subjects === 'string' 
-                                                        ? JSON.parse(job.subjects || '[]') 
-                                                        : (job.subjects || []);
-                                                    return subjects.map((subject, idx) => (
-                                                        <Badge key={idx} variant="secondary">
-                                                            {subject}
-                                                        </Badge>
-                                                    ));
-                                                })()
-                                            )}
+                                            {job.subject_names.map((subject, idx) => (
+                                                <Badge key={idx} variant="secondary">
+                                                    {subject}
+                                                </Badge>
+                                            ))}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -216,7 +203,7 @@ export default function JobDetail({ auth, job, jobType }) {
                                             <p className="font-semibold text-green-600">
                                                 {jobType === 'tutor' 
                                                     ? `${job.monthly_salary}/month`
-                                                    : `${job.salary_min} - ${job.salary_max}/${job.salary_period || 'month'}`}
+                                                    : `৳${job.salary}/month`}
                                             </p>
                                         </div>
                                     </div>
@@ -228,7 +215,7 @@ export default function JobDetail({ auth, job, jobType }) {
                                             <p className="font-medium">
                                                 {jobType === 'tutor' 
                                                     ? `${job.district || 'N/A'}, ${job.division || 'N/A'}`
-                                                    : job.location?.city || 'N/A'}
+                                                    : `${job.district || 'N/A'}, ${job.division || 'N/A'}`}
                                             </p>
                                         </div>
                                     </div>

@@ -126,6 +126,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         // Guardians Management
         Route::get('/guardians', [AdminController::class, 'guardiansList'])->name('guardians.index');
+        Route::get('/guardians/{guardian}/view', [AdminController::class, 'viewGuardian'])->name('guardians.view');
         
         // Job Approvals
         Route::get('/jobs/approvals', [AdminController::class, 'jobApprovals'])->name('jobs.approvals');
@@ -137,10 +138,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/jobs/{job}', [AdminController::class, 'viewJob'])->name('jobs.view');
         Route::post('/jobs/{job}/approve', [AdminController::class, 'approveJob'])->name('jobs.approve');
         Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
-
-        // Tutor Job Requests Management
-        Route::get('/tutor-job-requests', [AdminController::class, 'tutorJobRequests'])->name('tutor-job-requests.index');
-        Route::get('/tutor-job-requests/{jobRequest}', [AdminController::class, 'viewTutorJobRequest'])->name('tutor-job-requests.view');
+        
+        // Tutor Job Request Approval (unified with guardian jobs in JobApprovals page)
         Route::post('/tutor-job-requests/{jobRequest}/approve', [AdminController::class, 'approveTutorJobRequest'])->name('tutor-job-requests.approve');
         Route::post('/tutor-job-requests/{jobRequest}/reject', [AdminController::class, 'rejectTutorJobRequest'])->name('tutor-job-requests.reject');
 

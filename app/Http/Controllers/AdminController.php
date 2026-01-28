@@ -130,25 +130,34 @@ class AdminController extends Controller
         ]);
     }
 
+    public function viewGuardian(Guardian $guardian)
+    {
+        $guardian->load(['user', 'location', 'jobs']);
+
+        return Inertia::render('Admin/GuardianView', [
+            'guardian' => $guardian,
+        ]);
+    }
+
     public function tutorVerifications()
     {
         $tutors = Tutor::with(['user', 'location'])
             ->latest()
-            ->get();
-
-        // Load subject names and photo URLs for each tutor
-        $tutors->each(function ($tutor) {
-            if ($tutor->subjects && is_array($tutor->subjects)) {
-                $subjectIds = array_map('intval', $tutor->subjects);
-                $tutor->subject_names = \App\Models\Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
-            } else {
-                $tutor->subject_names = [];
-            }
-            
-            if ($tutor->photo) {
-                $tutor->photo_url = Storage::url($tutor->photo);
-            }
-        });
+            ->get()
+            ->map(function ($tutor) {
+                // Load subject names
+                if ($tutor->subjects && is_array($tutor->subjects)) {
+                    $subjectIds = array_map('intval', $tutor->subjects);
+                    $tutor->subject_names = \App\Models\Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
+                } else {
+                    $tutor->subject_names = [];
+                }
+                
+                // Set photo URL using Storage facade with full URL
+                $tutor->photo_url = $tutor->photo ? url(Storage::url($tutor->photo)) : null;
+                
+                return $tutor;
+            });
 
         $stats = [
             'pending' => $tutors->where('verification_status', 'pending')->count(),
@@ -236,6 +245,7 @@ class AdminController extends Controller
             ->get()
             ->map(function ($job) {
                 $job->job_type = 'guardian';
+                $job->append('subject_names');
                 return $job;
             });
 
@@ -266,6 +276,7 @@ class AdminController extends Controller
     public function viewJob(Job $job)
     {
         $job->load(['guardian.user', 'location', 'student']);
+        $job->append('subject_names');
         
         return Inertia::render('Admin/JobDetail', [
             'job' => $job,
@@ -302,43 +313,6 @@ class AdminController extends Controller
         $job->guardian->user->notify(new \App\Notifications\JobRejected($job, $request->rejection_reason));
 
         return back()->with('success', 'Job rejected.');
-    }
-
-    public function tutorJobRequests()
-    {
-        $jobRequests = TutorJobRequest::with(['tutor.user'])
-            ->latest()
-            ->get();
-
-        $stats = [
-            'pending' => $jobRequests->where('approval_status', 'pending')->count(),
-            'approved' => $jobRequests->where('approval_status', 'approved')->count(),
-            'rejected' => $jobRequests->where('approval_status', 'rejected')->count(),
-        ];
-
-        return Inertia::render('Admin/TutorJobRequests', [
-            'jobRequests' => $jobRequests,
-            'stats' => $stats,
-        ]);
-    }
-
-    public function viewTutorJobRequest(TutorJobRequest $jobRequest)
-    {
-        $jobRequest->load(['tutor.user']);
-        
-        // Load subject names
-        $subjectNames = [];
-        if ($jobRequest->subjects && is_array($jobRequest->subjects)) {
-            $subjectIds = array_map('intval', $jobRequest->subjects);
-            $subjectNames = \App\Models\Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
-        }
-        
-        $jobRequest->subject_names = $subjectNames;
-        
-        return Inertia::render('Admin/JobDetail', [
-            'job' => $jobRequest,
-            'jobType' => 'tutor',
-        ]);
     }
 
     public function approveTutorJobRequest(TutorJobRequest $jobRequest)

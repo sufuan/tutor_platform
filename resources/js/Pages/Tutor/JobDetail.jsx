@@ -158,7 +158,7 @@ export default function JobDetail({ auth, job }) {
                                                 </div>
                                                 <div>
                                                     <p className="text-slate-500">Gender Preference</p>
-                                                    <p className="font-medium capitalize">{job.gender_preference || 'Any'}</p>
+                                                    <p className="font-medium capitalize">{job.preferred_tutor_gender || 'Any'}</p>
                                                 </div>
                                             </div>
                                         </div>

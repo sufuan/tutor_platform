@@ -94,6 +94,22 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
         }
     };
 
+    const isFormValid = () => {
+        return (
+            data.title &&
+            data.description &&
+            data.division &&
+            data.district &&
+            data.subjects.length > 0 &&
+            data.class_level &&
+            data.education_medium &&
+            data.tuition_type &&
+            data.sessions_per_week &&
+            data.session_duration &&
+            data.salary
+        );
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         post(route('guardian.jobs.store'), {
@@ -201,7 +217,7 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
                                 <div className="flex gap-3">
                                     <Button
                                         onClick={handleSubmit}
-                                        disabled={processing}
+                                        disabled={processing || !isFormValid()}
                                         className="flex-1"
                                     >
                                         {processing ? 'Publishing...' : 'Publish Job'}
@@ -456,6 +472,7 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
                                         type="button"
                                         variant="outline"
                                         onClick={() => setShowPreview(true)}
+                                        disabled={!isFormValid()}
                                         className="flex-1"
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
@@ -463,12 +480,17 @@ export default function PostJob({ auth, locations = [], subjects = [], students 
                                     </Button>
                                     <Button
                                         type="submit"
-                                        disabled={processing}
+                                        disabled={processing || !isFormValid()}
                                         className="flex-1"
                                     >
                                         {processing ? 'Publishing...' : 'Publish Job'}
                                     </Button>
                                 </div>
+                                {!isFormValid() && (
+                                    <p className="text-sm text-red-500 text-center mt-2">
+                                        Please fill in all required fields before submitting or previewing
+                                    </p>
+                                )}
                             </form>
                         </CardContent>
                     </Card>

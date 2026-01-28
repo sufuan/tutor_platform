@@ -164,10 +164,12 @@ export default function GuardiansList({ auth, guardians, stats }) {
                                                         {new Date(guardian.created_at).toLocaleDateString()}
                                                     </p>
                                                 </div>
-                                                <Button size="sm" variant="outline" className="gap-2">
-                                                    <Eye className="h-4 w-4" />
-                                                    View
-                                                </Button>
+                                                <Link href={route('admin.guardians.view', guardian.id)}>
+                                                    <Button size="sm" variant="outline" className="gap-2">
+                                                        <Eye className="h-4 w-4" />
+                                                        View
+                                                    </Button>
+                                                </Link>
                                             </div>
                                         </div>
                                     ))}

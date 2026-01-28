@@ -160,12 +160,7 @@ export default function JobApprovals({ auth, jobs, stats }) {
                     <p className="text-xs text-gray-500 mb-2">Subjects:</p>
                     <div className="flex flex-wrap gap-1">
                         {(() => {
-                            let subjects = [];
-                            if (job.job_type === 'tutor') {
-                                subjects = job.subject_names || [];
-                            } else {
-                                subjects = typeof job.subjects === 'string' ? JSON.parse(job.subjects || '[]') : (job.subjects || []);
-                            }
+                            const subjects = job.subject_names || [];
                             return subjects.map((subject, idx) => (
                                 <Badge key={idx} variant="secondary" className="text-xs">
                                     {subject}
@@ -176,21 +171,36 @@ export default function JobApprovals({ auth, jobs, stats }) {
                 </div>
 
                 {job.job_type === 'guardian' && (
-                    <div className="flex gap-2 items-center text-xs">
-                        <Badge variant="outline">{job.education_medium}</Badge>
-                        <Badge variant="outline">{job.tuition_type}</Badge>
+                    <div className="flex gap-2 items-center text-xs flex-wrap">
+                        <Badge variant="outline" className="capitalize">
+                            {job.education_medium === 'bangla' && 'Bangla Medium'}
+                            {job.education_medium === 'english' && 'English Medium'}
+                            {job.education_medium === 'english_version' && 'English Version'}
+                            {!['bangla', 'english', 'english_version'].includes(job.education_medium) && job.education_medium}
+                        </Badge>
+                        <Badge variant="outline" className="capitalize">
+                            {job.tuition_type === 'home' && 'Home Tuition'}
+                            {job.tuition_type === 'online' && 'Online Tuition'}
+                            {job.tuition_type === 'group' && 'Group Tuition'}
+                            {!['home', 'online', 'group'].includes(job.tuition_type) && job.tuition_type}
+                        </Badge>
                         <Badge variant="outline">{job.class_level}</Badge>
                         {job.preferred_tutor_gender !== 'any' && (
-                            <Badge variant="outline">{job.preferred_tutor_gender} tutor</Badge>
+                            <Badge variant="outline" className="capitalize">{job.preferred_tutor_gender} Tutor Preferred</Badge>
                         )}
                     </div>
                 )}
 
                 {job.job_type === 'tutor' && (
-                    <div className="flex gap-2 items-center text-xs">
-                        <Badge variant="outline">{job.teaching_mode}</Badge>
+                    <div className="flex gap-2 items-center text-xs flex-wrap">
+                        <Badge variant="outline" className="capitalize">
+                            {job.teaching_mode === 'home' && 'Home Tuition'}
+                            {job.teaching_mode === 'online' && 'Online Tuition'}
+                            {job.teaching_mode === 'both' && 'Home & Online'}
+                            {!['home', 'online', 'both'].includes(job.teaching_mode) && job.teaching_mode}
+                        </Badge>
                         {job.preferred_gender && (
-                            <Badge variant="outline" className="capitalize">{job.preferred_gender} tutor</Badge>
+                            <Badge variant="outline" className="capitalize">{job.preferred_gender} Students Preferred</Badge>
                         )}
                     </div>
                 )}
