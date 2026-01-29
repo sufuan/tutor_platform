@@ -200,7 +200,31 @@ class GuardianController extends Controller
 
     public function jobApplications(Job $job)
     {
-        $this->authorize('view', $job);
+        // Ensure guardian exists
+        $guardian = auth()->user()->guardian;
+
+        if (!$guardian) {
+            \Log::error('Guardian not found for user', [
+                'user_id' => auth()->id(),
+                'user_email' => auth()->user()->email,
+                'user_role' => auth()->user()->role,
+            ]);
+
+            return redirect()->route('guardian.jobs.index')
+                ->with('error', 'Guardian profile not found. Please contact support.');
+        }
+
+        // Check if this job belongs to the guardian
+        if ($job->guardian_id !== $guardian->id) {
+            \Log::warning('Unauthorized job access attempt', [
+                'user_id' => auth()->id(),
+                'guardian_id' => $guardian->id,
+                'job_id' => $job->id,
+                'job_guardian_id' => $job->guardian_id,
+            ]);
+
+            abort(403, 'This action is unauthorized.');
+        }
 
         $applications = Application::with(['tutor.user', 'tutor.location'])
             ->where('job_id', $job->id)
