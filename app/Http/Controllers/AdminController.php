@@ -354,7 +354,13 @@ class AdminController extends Controller
 
     public function jobApplications()
     {
-        $applications = Application::with(['tutor.user', 'job.guardian.user'])
+        $applications = Application::with([
+                'tutor.user',
+                'job.guardian.user',
+                'guardianRecommendations' => function ($query) {
+                    $query->latest();
+                }
+            ])
             ->latest()
             ->get();
 
@@ -500,6 +506,40 @@ class AdminController extends Controller
             return back()->with('success', 'Job deleted successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to delete job: ' . $e->getMessage());
+        }
+    }
+
+    public function unassignTutor($id)
+    {
+        DB::beginTransaction();
+        try {
+            $job = Job::findOrFail($id);
+
+            // Check if job has accepted applications
+            $acceptedApplication = $job->applications()->where('status', 'accepted')->first();
+
+            if (!$acceptedApplication) {
+                return back()->with('error', 'No tutor is currently assigned to this job.');
+            }
+
+            // Reset job status to open
+            $job->update([
+                'status' => 'open',
+                'filled_at' => null,
+            ]);
+
+            // Reset all applications to pending
+            $job->applications()->update([
+                'status' => 'pending',
+                'status_updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return back()->with('success', 'Tutor unassigned successfully. Job is now open for applications.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to unassign tutor: ' . $e->getMessage());
         }
     }
 

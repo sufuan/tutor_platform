@@ -10,6 +10,8 @@ use App\Models\Booking;
 use App\Models\Location;
 use App\Models\Subject;
 use App\Models\GuardianFeedback;
+use App\Models\GuardianRecommendation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -279,6 +281,70 @@ class GuardianController extends Controller
         ]);
 
         return back()->with('success', 'Application rejected.');
+    }
+
+    public function recommendHire(Application $application)
+    {
+        $this->authorize('manage', $application->job);
+
+        // Check if recommendation already exists
+        $existingRecommendation = GuardianRecommendation::where('application_id', $application->id)
+            ->where('guardian_id', auth()->user()->guardian->id)
+            ->first();
+
+        if ($existingRecommendation) {
+            return back()->with('info', 'You have already submitted a recommendation for this tutor.');
+        }
+
+        // Create recommendation
+        GuardianRecommendation::create([
+            'application_id' => $application->id,
+            'guardian_id' => auth()->user()->guardian->id,
+            'job_id' => $application->job_id,
+            'tutor_id' => $application->tutor_id,
+            'recommendation_type' => 'hire',
+            'message' => 'Guardian recommends hiring this tutor for job: ' . $application->job->title,
+        ]);
+
+        // Notify all admin users
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\GuardianRecommendation($application, 'hire'));
+        }
+
+        return back()->with('success', 'Your recommendation has been sent to the admin for review.');
+    }
+
+    public function recommendReject(Application $application)
+    {
+        $this->authorize('manage', $application->job);
+
+        // Check if recommendation already exists
+        $existingRecommendation = GuardianRecommendation::where('application_id', $application->id)
+            ->where('guardian_id', auth()->user()->guardian->id)
+            ->first();
+
+        if ($existingRecommendation) {
+            return back()->with('info', 'You have already submitted a recommendation for this tutor.');
+        }
+
+        // Create recommendation
+        GuardianRecommendation::create([
+            'application_id' => $application->id,
+            'guardian_id' => auth()->user()->guardian->id,
+            'job_id' => $application->job_id,
+            'tutor_id' => $application->tutor_id,
+            'recommendation_type' => 'reject',
+            'message' => 'Guardian is not interested in this tutor for job: ' . $application->job->title,
+        ]);
+
+        // Notify all admin users
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\GuardianRecommendation($application, 'reject'));
+        }
+
+        return back()->with('info', 'Your feedback has been sent to the admin.');
     }
 
     public function profileComplete()

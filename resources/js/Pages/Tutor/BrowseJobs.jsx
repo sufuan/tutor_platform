@@ -116,7 +116,11 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
                 <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="h-4 w-4" />
-                        <span>{job.location?.name}</span>
+                        <span>
+                            {job.district && job.division
+                                ? `${job.district}, ${job.division}`
+                                : job.location?.city || 'Not specified'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                         <CurrencyBangladeshiIcon size={16} className=" " />
@@ -130,6 +134,15 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
                         <Clock className="h-4 w-4" />
                         <span>{job.duration_per_session} mins</span>
                     </div>
+                </div>
+
+                {/* Posted Date */}
+                <div className="text-xs text-gray-500">
+                    Posted {new Date(job.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    })}
                 </div>
 
                 <div>

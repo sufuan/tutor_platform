@@ -5,8 +5,8 @@ import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { useState } from 'react';
-import { 
-    MapPin, 
+import {
+    MapPin,
     Calendar,
     Clock,
     User,
@@ -18,7 +18,9 @@ import {
     ExternalLink,
     CheckCircle,
     XCircle,
-    ThumbsUp
+    ThumbsUp,
+    ThumbsDown,
+    MessageSquare
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
@@ -59,6 +61,11 @@ export default function JobApplications({ auth, applications, stats }) {
         const job = application.job;
         const guardian = job?.guardian;
 
+        // Get the latest guardian recommendation
+        const latestRecommendation = application.guardian_recommendations && application.guardian_recommendations.length > 0
+            ? application.guardian_recommendations[0]
+            : null;
+
         return (
             <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -70,7 +77,44 @@ export default function JobApplications({ auth, applications, stats }) {
                             {new Date(application.applied_at).toLocaleDateString()}
                         </Badge>
                     </div>
-                    <CardTitle className="text-lg">Application #{application.id}</CardTitle>
+
+                    {/* Guardian Recommendation Note */}
+                    {latestRecommendation && (
+                        <div className={`mt-2 p-3 rounded-lg border-l-4 text-sm ${
+                            latestRecommendation.recommendation_type === 'hire'
+                                ? 'bg-green-50 border-green-500 text-green-800'
+                                : 'bg-orange-50 border-orange-500 text-orange-800'
+                        }`}>
+                            <div className="flex items-start gap-2">
+                                {latestRecommendation.recommendation_type === 'hire' ? (
+                                    <ThumbsUp className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                ) : (
+                                    <ThumbsDown className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                )}
+                                <div className="flex-1">
+                                    <p className="font-semibold">
+                                        {latestRecommendation.recommendation_type === 'hire'
+                                            ? '✓ Guardian Recommends Hiring'
+                                            : '✗ Guardian Not Interested'}
+                                    </p>
+                                    <p className="text-xs mt-1 opacity-90">
+                                        {latestRecommendation.message}
+                                    </p>
+                                    <p className="text-xs mt-1 opacity-75">
+                                        {new Date(latestRecommendation.created_at).toLocaleString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <CardTitle className="text-lg mt-3">Application #{application.id}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

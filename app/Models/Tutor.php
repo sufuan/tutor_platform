@@ -26,6 +26,10 @@ class Tutor extends Model
         'verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'subject_names',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -54,5 +58,17 @@ class Tutor extends Model
     public function subjectsRelation(): BelongsToMany
     {
         return $this->belongsToMany(Subject::class, 'tutor_subjects');
+    }
+
+    /**
+     * Get subject names from subject IDs
+     */
+    public function getSubjectNamesAttribute()
+    {
+        if (empty($this->subjects) || !is_array($this->subjects)) {
+            return [];
+        }
+
+        return Subject::whereIn('id', $this->subjects)->pluck('name')->toArray();
     }
 }

@@ -18,15 +18,16 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/Components/ui/dropdown-menu';
-import { 
-    MoreVertical, 
-    Eye, 
+import {
+    MoreVertical,
+    Eye,
     Trash2,
     Briefcase,
     Users,
     CheckCircle,
     Clock,
-    ListFilter
+    ListFilter,
+    UserX
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
@@ -37,6 +38,16 @@ export default function AllJobs({ auth, jobs }) {
         if (confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
             setProcessingId(id);
             router.delete(route('admin.all-jobs.delete', { type, id }), {
+                preserveScroll: true,
+                onFinish: () => setProcessingId(null),
+            });
+        }
+    };
+
+    const handleUnassignTutor = (id, title) => {
+        if (confirm(`Are you sure you want to unassign the tutor from "${title}"? The job will be reopened for applications.`)) {
+            setProcessingId(id);
+            router.post(route('admin.all-jobs.unassign', id), {}, {
                 preserveScroll: true,
                 onFinish: () => setProcessingId(null),
             });
@@ -271,6 +282,15 @@ export default function AllJobs({ auth, jobs }) {
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent align="end">
+                                                                {job.status === 'filled' && job.accepted_count > 0 && (job.type === 'guardian' || job.type === 'admin') && (
+                                                                    <DropdownMenuItem
+                                                                        onClick={() => handleUnassignTutor(job.id, job.title)}
+                                                                        className="text-blue-600 focus:text-blue-600"
+                                                                    >
+                                                                        <UserX className="h-4 w-4 mr-2" />
+                                                                        Unassign Tutor
+                                                                    </DropdownMenuItem>
+                                                                )}
                                                                 <DropdownMenuItem
                                                                     onClick={() => handleDelete(job.type, job.id, job.title)}
                                                                     className="text-red-600 focus:text-red-600"

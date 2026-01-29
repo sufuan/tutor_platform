@@ -57,6 +57,8 @@ Route::middleware(['auth', 'verified'])->prefix('guardian')->name('guardian.')->
     Route::post('/applications/{application}/shortlist', [GuardianController::class, 'applicationShortlist'])->name('applications.shortlist');
     Route::post('/applications/{application}/hire', [GuardianController::class, 'applicationHire'])->name('applications.hire');
     Route::post('/applications/{application}/reject', [GuardianController::class, 'applicationReject'])->name('applications.reject');
+    Route::post('/applications/{application}/recommend-hire', [GuardianController::class, 'recommendHire'])->name('applications.recommend-hire');
+    Route::post('/applications/{application}/recommend-reject', [GuardianController::class, 'recommendReject'])->name('applications.recommend-reject');
     
     // Feedback Management
     Route::get('/feedback/create', [GuardianController::class, 'feedbackCreate'])->name('feedback.create');
@@ -134,6 +136,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // All Jobs Management (Guardian Jobs, Tutor Job Requests, Admin Jobs)
         Route::get('/all-jobs', [AdminController::class, 'allJobs'])->name('all-jobs.index');
         Route::delete('/all-jobs/{type}/{id}', [AdminController::class, 'deleteJob'])->name('all-jobs.delete');
+        Route::post('/all-jobs/{id}/unassign', [AdminController::class, 'unassignTutor'])->name('all-jobs.unassign');
         
         // Admin Post Job (must be before /jobs/{job} to avoid route conflict)
         Route::get('/jobs/create', [AdminController::class, 'jobsCreate'])->name('jobs.create');

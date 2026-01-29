@@ -7,11 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
 import { Textarea } from '@/Components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { 
-    User, 
-    MapPin, 
-    Star, 
+import {
+    User,
+    MapPin,
+    Star,
     GraduationCap,
     Calendar,
     CheckCircle,
@@ -20,14 +21,14 @@ import {
     ArrowLeft,
     Mail,
     Phone,
-    BookOpen
+    BookOpen,
+    ThumbsUp,
+    ThumbsDown
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function JobApplications({ auth, job, applications }) {
-    const [selectedApplication, setSelectedApplication] = useState(null);
-    const [showHireDialog, setShowHireDialog] = useState(false);
-    const [showRejectDialog, setShowRejectDialog] = useState(false);
+    const { toast } = useToast();
 
     const groupedApplications = {
         pending: applications.filter(a => a.status === 'pending'),
@@ -40,30 +41,24 @@ export default function JobApplications({ auth, job, applications }) {
         router.post(route('guardian.applications.shortlist', applicationId));
     };
 
-    const handleHire = (applicationId) => {
-        setSelectedApplication(applicationId);
-        setShowHireDialog(true);
-    };
-
-    const confirmHire = () => {
-        router.post(route('guardian.applications.hire', selectedApplication), {}, {
+    const handleRecommendHire = (applicationId) => {
+        router.post(route('guardian.applications.recommend-hire', applicationId), {}, {
             onSuccess: () => {
-                setShowHireDialog(false);
-                setSelectedApplication(null);
+                toast({
+                    title: "Recommendation Sent",
+                    description: "Your recommendation has been sent to the admin for review.",
+                });
             }
         });
     };
 
-    const handleReject = (applicationId) => {
-        setSelectedApplication(applicationId);
-        setShowRejectDialog(true);
-    };
-
-    const confirmReject = () => {
-        router.post(route('guardian.applications.reject', selectedApplication), {}, {
+    const handleRecommendReject = (applicationId) => {
+        router.post(route('guardian.applications.recommend-reject', applicationId), {}, {
             onSuccess: () => {
-                setShowRejectDialog(false);
-                setSelectedApplication(null);
+                toast({
+                    title: "Feedback Sent",
+                    description: "Your feedback has been sent to the admin.",
+                });
             }
         });
     };
@@ -124,16 +119,16 @@ export default function JobApplications({ auth, job, applications }) {
                                 </div>
                             </div>
 
-                            {tutor.subjects && tutor.subjects.length > 0 && (
+                            {tutor.subject_names && tutor.subject_names.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mb-4">
-                                    {tutor.subjects.slice(0, 4).map((subject, idx) => (
+                                    {tutor.subject_names.slice(0, 4).map((subject, idx) => (
                                         <Badge key={idx} variant="secondary" className="text-xs">
                                             {subject}
                                         </Badge>
                                     ))}
-                                    {tutor.subjects.length > 4 && (
+                                    {tutor.subject_names.length > 4 && (
                                         <Badge variant="secondary" className="text-xs">
-                                            +{tutor.subjects.length - 4}
+                                            +{tutor.subject_names.length - 4}
                                         </Badge>
                                     )}
                                 </div>
@@ -169,12 +164,20 @@ export default function JobApplications({ auth, job, applications }) {
                                             Shortlist
                                         </Button>
                                         <Button
-                                            variant="destructive"
+                                            variant="outline"
                                             size="sm"
-                                            onClick={() => handleReject(application.id)}
+                                            onClick={() => handleRecommendHire(application.id)}
                                         >
-                                            <XCircle className="mr-2 h-4 w-4" />
-                                            Reject
+                                            <ThumbsUp className="mr-2 h-4 w-4" />
+                                            Recommend
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleRecommendReject(application.id)}
+                                        >
+                                            <ThumbsDown className="mr-2 h-4 w-4" />
+                                            Not Interested
                                         </Button>
                                     </>
                                 )}
@@ -182,19 +185,20 @@ export default function JobApplications({ auth, job, applications }) {
                                 {application.status === 'shortlisted' && (
                                     <>
                                         <Button
+                                            variant="outline"
                                             size="sm"
-                                            onClick={() => handleHire(application.id)}
+                                            onClick={() => handleRecommendHire(application.id)}
                                         >
-                                            <CheckCircle className="mr-2 h-4 w-4" />
-                                            Hire
+                                            <ThumbsUp className="mr-2 h-4 w-4" />
+                                            Recommend
                                         </Button>
                                         <Button
-                                            variant="destructive"
+                                            variant="outline"
                                             size="sm"
-                                            onClick={() => handleReject(application.id)}
+                                            onClick={() => handleRecommendReject(application.id)}
                                         >
-                                            <XCircle className="mr-2 h-4 w-4" />
-                                            Reject
+                                            <ThumbsDown className="mr-2 h-4 w-4" />
+                                            Not Interested
                                         </Button>
                                     </>
                                 )}
@@ -345,45 +349,6 @@ export default function JobApplications({ auth, job, applications }) {
                 </div>
             </div>
 
-            {/* Hire Confirmation Dialog */}
-            <Dialog open={showHireDialog} onOpenChange={setShowHireDialog}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Confirm Hiring</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to hire this tutor? This action will close the job posting.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowHireDialog(false)}>
-                            Cancel
-                        </Button>
-                        <Button onClick={confirmHire}>
-                            Confirm Hire
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            {/* Reject Confirmation Dialog */}
-            <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Confirm Rejection</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to reject this application?
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setShowRejectDialog(false)}>
-                            Cancel
-                        </Button>
-                        <Button variant="destructive" onClick={confirmReject}>
-                            Reject Application
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </AuthenticatedLayout>
     );
 }
