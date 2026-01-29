@@ -1,25 +1,35 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Input } from '@/Components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Badge } from '@/Components/ui/badge';
-import { MapPin, Search, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { MapPin, Search, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User, X } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
-export default function Jobs({ jobs, locations, subjects, filters }) {
+export default function Jobs({ jobs, districts, subjects, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [selectedLocation, setSelectedLocation] = useState(filters.location || '');
     const [selectedSubject, setSelectedSubject] = useState(filters.subject || '');
 
-    const handleFilter = () => {
-        router.get('/jobs', {
-            search: searchTerm,
-            location: selectedLocation,
-            subject: selectedSubject,
-        }, {
+    // Debounce search to avoid too many requests
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            applyFilters();
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchTerm, selectedLocation, selectedSubject]);
+
+    const applyFilters = () => {
+        const params = {};
+        if (searchTerm) params.search = searchTerm;
+        if (selectedLocation && selectedLocation !== 'all') params.location = selectedLocation;
+        if (selectedSubject && selectedSubject !== 'all') params.subject = selectedSubject;
+
+        router.get('/jobs', params, {
             preserveState: true,
             preserveScroll: true,
         });
@@ -29,8 +39,9 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
         setSearchTerm('');
         setSelectedLocation('');
         setSelectedSubject('');
-        router.get('/jobs');
     };
+
+    const hasActiveFilters = searchTerm || (selectedLocation && selectedLocation !== 'all') || (selectedSubject && selectedSubject !== 'all');
 
     const getJobTypeColor = (type) => {
         const colors = {
@@ -70,19 +81,19 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                     placeholder="Search jobs by title or description..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
                                     className="pl-10"
                                 />
                             </div>
                         </div>
                         <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                             <SelectTrigger>
-                                <SelectValue placeholder="All Locations" />
+                                <SelectValue placeholder="Select District" />
                             </SelectTrigger>
                             <SelectContent>
-                                {locations.map((location) => (
-                                    <SelectItem key={location.id} value={location.id.toString()}>
-                                        {location.city}
+                                <SelectItem value="all">All Districts</SelectItem>
+                                {districts.map((district) => (
+                                    <SelectItem key={district} value={district}>
+                                        {district}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -92,6 +103,7 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                                 <SelectValue placeholder="All Subjects" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="all">All Subjects</SelectItem>
                                 {subjects.map((subject) => (
                                     <SelectItem key={subject.id} value={subject.name}>
                                         {subject.name}
@@ -104,14 +116,12 @@ export default function Jobs({ jobs, locations, subjects, filters }) {
                         <p className="text-sm text-gray-600">
                             Showing {jobs.data.length} of {jobs.total} jobs
                         </p>
-                        <div className="flex gap-2">
+                        {hasActiveFilters && (
                             <Button onClick={clearFilters} variant="outline" size="sm">
+                                <X className="h-4 w-4 mr-1" />
                                 Clear Filters
                             </Button>
-                            <Button onClick={handleFilter} size="sm">
-                                Apply Filters
-                            </Button>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

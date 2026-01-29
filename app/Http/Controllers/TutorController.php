@@ -254,16 +254,23 @@ class TutorController extends Controller
                 ->with('warning', 'Please complete at least 70% of your profile to browse jobs.');
         }
 
+        // Convert subject name to ID if filtering by subject
+        $subjectId = null;
+        if ($request->subject) {
+            $subject = Subject::where('name', $request->subject)->first();
+            $subjectId = $subject ? $subject->id : null;
+        }
+
         $query = Job::with(['location', 'guardian'])
             ->where('approval_status', 'approved')
             ->where('status', 'open');
 
         if ($request->location) {
-            $query->where('location_id', $request->location);
+            $query->where('district', $request->location);
         }
 
-        if ($request->subject) {
-            $query->whereJsonContains('subjects', $request->subject);
+        if ($subjectId) {
+            $query->whereJsonContains('subjects', $subjectId);
         }
 
         if ($request->search) {
@@ -278,12 +285,22 @@ class TutorController extends Controller
             return $job;
         });
 
+        // Get unique districts from approved open jobs
+        $districts = Job::where('approval_status', 'approved')
+            ->where('status', 'open')
+            ->whereNotNull('district')
+            ->pluck('district')
+            ->unique()
+            ->sort()
+            ->values();
+
         return Inertia::render('Tutor/BrowseJobs', [
             'jobs' => $jobs,
-            'locations' => Location::orderBy('city')->get(),
+            'districts' => $districts,
             'subjects' => Subject::orderBy('name')->get(),
             'verificationStatus' => $tutor->verification_status,
             'tutorCv' => $tutor->cv_path,
+            'filters' => $request->only(['location', 'subject', 'search']),
         ]);
     }
 
@@ -453,6 +470,9 @@ class TutorController extends Controller
         }
 
         $job->load(['location', 'guardian']);
+        
+        // Check if tutor has already applied
+        $job->has_applied = $job->applications()->where('tutor_id', $tutor->id)->exists();
 
         return Inertia::render('Tutor/JobDetail', [
             'job' => $job,
@@ -504,6 +524,10 @@ class TutorController extends Controller
             'subjects' => 'required|array|min:1',
             'subjects.*' => 'exists:subjects,id',
             'education_level' => 'required|string',
+            'class_level' => 'nullable|string',
+            'education_medium' => 'nullable|string',
+            'tuition_type' => 'nullable|string',
+            'tutor_gender_preference' => 'nullable|string|in:any,male,female',
             'monthly_salary' => 'required|numeric|min:0',
             'available_days' => 'required|array|min:1',
             'available_days.*' => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
@@ -615,6 +639,10 @@ class TutorController extends Controller
             'subjects' => 'required|array|min:1',
             'subjects.*' => 'exists:subjects,id',
             'education_level' => 'required|string',
+            'class_level' => 'nullable|string',
+            'education_medium' => 'nullable|string',
+            'tuition_type' => 'nullable|string',
+            'tutor_gender_preference' => 'nullable|string|in:any,male,female',
             'monthly_salary' => 'required|numeric|min:0',
             'available_days' => 'required|array|min:1',
             'available_days.*' => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',

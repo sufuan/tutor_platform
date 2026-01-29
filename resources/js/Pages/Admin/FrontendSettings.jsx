@@ -7,15 +7,74 @@ import { Label } from '@/Components/ui/label';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
 import { Switch } from '@/Components/ui/switch';
-import { Upload, Image as ImageIcon, X, Check, AlertCircle, Settings, Eye, Sparkles, LayoutDashboard, MapPin, Phone, Mail, Clock, Facebook, Linkedin, Twitter, Youtube, MessageCircle } from 'lucide-react';
+import { Upload, Image as ImageIcon, X, Check, AlertCircle, Settings, Eye, Sparkles, LayoutDashboard, MapPin, Phone, Mail, Clock, Facebook, Linkedin, Twitter, Youtube, MessageCircle, BookOpen, Plus, Edit, Trash2, Search, Package, Home, UsersRound, Monitor, Languages, GraduationCap, Target, TrendingUp, Baby, Palette, Users, CheckCircle, Award } from 'lucide-react';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import { Separator } from '@/Components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
+import { Badge } from '@/Components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 
-export default function FrontendSettings({ auth, settings }) {
-    const { data, setData, post, processing, errors } = useForm({
+export default function FrontendSettings({ auth, settings, subjects, categories }) {
+    // Hero & Content Form
+    const heroForm = useForm({
+        hero_title: settings.hero_title || 'Find the Perfect Tutor',
+        hero_subtitle: settings.hero_subtitle || 'Connect with Bangladesh\'s finest verified tutors. Transform your learning journey with personalized education tailored to your needs.',
+    });
+
+    // Stats Form
+    const statsForm = useForm({
+        stats_tutors: settings.stats_tutors || '850',
+        stats_jobs: settings.stats_jobs || '1250',
+        stats_success_rate: settings.stats_success_rate || '95',
+        stats_students: settings.stats_students || '2400',
+    });
+
+    // Images Form
+    const imagesForm = useForm({
         hero_image: null,
         promo_banner_image: null,
         show_promo_banner: settings.show_promo_banner || false,
+    });
+
+    // Tuition Types Form
+    const tuitionTypesForm = useForm({
+        tuition_types: settings.tuition_types ? JSON.parse(settings.tuition_types) : [
+            { title: 'Home Tutoring', description: 'Home tutoring allows students to learn various subjects in their own home.', icon: 'Home' },
+            { title: 'Group Tutoring', description: 'Group tutoring allows students to learn together and solve problems at an affordable cost.', icon: 'UsersRound' },
+            { title: 'Online Tutoring', description: 'Hire the best tutors from anywhere and take online classes by using tools such as Google Meet, Zoom and more.', icon: 'Monitor' },
+            { title: 'Package Tutoring', description: 'Package tutoring helps students to complete their studies within a specific time frame.', icon: 'Package' },
+        ],
+    });
+
+    // Serving Categories Form
+    const servingCategoriesForm = useForm({
+        serving_categories: settings.serving_categories ? JSON.parse(settings.serving_categories) : [
+            { name: 'Bangla Medium', icon: 'Languages' },
+            { name: 'English Version', icon: 'BookOpen' },
+            { name: 'English Medium', icon: 'GraduationCap' },
+            { name: 'Madrasa Medium', icon: 'BookOpen' },
+            { name: 'Quran and Islamic Studies', icon: 'BookOpen' },
+            { name: 'Admission Preparation', icon: 'Target' },
+            { name: 'Skill Development', icon: 'TrendingUp' },
+            { name: 'Pre-school Education', icon: 'Baby' },
+            { name: 'Arts and Crafts', icon: 'Palette' },
+        ],
+    });
+
+    // How It Works Form
+    const howItWorksForm = useForm({
+        how_it_works: settings.how_it_works ? JSON.parse(settings.how_it_works) : [
+            { title: 'Search', description: 'Browse verified tutors by subject & location', icon: 'Target' },
+            { title: 'Compare', description: 'Review profiles, ratings & experience', icon: 'Users' },
+            { title: 'Connect', description: 'Book trial session instantly', icon: 'CheckCircle' },
+            { title: 'Excel', description: 'Achieve your academic goals', icon: 'Award' },
+        ],
+    });
+
+    // Footer Form
+    const footerForm = useForm({
         contact_title: settings.contact_title || '',
         contact_description: settings.contact_description || '',
         contact_address: settings.contact_address || '',
@@ -31,11 +90,23 @@ export default function FrontendSettings({ auth, settings }) {
 
     const [heroPreview, setHeroPreview] = useState(null);
     const [promoPreview, setPromoPreview] = useState(null);
+    const [showSubjectDialog, setShowSubjectDialog] = useState(false);
+    const [editingSubject, setEditingSubject] = useState(null);
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [expandedCategories, setExpandedCategories] = useState({});
+    const { toast } = useToast();
 
+    const subjectForm = useForm({
+        name: '',
+        category_id: '',
+    });
+
+    // Handler for Hero Image
     const handleHeroImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setData('hero_image', file);
+            imagesForm.setData('hero_image', file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setHeroPreview(reader.result);
@@ -44,10 +115,11 @@ export default function FrontendSettings({ auth, settings }) {
         }
     };
 
+    // Handler for Promo Image
     const handlePromoImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setData('promo_banner_image', file);
+            imagesForm.setData('promo_banner_image', file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPromoPreview(reader.result);
@@ -56,22 +128,171 @@ export default function FrontendSettings({ auth, settings }) {
         }
     };
 
-    const handleSubmit = (e) => {
+    // Submit handlers for each section
+    const handleHeroSubmit = (e) => {
         e.preventDefault();
-        post(route('admin.frontend-settings.update'), {
+        heroForm.post(route('admin.frontend-settings.update'), {
+            onSuccess: () => {
+                toast({ title: "Success", description: "Hero section updated successfully!" });
+            },
+        });
+    };
+
+    const handleStatsSubmit = (e) => {
+        e.preventDefault();
+        statsForm.post(route('admin.frontend-settings.update'), {
+            onSuccess: () => {
+                toast({ title: "Success", description: "Stats section updated successfully!" });
+            },
+        });
+    };
+
+    const handleImagesSubmit = (e) => {
+        e.preventDefault();
+        imagesForm.post(route('admin.frontend-settings.update'), {
             forceFormData: true,
+            onSuccess: () => {
+                setHeroPreview(null);
+                setPromoPreview(null);
+                toast({ title: "Success", description: "Images updated successfully!" });
+            },
+        });
+    };
+
+    const handleTuitionTypesSubmit = (e) => {
+        e.preventDefault();
+        tuitionTypesForm.post(route('admin.frontend-settings.update'), {
+            data: {
+                tuition_types: JSON.stringify(tuitionTypesForm.data.tuition_types)
+            },
+            onSuccess: () => {
+                toast({ title: "Success", description: "Tuition types updated successfully!" });
+            },
+        });
+    };
+
+    const handleServingCategoriesSubmit = (e) => {
+        e.preventDefault();
+        servingCategoriesForm.post(route('admin.frontend-settings.update'), {
+            data: {
+                serving_categories: JSON.stringify(servingCategoriesForm.data.serving_categories)
+            },
+            onSuccess: () => {
+                toast({ title: "Success", description: "Serving categories updated successfully!" });
+            },
+        });
+    };
+
+    const handleHowItWorksSubmit = (e) => {
+        e.preventDefault();
+        howItWorksForm.post(route('admin.frontend-settings.update'), {
+            data: {
+                how_it_works: JSON.stringify(howItWorksForm.data.how_it_works)
+            },
+            onSuccess: () => {
+                toast({ title: "Success", description: "How It Works section updated successfully!" });
+            },
+        });
+    };
+
+    const handleFooterSubmit = (e) => {
+        e.preventDefault();
+        footerForm.post(route('admin.frontend-settings.update'), {
+            onSuccess: () => {
+                toast({ title: "Success", description: "Footer information updated successfully!" });
+            },
         });
     };
 
     const clearHeroPreview = () => {
         setHeroPreview(null);
-        setData('hero_image', null);
+        imagesForm.setData('hero_image', null);
     };
 
     const clearPromoPreview = () => {
         setPromoPreview(null);
-        setData('promo_banner_image', null);
+        imagesForm.setData('promo_banner_image', null);
     };
+
+    const openSubjectDialog = (subject = null) => {
+        if (subject) {
+            setEditingSubject(subject);
+            subjectForm.setData({
+                name: subject.name,
+                category_id: subject.category_id.toString(),
+            });
+        } else {
+            setEditingSubject(null);
+            subjectForm.reset();
+        }
+        setShowSubjectDialog(true);
+    };
+
+    const closeSubjectDialog = () => {
+        setShowSubjectDialog(false);
+        setEditingSubject(null);
+        subjectForm.reset();
+    };
+
+    const handleSubjectSubmit = (e) => {
+        e.preventDefault();
+        if (editingSubject) {
+            subjectForm.put(route('admin.subjects.update', editingSubject.id), {
+                onSuccess: () => {
+                    closeSubjectDialog();
+                    toast({
+                        title: "Success",
+                        description: "Subject updated successfully!",
+                    });
+                },
+            });
+        } else {
+            subjectForm.post(route('admin.subjects.store'), {
+                onSuccess: () => {
+                    closeSubjectDialog();
+                    toast({
+                        title: "Success",
+                        description: "Subject created successfully!",
+                    });
+                },
+            });
+        }
+    };
+
+    const handleDeleteSubject = (subject) => {
+        if (confirm(`Are you sure you want to delete "${subject.name}"?`)) {
+            subjectForm.delete(route('admin.subjects.delete', subject.id), {
+                onSuccess: () => {
+                    toast({
+                        title: "Success",
+                        description: "Subject deleted successfully!",
+                    });
+                },
+            });
+        }
+    };
+
+    const toggleCategory = (categoryId) => {
+        setExpandedCategories(prev => ({
+            ...prev,
+            [categoryId]: !prev[categoryId]
+        }));
+    };
+
+    const filteredSubjects = subjects.filter(subject => {
+        const matchesCategory = categoryFilter === 'all' || subject.category_id.toString() === categoryFilter;
+        const matchesSearch = subject.name.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
+
+    const groupedSubjects = filteredSubjects.reduce((acc, subject) => {
+        const categoryName = subject.category?.name || 'Uncategorized';
+        if (!acc[categoryName]) {
+            acc[categoryName] = [];
+        }
+        acc[categoryName].push(subject);
+        return acc;
+    }, {});
 
     return (
         <AuthenticatedLayout
@@ -109,7 +330,205 @@ export default function FrontendSettings({ auth, settings }) {
                     </div>
                 </Alert>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Tabs for different sections */}
+                <Tabs defaultValue="hero-banner" className="space-y-6">
+                    <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-slate-100 p-1 rounded-xl shadow-sm">
+                        <TabsTrigger 
+                            value="hero-banner" 
+                            className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg font-semibold text-sm flex items-center gap-2"
+                        >
+                            <Settings className="h-4 w-4" />
+                            Business Settings
+                        </TabsTrigger>
+                        <TabsTrigger 
+                            value="subjects" 
+                            className="data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg font-semibold text-sm flex items-center gap-2"
+                        >
+                            <BookOpen className="h-4 w-4" />
+                            Subject Management
+                        </TabsTrigger>
+                    </TabsList>
+
+                    {/* Tab 1: Business Settings */}
+                    <TabsContent value="hero-banner" className="space-y-8">
+                    {/* Hero Section Text */}
+                    <form onSubmit={handleHeroSubmit}>
+                    <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
+                        <CardHeader className="bg-gradient-to-br from-indigo-600 via-indigo-500 to-indigo-600/90 text-white pb-8">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                                    <Settings className="h-6 w-6" />
+                                </div>
+                                <CardTitle className="text-2xl font-bold">Hero Section Content</CardTitle>
+                            </div>
+                            <CardDescription className="text-white/90 text-base">
+                                Customize the main headline and subtitle on your homepage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6 bg-gradient-to-b from-indigo-50/30 to-white">
+                            <div className="space-y-4">
+                                <div>
+                                    <Label htmlFor="hero_title" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Hero Title
+                                    </Label>
+                                    <Textarea
+                                        id="hero_title"
+                                        value={heroForm.data.hero_title}
+                                        onChange={(e) => heroForm.setData('hero_title', e.target.value)}
+                                        placeholder="Find the Perfect Tutor"
+                                        rows={2}
+                                        className="border-slate-300 focus:border-indigo-500 focus:ring-indigo-500 text-lg font-semibold"
+                                    />
+                                    {heroForm.errors.hero_title && (
+                                        <p className="text-xs text-red-600 mt-1">{heroForm.errors.hero_title}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <Label htmlFor="hero_subtitle" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Hero Subtitle
+                                    </Label>
+                                    <Textarea
+                                        id="hero_subtitle"
+                                        value={heroForm.data.hero_subtitle}
+                                        onChange={(e) => heroForm.setData('hero_subtitle', e.target.value)}
+                                        placeholder="Connect with Bangladesh's finest verified tutors..."
+                                        rows={3}
+                                        className="border-slate-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                    />
+                                    {heroForm.errors.hero_subtitle && (
+                                        <p className="text-xs text-red-600 mt-1">{heroForm.errors.hero_subtitle}</p>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            {/* Save Button for Hero Section */}
+                            <div className="flex justify-end pt-4 border-t">
+                                <Button
+                                    type="submit"
+                                    disabled={heroForm.processing}
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 shadow-lg"
+                                >
+                                    {heroForm.processing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="mr-2 h-4 w-4" />
+                                            Save Hero Section
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    </form>
+
+                    {/* Stats Section */}
+                    <form onSubmit={handleStatsSubmit}>
+                    <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
+                        <CardHeader className="bg-gradient-to-br from-teal-600 via-teal-500 to-teal-600/90 text-white pb-8">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                                    <Settings className="h-6 w-6" />
+                                </div>
+                                <CardTitle className="text-2xl font-bold">Statistics Section</CardTitle>
+                            </div>
+                            <CardDescription className="text-white/90 text-base">
+                                Update the numbers displayed in the stats section
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6 bg-gradient-to-b from-teal-50/30 to-white">
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <Label htmlFor="stats_tutors" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Expert Tutors
+                                    </Label>
+                                    <Input
+                                        id="stats_tutors"
+                                        value={statsForm.data.stats_tutors}
+                                        onChange={(e) => statsForm.setData('stats_tutors', e.target.value)}
+                                        placeholder="850"
+                                        className="border-slate-300 focus:border-teal-500 focus:ring-teal-500"
+                                    />
+                                    {statsForm.errors.stats_tutors && (
+                                        <p className="text-xs text-red-600 mt-1">{statsForm.errors.stats_tutors}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <Label htmlFor="stats_jobs" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Active Jobs
+                                    </Label>
+                                    <Input
+                                        id="stats_jobs"
+                                        value={statsForm.data.stats_jobs}
+                                        onChange={(e) => statsForm.setData('stats_jobs', e.target.value)}
+                                        placeholder="1250"
+                                        className="border-slate-300 focus:border-teal-500 focus:ring-teal-500"
+                                    />
+                                    {statsForm.errors.stats_jobs && (
+                                        <p className="text-xs text-red-600 mt-1">{statsForm.errors.stats_jobs}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <Label htmlFor="stats_success_rate" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Success Rate (%)
+                                    </Label>
+                                    <Input
+                                        id="stats_success_rate"
+                                        value={statsForm.data.stats_success_rate}
+                                        onChange={(e) => statsForm.setData('stats_success_rate', e.target.value)}
+                                        placeholder="95"
+                                        className="border-slate-300 focus:border-teal-500 focus:ring-teal-500"
+                                    />
+                                    {statsForm.errors.stats_success_rate && (
+                                        <p className="text-xs text-red-600 mt-1">{statsForm.errors.stats_success_rate}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <Label htmlFor="stats_students" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Happy Students
+                                    </Label>
+                                    <Input
+                                        id="stats_students"
+                                        value={statsForm.data.stats_students}
+                                        onChange={(e) => statsForm.setData('stats_students', e.target.value)}
+                                        placeholder="2400"
+                                        className="border-slate-300 focus:border-teal-500 focus:ring-teal-500"
+                                    />
+                                    {statsForm.errors.stats_students && (
+                                        <p className="text-xs text-red-600 mt-1">{statsForm.errors.stats_students}</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Save Button for Stats Section */}
+                            <div className="flex justify-end pt-4 border-t">
+                                <Button
+                                    type="submit"
+                                    disabled={statsForm.processing}
+                                    className="bg-teal-600 hover:bg-teal-700 text-white px-8 shadow-lg"
+                                >
+                                    {statsForm.processing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="mr-2 h-4 w-4" />
+                                            Save Statistics
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    </form>
+
+                    {/* Images Section */}
+                    <form onSubmit={handleImagesSubmit}>
                     <div className="grid lg:grid-cols-2 gap-8">
                         {/* Hero Section Image Card */}
                         <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden group">
@@ -208,10 +627,10 @@ export default function FrontendSettings({ auth, settings }) {
                                             />
                                         </label>
                                     )}
-                                    {errors.hero_image && (
+                                    {imagesForm.errors.hero_image && (
                                         <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                                             <AlertCircle className="h-4 w-4 text-red-600" />
-                                            <p className="text-sm text-red-600 font-medium">{errors.hero_image}</p>
+                                            <p className="text-sm text-red-600 font-medium">{imagesForm.errors.hero_image}</p>
                                         </div>
                                     )}
                                 </div>
@@ -240,17 +659,17 @@ export default function FrontendSettings({ auth, settings }) {
                                                 Display Promotional Banner
                                             </Label>
                                             <p className="text-sm text-slate-600">
-                                                Toggle to {data.show_promo_banner ? 'hide' : 'show'} the promotional modal on website visits
+                                                Toggle to {imagesForm.data.show_promo_banner ? 'hide' : 'show'} the promotional modal on website visits
                                             </p>
                                         </div>
                                         <Switch
                                             id="show-promo"
-                                            checked={data.show_promo_banner}
-                                            onCheckedChange={(checked) => setData('show_promo_banner', checked)}
+                                            checked={imagesForm.data.show_promo_banner}
+                                            onCheckedChange={(checked) => imagesForm.setData('show_promo_banner', checked)}
                                             className="data-[state=checked]:bg-[#0675C1]"
                                         />
                                     </div>
-                                    {data.show_promo_banner && (
+                                    {imagesForm.data.show_promo_banner && (
                                         <div className="mt-3 pt-3 border-t border-slate-200">
                                             <div className="flex items-center gap-2 text-xs text-green-600 font-medium">
                                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -348,10 +767,10 @@ export default function FrontendSettings({ auth, settings }) {
                                             />
                                         </label>
                                     )}
-                                    {errors.promo_banner_image && (
+                                    {imagesForm.errors.promo_banner_image && (
                                         <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                                             <AlertCircle className="h-4 w-4 text-red-600" />
-                                            <p className="text-sm text-red-600 font-medium">{errors.promo_banner_image}</p>
+                                            <p className="text-sm text-red-600 font-medium">{imagesForm.errors.promo_banner_image}</p>
                                         </div>
                                     )}
                                 </div>
@@ -359,7 +778,378 @@ export default function FrontendSettings({ auth, settings }) {
                         </Card>
                     </div>
 
+                    {/* Save Button for Images Section */}
+                    <div className="flex justify-end">
+                        <Button
+                            type="submit"
+                            disabled={imagesForm.processing}
+                            className="bg-[#0675C1] hover:bg-[#0675C1]/90 text-white px-8 shadow-lg"
+                        >
+                            {imagesForm.processing ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <Check className="mr-2 h-4 w-4" />
+                                    Save Images
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                    </form>
+
+                    {/* Tuition Types Section */}
+                    <form onSubmit={handleTuitionTypesSubmit}>
+                    <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
+                        <CardHeader className="bg-gradient-to-br from-orange-600 via-orange-500 to-orange-600/90 text-white pb-8">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                                    <Package className="h-6 w-6" />
+                                </div>
+                                <CardTitle className="text-2xl font-bold">Tuition Types Section</CardTitle>
+                            </div>
+                            <CardDescription className="text-white/90 text-base">
+                                Manage the tuition types displayed on your homepage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6 bg-gradient-to-b from-orange-50/30 to-white">
+                            <div className="space-y-4">
+                                {tuitionTypesForm.data.tuition_types.map((type, index) => (
+                                    <Card key={index} className="border-2 border-orange-200">
+                                        <CardContent className="p-4 space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <Label className="text-sm font-bold text-slate-900">Type #{index + 1}</Label>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        const newTypes = [...tuitionTypesForm.data.tuition_types];
+                                                        newTypes.splice(index, 1);
+                                                        tuitionTypesForm.setData('tuition_types', newTypes);
+                                                    }}
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm font-semibold text-slate-700">Title</Label>
+                                                <Input
+                                                    value={type.title}
+                                                    onChange={(e) => {
+                                                        const newTypes = [...tuitionTypesForm.data.tuition_types];
+                                                        newTypes[index].title = e.target.value;
+                                                        tuitionTypesForm.setData('tuition_types', newTypes);
+                                                    }}
+                                                    placeholder="e.g., Home Tutoring"
+                                                    className="mt-1"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm font-semibold text-slate-700">Description</Label>
+                                                <Textarea
+                                                    value={type.description}
+                                                    onChange={(e) => {
+                                                        const newTypes = [...tuitionTypesForm.data.tuition_types];
+                                                        newTypes[index].description = e.target.value;
+                                                        tuitionTypesForm.setData('tuition_types', newTypes);
+                                                    }}
+                                                    placeholder="Describe this tuition type..."
+                                                    rows={2}
+                                                    className="mt-1"
+                                                />
+                                            </div>
+                                            <div>
+                                                <Label className="text-sm font-semibold text-slate-700">Icon Name</Label>
+                                                <Input
+                                                    value={type.icon}
+                                                    onChange={(e) => {
+                                                        const newTypes = [...tuitionTypesForm.data.tuition_types];
+                                                        newTypes[index].icon = e.target.value;
+                                                        tuitionTypesForm.setData('tuition_types', newTypes);
+                                                    }}
+                                                    placeholder="e.g., Home, Package, Monitor"
+                                                    className="mt-1"
+                                                />
+                                                <p className="text-xs text-slate-500 mt-1">Use: Home, UsersRound, Monitor, Package, BookOpen, etc.</p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                                
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => {
+                                        tuitionTypesForm.setData('tuition_types', [
+                                            ...tuitionTypesForm.data.tuition_types,
+                                            { title: '', description: '', icon: 'Package' }
+                                        ]);
+                                    }}
+                                    className="w-full border-2 border-dashed border-orange-300 hover:border-orange-500 hover:bg-orange-50"
+                                >
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add Tuition Type
+                                </Button>
+                            </div>
+
+                            {/* Save Button for Tuition Types */}
+                            <div className="flex justify-end pt-4 border-t">
+                                <Button
+                                    type="submit"
+                                    disabled={tuitionTypesForm.processing}
+                                    className="bg-orange-600 hover:bg-orange-700 text-white px-8 shadow-lg"
+                                >
+                                    {tuitionTypesForm.processing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="mr-2 h-4 w-4" />
+                                            Save Tuition Types
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    </form>
+
+                    {/* Serving Categories Section */}
+                    <form onSubmit={handleServingCategoriesSubmit}>
+                    <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
+                        <CardHeader className="bg-gradient-to-br from-pink-600 via-pink-500 to-pink-600/90 text-white pb-8">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                                    <GraduationCap className="h-6 w-6" />
+                                </div>
+                                <CardTitle className="text-2xl font-bold">Serving Categories Section</CardTitle>
+                            </div>
+                            <CardDescription className="text-white/90 text-base">
+                                Manage the education categories shown on your homepage
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6 bg-gradient-to-b from-pink-50/30 to-white">
+                            <div className="space-y-4">
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    {servingCategoriesForm.data.serving_categories.map((category, index) => (
+                                        <Card key={index} className="border-2 border-pink-200">
+                                            <CardContent className="p-4 space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <Label className="text-sm font-bold text-slate-900">Category #{index + 1}</Label>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            const newCategories = [...servingCategoriesForm.data.serving_categories];
+                                                            newCategories.splice(index, 1);
+                                                            servingCategoriesForm.setData('serving_categories', newCategories);
+                                                        }}
+                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                                <div>
+                                                    <Label className="text-sm font-semibold text-slate-700">Name</Label>
+                                                    <Input
+                                                        value={category.name}
+                                                        onChange={(e) => {
+                                                            const newCategories = [...servingCategoriesForm.data.serving_categories];
+                                                            newCategories[index].name = e.target.value;
+                                                            servingCategoriesForm.setData('serving_categories', newCategories);
+                                                        }}
+                                                        placeholder="e.g., Bangla Medium"
+                                                        className="mt-1"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <Label className="text-sm font-semibold text-slate-700">Icon Name</Label>
+                                                    <Input
+                                                        value={category.icon}
+                                                        onChange={(e) => {
+                                                            const newCategories = [...servingCategoriesForm.data.serving_categories];
+                                                            newCategories[index].icon = e.target.value;
+                                                            servingCategoriesForm.setData('serving_categories', newCategories);
+                                                        }}
+                                                        placeholder="e.g., Languages, BookOpen"
+                                                        className="mt-1"
+                                                    />
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                                
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => {
+                                        servingCategoriesForm.setData('serving_categories', [
+                                            ...servingCategoriesForm.data.serving_categories,
+                                            { name: '', icon: 'BookOpen' }
+                                        ]);
+                                    }}
+                                    className="w-full border-2 border-dashed border-pink-300 hover:border-pink-500 hover:bg-pink-50"
+                                >
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add Category
+                                </Button>
+                            </div>
+
+                            {/* Save Button for Serving Categories */}
+                            <div className="flex justify-end pt-4 border-t">
+                                <Button
+                                    type="submit"
+                                    disabled={servingCategoriesForm.processing}
+                                    className="bg-pink-600 hover:bg-pink-700 text-white px-8 shadow-lg"
+                                >
+                                    {servingCategoriesForm.processing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="mr-2 h-4 w-4" />
+                                            Save Categories
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    </form>
+
+                    {/* How It Works Section */}
+                    <form onSubmit={handleHowItWorksSubmit}>
+                    <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
+                        <CardHeader className="bg-gradient-to-br from-cyan-600 via-cyan-500 to-cyan-600/90 text-white pb-8">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                                    <Target className="h-6 w-6" />
+                                </div>
+                                <CardTitle className="text-2xl font-bold">How It Works Section</CardTitle>
+                            </div>
+                            <CardDescription className="text-white/90 text-base">
+                                Manage the steps shown in the How It Works section (Recommended: 4 steps)
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6 bg-gradient-to-b from-cyan-50/30 to-white">
+                            <div className="space-y-4">
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    {howItWorksForm.data.how_it_works.map((step, index) => (
+                                        <Card key={index} className="border-2 border-cyan-200">
+                                            <CardContent className="p-4 space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <Label className="text-sm font-bold text-slate-900">Step #{index + 1}</Label>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            const newSteps = [...howItWorksForm.data.how_it_works];
+                                                            newSteps.splice(index, 1);
+                                                            howItWorksForm.setData('how_it_works', newSteps);
+                                                        }}
+                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                                <div>
+                                                    <Label className="text-sm font-semibold text-slate-700">Title</Label>
+                                                    <Input
+                                                        value={step.title}
+                                                        onChange={(e) => {
+                                                            const newSteps = [...howItWorksForm.data.how_it_works];
+                                                            newSteps[index].title = e.target.value;
+                                                            howItWorksForm.setData('how_it_works', newSteps);
+                                                        }}
+                                                        placeholder="e.g., Search"
+                                                        className="mt-1"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <Label className="text-sm font-semibold text-slate-700">Description</Label>
+                                                    <Textarea
+                                                        value={step.description}
+                                                        onChange={(e) => {
+                                                            const newSteps = [...howItWorksForm.data.how_it_works];
+                                                            newSteps[index].description = e.target.value;
+                                                            howItWorksForm.setData('how_it_works', newSteps);
+                                                        }}
+                                                        placeholder="Describe this step..."
+                                                        rows={2}
+                                                        className="mt-1"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <Label className="text-sm font-semibold text-slate-700">Icon Name</Label>
+                                                    <Input
+                                                        value={step.icon}
+                                                        onChange={(e) => {
+                                                            const newSteps = [...howItWorksForm.data.how_it_works];
+                                                            newSteps[index].icon = e.target.value;
+                                                            howItWorksForm.setData('how_it_works', newSteps);
+                                                        }}
+                                                        placeholder="e.g., Target, Users, CheckCircle"
+                                                        className="mt-1"
+                                                    />
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                </div>
+                                
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => {
+                                        howItWorksForm.setData('how_it_works', [
+                                            ...howItWorksForm.data.how_it_works,
+                                            { title: '', description: '', icon: 'Target' }
+                                        ]);
+                                    }}
+                                    className="w-full border-2 border-dashed border-cyan-300 hover:border-cyan-500 hover:bg-cyan-50"
+                                >
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add Step
+                                </Button>
+                            </div>
+
+                            {/* Save Button for How It Works */}
+                            <div className="flex justify-end pt-4 border-t">
+                                <Button
+                                    type="submit"
+                                    disabled={howItWorksForm.processing}
+                                    className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 shadow-lg"
+                                >
+                                    {howItWorksForm.processing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="mr-2 h-4 w-4" />
+                                            Save Steps
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    </form>
+
                     {/* Footer Information Section */}
+                    <form onSubmit={handleFooterSubmit}>
                     <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden">
                         <CardHeader className="bg-gradient-to-br from-emerald-600 via-emerald-500 to-emerald-600/90 text-white pb-8">
                             <div className="flex items-center gap-3 mb-2">
@@ -387,13 +1177,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         </Label>
                                         <Input
                                             id="contact_title"
-                                            value={data.contact_title}
-                                            onChange={(e) => setData('contact_title', e.target.value)}
+                                            value={footerForm.data.contact_title}
+                                            onChange={(e) => footerForm.setData('contact_title', e.target.value)}
                                             placeholder="Contact Us"
                                             className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
                                         />
-                                        {errors.contact_title && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.contact_title}</p>
+                                        {footerForm.errors.contact_title && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.contact_title}</p>
                                         )}
                                     </div>
 
@@ -403,13 +1193,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         </Label>
                                         <Input
                                             id="contact_phone"
-                                            value={data.contact_phone}
-                                            onChange={(e) => setData('contact_phone', e.target.value)}
+                                            value={footerForm.data.contact_phone}
+                                            onChange={(e) => footerForm.setData('contact_phone', e.target.value)}
                                             placeholder="+880 1818 420012"
                                             className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
                                         />
-                                        {errors.contact_phone && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.contact_phone}</p>
+                                        {footerForm.errors.contact_phone && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.contact_phone}</p>
                                         )}
                                     </div>
                                 </div>
@@ -420,14 +1210,14 @@ export default function FrontendSettings({ auth, settings }) {
                                     </Label>
                                     <Textarea
                                         id="contact_description"
-                                        value={data.contact_description}
-                                        onChange={(e) => setData('contact_description', e.target.value)}
+                                        value={footerForm.data.contact_description}
+                                        onChange={(e) => footerForm.setData('contact_description', e.target.value)}
                                         placeholder="Have any questions or need a tutor? We are here to help!"
                                         rows={2}
                                         className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
                                     />
-                                    {errors.contact_description && (
-                                        <p className="text-xs text-red-600 mt-1">{errors.contact_description}</p>
+                                    {footerForm.errors.contact_description && (
+                                        <p className="text-xs text-red-600 mt-1">{footerForm.errors.contact_description}</p>
                                     )}
                                 </div>
 
@@ -439,13 +1229,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         <Input
                                             id="contact_email"
                                             type="email"
-                                            value={data.contact_email}
-                                            onChange={(e) => setData('contact_email', e.target.value)}
+                                            value={footerForm.data.contact_email}
+                                            onChange={(e) => footerForm.setData('contact_email', e.target.value)}
                                             placeholder="tuitionbarta@gmail.com"
                                             className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
                                         />
-                                        {errors.contact_email && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.contact_email}</p>
+                                        {footerForm.errors.contact_email && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.contact_email}</p>
                                         )}
                                     </div>
 
@@ -455,13 +1245,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         </Label>
                                         <Input
                                             id="contact_hours"
-                                            value={data.contact_hours}
-                                            onChange={(e) => setData('contact_hours', e.target.value)}
+                                            value={footerForm.data.contact_hours}
+                                            onChange={(e) => footerForm.setData('contact_hours', e.target.value)}
                                             placeholder="Sat - Thu, 10:00 AM - 8:00 PM"
                                             className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
                                         />
-                                        {errors.contact_hours && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.contact_hours}</p>
+                                        {footerForm.errors.contact_hours && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.contact_hours}</p>
                                         )}
                                     </div>
                                 </div>
@@ -472,14 +1262,14 @@ export default function FrontendSettings({ auth, settings }) {
                                     </Label>
                                     <Textarea
                                         id="contact_address"
-                                        value={data.contact_address}
-                                        onChange={(e) => setData('contact_address', e.target.value)}
+                                        value={footerForm.data.contact_address}
+                                        onChange={(e) => footerForm.setData('contact_address', e.target.value)}
                                         placeholder="Salmanpur, Kotbari, Comilla, Bangladesh"
                                         rows={2}
                                         className="border-slate-300 focus:border-emerald-500 focus:ring-emerald-500"
                                     />
-                                    {errors.contact_address && (
-                                        <p className="text-xs text-red-600 mt-1">{errors.contact_address}</p>
+                                    {footerForm.errors.contact_address && (
+                                        <p className="text-xs text-red-600 mt-1">{footerForm.errors.contact_address}</p>
                                     )}
                                 </div>
                             </div>
@@ -502,13 +1292,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         <Input
                                             id="social_facebook"
                                             type="url"
-                                            value={data.social_facebook}
-                                            onChange={(e) => setData('social_facebook', e.target.value)}
+                                            value={footerForm.data.social_facebook}
+                                            onChange={(e) => footerForm.setData('social_facebook', e.target.value)}
                                             placeholder="https://facebook.com/tuitionbarta"
                                             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                                         />
-                                        {errors.social_facebook && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.social_facebook}</p>
+                                        {footerForm.errors.social_facebook && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.social_facebook}</p>
                                         )}
                                     </div>
 
@@ -520,13 +1310,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         <Input
                                             id="social_linkedin"
                                             type="url"
-                                            value={data.social_linkedin}
-                                            onChange={(e) => setData('social_linkedin', e.target.value)}
+                                            value={footerForm.data.social_linkedin}
+                                            onChange={(e) => footerForm.setData('social_linkedin', e.target.value)}
                                             placeholder="https://linkedin.com/company/tuitionbarta"
                                             className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
                                         />
-                                        {errors.social_linkedin && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.social_linkedin}</p>
+                                        {footerForm.errors.social_linkedin && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.social_linkedin}</p>
                                         )}
                                     </div>
 
@@ -538,13 +1328,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         <Input
                                             id="social_twitter"
                                             type="url"
-                                            value={data.social_twitter}
-                                            onChange={(e) => setData('social_twitter', e.target.value)}
+                                            value={footerForm.data.social_twitter}
+                                            onChange={(e) => footerForm.setData('social_twitter', e.target.value)}
                                             placeholder="https://x.com/tuitionbarta"
                                             className="border-slate-300 focus:border-sky-500 focus:ring-sky-500"
                                         />
-                                        {errors.social_twitter && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.social_twitter}</p>
+                                        {footerForm.errors.social_twitter && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.social_twitter}</p>
                                         )}
                                     </div>
 
@@ -556,13 +1346,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         <Input
                                             id="social_youtube"
                                             type="url"
-                                            value={data.social_youtube}
-                                            onChange={(e) => setData('social_youtube', e.target.value)}
+                                            value={footerForm.data.social_youtube}
+                                            onChange={(e) => footerForm.setData('social_youtube', e.target.value)}
                                             placeholder="https://youtube.com/@tuitionbarta"
                                             className="border-slate-300 focus:border-red-500 focus:ring-red-500"
                                         />
-                                        {errors.social_youtube && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.social_youtube}</p>
+                                        {footerForm.errors.social_youtube && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.social_youtube}</p>
                                         )}
                                     </div>
 
@@ -574,13 +1364,13 @@ export default function FrontendSettings({ auth, settings }) {
                                         <Input
                                             id="social_whatsapp"
                                             type="url"
-                                            value={data.social_whatsapp}
-                                            onChange={(e) => setData('social_whatsapp', e.target.value)}
+                                            value={footerForm.data.social_whatsapp}
+                                            onChange={(e) => footerForm.setData('social_whatsapp', e.target.value)}
                                             placeholder="https://wa.me/8801818420012"
                                             className="border-slate-300 focus:border-green-500 focus:ring-green-500"
                                         />
-                                        {errors.social_whatsapp && (
-                                            <p className="text-xs text-red-600 mt-1">{errors.social_whatsapp}</p>
+                                        {footerForm.errors.social_whatsapp && (
+                                            <p className="text-xs text-red-600 mt-1">{footerForm.errors.social_whatsapp}</p>
                                         )}
                                     </div>
                                 </div>
@@ -588,39 +1378,287 @@ export default function FrontendSettings({ auth, settings }) {
                         </CardContent>
                     </Card>
 
-                    {/* Submit Button */}
-                    <div className="flex items-center justify-between p-6 bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-xl shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <AlertCircle className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-semibold text-slate-900">Ready to apply changes?</p>
-                                <p className="text-xs text-slate-600">Your updates will be visible immediately on the frontend</p>
-                            </div>
-                        </div>
+                    {/* Save Button for Footer Section */}
+                    <div className="flex justify-end">
                         <Button
                             type="submit"
-                            disabled={processing}
-                            size="lg"
-                            className="bg-[#0675C1] hover:bg-[#0675C1]/90 text-white px-10 rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={footerForm.processing}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 shadow-lg"
                         >
-                            {processing ? (
+                            {footerForm.processing ? (
                                 <>
-                                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                                    Saving Changes...
+                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                    Saving...
                                 </>
                             ) : (
                                 <>
-                                    <Check className="mr-2 h-5 w-5" />
-                                    Save All Changes
+                                    <Check className="mr-2 h-4 w-4" />
+                                    Save Footer Info
                                 </>
                             )}
                         </Button>
                     </div>
-                </form>
-            </div>
-        </AuthenticatedLayout>
-    );
-}
+                    </form>
+                    </TabsContent>
 
+                    {/* Tab 2: Subject Management */}
+                    <TabsContent value="subjects" className="space-y-6">
+                {/* Subject Management Section */}
+                <div>
+                    <div className="mb-6">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
+                                <BookOpen className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black text-gray-900">Subject Management</h2>
+                                <p className="text-sm text-slate-600">Manage all tutoring subjects organized by categories</p>
+                            </div>
+                        </div>
+                    </div>
+
+                <Card className="border-purple-200 shadow-lg hover:shadow-xl transition-all">
+                            <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100/50 border-b border-purple-200">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
+                                            <BookOpen className="h-5 w-5 text-white" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-xl font-bold text-gray-900">Subject Database</CardTitle>
+                                            <CardDescription className="text-slate-600">Add, edit, or remove tutoring subjects</CardDescription>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        onClick={() => openSubjectDialog()}
+                                        className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-md"
+                                    >
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Add Subject
+                                    </Button>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-6">
+                                {/* Filters */}
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-sm font-semibold">Filter by Category</Label>
+                                        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                            <SelectTrigger className="border-purple-200 focus:ring-purple-500">
+                                                <SelectValue placeholder="All Categories" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Categories</SelectItem>
+                                                {categories.map((category) => (
+                                                    <SelectItem key={category.id} value={category.id.toString()}>
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-sm font-semibold">Search Subjects</Label>
+                                        <div className="relative">
+                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                            <Input
+                                                placeholder="Search by name..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="pl-10 border-purple-200 focus:ring-purple-500"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Stats Bar */}
+                                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100/50 border border-purple-200 rounded-lg">
+                                    <div className="flex items-center gap-2">
+                                        <BookOpen className="h-5 w-5 text-purple-600" />
+                                        <p className="text-sm font-medium text-purple-900">
+                                            Showing {filteredSubjects.length} of {subjects.length} subjects
+                                        </p>
+                                    </div>
+                                    {categoryFilter !== 'all' && (
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() => setCategoryFilter('all')}
+                                            className="text-purple-600 hover:text-purple-700 hover:bg-purple-100"
+                                        >
+                                            <X className="h-3 w-3 mr-1" />
+                                            Clear Filter
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {/* Subjects List */}
+                                <div className="space-y-6">
+                                    {Object.keys(groupedSubjects).length === 0 ? (
+                                        <div className="text-center py-12 text-gray-500">
+                                            <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                                            <p className="font-medium">No subjects found</p>
+                                            <p className="text-sm mt-1">Try adjusting your filters or add a new subject</p>
+                                        </div>
+                                    ) : (
+                                        Object.entries(groupedSubjects).map(([categoryName, categorySubjects]) => {
+                                            const categoryId = categorySubjects[0]?.category.id;
+                                            const isExpanded = expandedCategories[categoryId];
+                                            
+                                            return (
+                                                <div key={categoryName} className="space-y-3">
+                                                    <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-purple-50 to-purple-100/30 rounded-lg border-l-4 border-purple-500">
+                                                        <div className="flex items-center gap-2">
+                                                            <h3 className="text-lg font-bold text-gray-900">{categoryName}</h3>
+                                                            <Badge variant="secondary" className="bg-purple-100 text-purple-700 font-semibold">
+                                                                {categorySubjects.length}
+                                                            </Badge>
+                                                        </div>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => toggleCategory(categoryId)}
+                                                            className="hover:bg-purple-100 text-purple-600 font-medium"
+                                                        >
+                                                            {isExpanded ? 'Hide' : 'View All'}
+                                                        </Button>
+                                                    </div>
+                                                    {isExpanded && (
+                                                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                                            {categorySubjects.map((subject) => (
+                                                                <Card key={subject.id} className="group hover:shadow-md transition-all hover:border-purple-300">
+                                                                    <CardContent className="p-4">
+                                                                        <div className="flex items-start justify-between gap-2">
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <p className="font-semibold text-gray-900 truncate">{subject.name}</p>
+                                                                                <p className="text-xs text-purple-600 mt-0.5">{subject.category?.name}</p>
+                                                                            </div>
+                                                                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                                <Button
+                                                                                    type="button"
+                                                                                    size="sm"
+                                                                                    variant="ghost"
+                                                                                    onClick={() => openSubjectDialog(subject)}
+                                                                                    className="h-8 w-8 p-0 hover:bg-purple-50 hover:text-purple-700"
+                                                                                >
+                                                                                    <Edit className="h-3.5 w-3.5" />
+                                                                                </Button>
+                                                                                <Button
+                                                                                    type="button"
+                                                                                    size="sm"
+                                                                                    variant="ghost"
+                                                                                    onClick={() => handleDeleteSubject(subject)}
+                                                                                    className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                                                >
+                                                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </CardContent>
+                                                                </Card>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                </div>
+                    </TabsContent>
+                </Tabs>
+
+                {/* Subject Dialog */}
+                <Dialog open={showSubjectDialog} onOpenChange={setShowSubjectDialog}>
+                    <DialogContent className="sm:max-w-[500px]">
+                        <DialogHeader className="pb-4 border-b border-purple-100">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                                    <BookOpen className="h-5 w-5 text-white" />
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-xl font-bold">{editingSubject ? 'Edit Subject' : 'Add New Subject'}</DialogTitle>
+                                    <DialogDescription className="text-sm">
+                                        {editingSubject ? 'Update the subject details below' : 'Enter the details for the new subject'}
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
+                        <form onSubmit={handleSubjectSubmit} className="space-y-5 pt-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="subject-name" className="text-sm font-semibold">Subject Name *</Label>
+                                <Input
+                                    id="subject-name"
+                                    value={subjectForm.data.name}
+                                    onChange={(e) => subjectForm.setData('name', e.target.value)}
+                                    placeholder="e.g., Mathematics, Physics"
+                                    className="border-purple-200 focus:ring-purple-500"
+                                    required
+                                />
+                                {subjectForm.errors.name && (
+                                    <p className="text-sm text-red-600">{subjectForm.errors.name}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="subject-category" className="text-sm font-semibold">Category *</Label>
+                                <Select
+                                    value={subjectForm.data.category_id}
+                                    onValueChange={(value) => subjectForm.setData('category_id', value)}
+                                    required
+                                >
+                                    <SelectTrigger id="subject-category" className="border-purple-200 focus:ring-purple-500">
+                                        <SelectValue placeholder="Select a category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categories.map((category) => (
+                                            <SelectItem key={category.id} value={category.id.toString()}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {subjectForm.errors.category_id && (
+                                    <p className="text-sm text-red-600">{subjectForm.errors.category_id}</p>
+                                )}
+                            </div>
+
+                            <DialogFooter className="gap-2 pt-4 border-t border-purple-100">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={closeSubjectDialog}
+                                    disabled={subjectForm.processing}
+                                    className="border-purple-200 hover:bg-purple-50"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={subjectForm.processing}
+                                    className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 shadow-md"
+                                >
+                                    {subjectForm.processing ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check className="mr-2 h-4 w-4" />
+                                            {editingSubject ? 'Update Subject' : 'Create Subject'}
+                                        </>
+                                    )}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </AuthenticatedLayout>    );
+}

@@ -29,6 +29,10 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor, jobReq
         description: jobRequest?.description || '',
         subjects: jobRequest?.subjects || tutorSubjects,
         education_level: jobRequest?.education_level || '',
+        class_level: jobRequest?.class_level || '',
+        education_medium: jobRequest?.education_medium || '',
+        tuition_type: jobRequest?.tuition_type || 'home',
+        tutor_gender_preference: jobRequest?.tutor_gender_preference || 'any',
         monthly_salary: jobRequest?.monthly_salary || tutor?.monthly_salary || '',
         available_days: jobRequest?.available_days || [],
         division: jobRequest?.division || tutor?.division || '',
@@ -135,6 +139,57 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor, jobReq
                                     {errors.subjects && <p className="text-sm text-red-600">{errors.subjects}</p>}
                                 </div>
 
+                                {/* Class Level and Medium */}
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="class_level">Class Level</Label>
+                                        <Select
+                                            value={data.class_level}
+                                            onValueChange={(value) => setData('class_level', value)}
+                                        >
+                                            <SelectTrigger className={errors.class_level && 'border-red-500'}>
+                                                <SelectValue placeholder="Select class" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Class 1">Class 1</SelectItem>
+                                                <SelectItem value="Class 2">Class 2</SelectItem>
+                                                <SelectItem value="Class 3">Class 3</SelectItem>
+                                                <SelectItem value="Class 4">Class 4</SelectItem>
+                                                <SelectItem value="Class 5">Class 5</SelectItem>
+                                                <SelectItem value="Class 6">Class 6</SelectItem>
+                                                <SelectItem value="Class 7">Class 7</SelectItem>
+                                                <SelectItem value="Class 8">Class 8</SelectItem>
+                                                <SelectItem value="Class 9">Class 9</SelectItem>
+                                                <SelectItem value="Class 10">Class 10</SelectItem>
+                                                <SelectItem value="O-Level">O-Level</SelectItem>
+                                                <SelectItem value="A-Level">A-Level</SelectItem>
+                                                <SelectItem value="HSC">HSC</SelectItem>
+                                                <SelectItem value="Undergraduate">Undergraduate</SelectItem>
+                                                <SelectItem value="Graduate">Graduate</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.class_level && <p className="text-sm text-red-600">{errors.class_level}</p>}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="education_medium">Education Medium</Label>
+                                        <Select
+                                            value={data.education_medium}
+                                            onValueChange={(value) => setData('education_medium', value)}
+                                        >
+                                            <SelectTrigger className={errors.education_medium && 'border-red-500'}>
+                                                <SelectValue placeholder="Select medium" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="bangla">Bangla Medium</SelectItem>
+                                                <SelectItem value="english">English Medium</SelectItem>
+                                                <SelectItem value="english_version">English Version</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.education_medium && <p className="text-sm text-red-600">{errors.education_medium}</p>}
+                                    </div>
+                                </div>
+
                                 {/* Education Level */}
                                 <div className="space-y-2">
                                     <Label htmlFor="education_level">Education Level</Label>
@@ -237,6 +292,45 @@ export default function CreateJobRequest({ auth, subjects, levels, tutor, jobReq
                                         </SelectContent>
                                     </Select>
                                     {errors.teaching_mode && <p className="text-sm text-red-600">{errors.teaching_mode}</p>}
+                                </div>
+
+                                {/* Tuition Type and Preferred Tutor Gender */}
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="tuition_type">Tuition Type</Label>
+                                        <Select
+                                            value={data.tuition_type}
+                                            onValueChange={(value) => setData('tuition_type', value)}
+                                        >
+                                            <SelectTrigger className={errors.tuition_type && 'border-red-500'}>
+                                                <SelectValue placeholder="Select type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="home">Home Tuition</SelectItem>
+                                                <SelectItem value="online">Online Tuition</SelectItem>
+                                                <SelectItem value="group">Group Tuition</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.tuition_type && <p className="text-sm text-red-600">{errors.tuition_type}</p>}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="tutor_gender_preference">Preferred Tutor Gender</Label>
+                                        <Select
+                                            value={data.tutor_gender_preference}
+                                            onValueChange={(value) => setData('tutor_gender_preference', value)}
+                                        >
+                                            <SelectTrigger className={errors.tutor_gender_preference && 'border-red-500'}>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="any">Any</SelectItem>
+                                                <SelectItem value="male">Male</SelectItem>
+                                                <SelectItem value="female">Female</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.tutor_gender_preference && <p className="text-sm text-red-600">{errors.tutor_gender_preference}</p>}
+                                    </div>
                                 </div>
 
                                 {/* Submit Button */}

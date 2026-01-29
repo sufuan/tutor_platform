@@ -176,6 +176,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Frontend Settings Management
         Route::get('/frontend-settings', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'index'])->name('frontend-settings.index');
         Route::post('/frontend-settings', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'update'])->name('frontend-settings.update');
+        
+        // Subject Management
+        Route::post('/subjects', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'storeSubject'])->name('subjects.store');
+        Route::put('/subjects/{subject}', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'updateSubject'])->name('subjects.update');
+        Route::delete('/subjects/{subject}', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'deleteSubject'])->name('subjects.delete');
 
         // Admin Logout
         Route::post('/logout', [\App\Http\Controllers\Admin\AdminAuthController::class, 'destroy'])->name('logout');

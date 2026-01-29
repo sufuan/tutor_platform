@@ -57,10 +57,10 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
 
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-12">
-                            <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center">
-                                <GraduationCap className="h-7 w-7 text-slate-900" />
+                            <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center p-1.5">
+                                <img src="/assets/logo.png" alt="Tuition Barta" className="h-full w-full object-contain" />
                             </div>
-                            <span className="text-white text-2xl font-bold">TutorHub</span>
+                            <span className="text-white text-2xl font-bold">Tuition Barta</span>
                         </div>
 
                         <div className="space-y-6">
@@ -91,7 +91,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                     </div>
 
                     <div className="relative z-10 text-slate-400 text-sm">
-                        © 2026 TutorHub. All rights reserved.
+                        © 2026 Tuition Barta. All rights reserved.
                     </div>
                 </div>
 
@@ -100,8 +100,8 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                     <div className="w-full max-w-md">
                         {/* Mobile Logo */}
                         <div className="lg:hidden flex justify-center mb-8">
-                            <div className="h-14 w-14 bg-slate-900 rounded-xl flex items-center justify-center">
-                                <GraduationCap className="h-8 w-8 text-white" />
+                            <div className="h-14 w-14 bg-slate-900 rounded-xl flex items-center justify-center p-2">
+                                <img src="/assets/logo.png" alt="Tuition Barta" className="h-full w-full object-contain" />
                             </div>
                         </div>
 

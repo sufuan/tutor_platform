@@ -74,6 +74,15 @@ class PublicController extends Controller
             'heroImage' => SiteSetting::get('hero_image', 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop'),
             'promoBannerImage' => SiteSetting::get('promo_banner_image', ''),
             'showPromoBanner' => SiteSetting::get('show_promo_banner', '0') === '1',
+            'heroTitle' => SiteSetting::get('hero_title', 'Find the Perfect Tutor'),
+            'heroSubtitle' => SiteSetting::get('hero_subtitle', 'Connect with Bangladesh\'s finest verified tutors. Transform your learning journey with personalized education tailored to your needs.'),
+            'statsTutors' => SiteSetting::get('stats_tutors', '850'),
+            'statsJobs' => SiteSetting::get('stats_jobs', '1250'),
+            'statsSuccessRate' => SiteSetting::get('stats_success_rate', '95'),
+            'statsStudents' => SiteSetting::get('stats_students', '2400'),
+            'tuitionTypes' => json_decode(SiteSetting::get('tuition_types', '[]'), true),
+            'servingCategories' => json_decode(SiteSetting::get('serving_categories', '[]'), true),
+            'howItWorks' => json_decode(SiteSetting::get('how_it_works', '[]'), true),
             'footerSettings' => [
                 'contact_title' => SiteSetting::get('contact_title', 'Contact Us'),
                 'contact_description' => SiteSetting::get('contact_description', 'Have any questions or need a tutor? We are here to help!'),
@@ -97,17 +106,24 @@ class PublicController extends Controller
             $tutor = auth()->user()->tutor;
         }
 
+        // Convert subject name to ID if filtering by subject
+        $subjectId = null;
+        if ($request->subject) {
+            $subject = Subject::where('name', $request->subject)->first();
+            $subjectId = $subject ? $subject->id : null;
+        }
+
         // Get guardian job posts
         $guardianJobs = Job::with(['location', 'guardian'])
             ->where('approval_status', 'approved')
             ->where('status', 'open');
 
         if ($request->location) {
-            $guardianJobs->where('location_id', $request->location);
+            $guardianJobs->where('district', $request->location);
         }
 
-        if ($request->subject) {
-            $guardianJobs->whereJsonContains('subjects', $request->subject);
+        if ($subjectId) {
+            $guardianJobs->whereJsonContains('subjects', $subjectId);
         }
 
         if ($request->search) {
@@ -130,8 +146,12 @@ class PublicController extends Controller
             ->where('approval_status', 'approved')
             ->where('status', 'active');
 
-        if ($request->subject) {
-            $tutorJobs->whereJsonContains('subjects', $request->subject);
+        if ($request->location) {
+            $tutorJobs->where('district', $request->location);
+        }
+
+        if ($subjectId) {
+            $tutorJobs->whereJsonContains('subjects', $subjectId);
         }
 
         if ($request->search) {
@@ -160,9 +180,17 @@ class PublicController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
+        // Get unique districts from both job types
+        $districts = collect()
+            ->merge(Job::where('approval_status', 'approved')->where('status', 'open')->whereNotNull('district')->pluck('district'))
+            ->merge(TutorJobRequest::where('approval_status', 'approved')->where('status', 'active')->whereNotNull('district')->pluck('district'))
+            ->unique()
+            ->sort()
+            ->values();
+
         return Inertia::render('Public/Jobs', [
             'jobs' => $jobs,
-            'locations' => Location::orderBy('city')->get(),
+            'districts' => $districts,
             'subjects' => Subject::orderBy('name')->get(),
             'filters' => $request->only(['location', 'subject', 'search']),
         ]);

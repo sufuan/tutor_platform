@@ -47,12 +47,14 @@ export default function JobDetail({ auth, job }) {
             onSuccess: () => {
                 setShowApplyModal(false);
                 reset();
+                toast({
+                    title: "Application Submitted",
+                    description: "Your application has been successfully submitted.",
+                });
             },
             forceFormData: true,
         });
     };
-
-    const hasApplied = job.applications?.some(app => app.tutor_id === tutor?.id);
 
     return (
         <AuthenticatedLayout>
@@ -83,7 +85,7 @@ export default function JobDetail({ auth, job }) {
                                                 Posted on {new Date(job.created_at).toLocaleDateString()}
                                             </CardDescription>
                                         </div>
-                                        {hasApplied && (
+                                        {job.has_applied && (
                                             <Badge className="bg-green-100 text-green-800">
                                                 <CheckCircle2 className="h-3 w-3 mr-1" />
                                                 Applied
@@ -205,7 +207,7 @@ export default function JobDetail({ auth, job }) {
                                         </div>
                                     )}
 
-                                    {!hasApplied ? (
+                                    {!job.has_applied ? (
                                         <Button 
                                             className="w-full mt-4" 
                                             onClick={handleApply}

@@ -45,10 +45,10 @@ export default function Login({ status, canResetPassword }) {
                     <div className="relative z-10">
                         {/* Logo */}
                         <div className="flex items-center space-x-3 mb-16">
-                            <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center">
-                                <GraduationCap className="h-8 w-8 text-blue-600" />
+                            <div className="h-12 w-12 bg-white rounded-xl flex items-center justify-center p-1.5">
+                                <img src="/assets/logo.png" alt="Tuition Barta" className="h-full w-full object-contain" />
                             </div>
-                            <span className="text-3xl font-bold text-white">TutorHub</span>
+                            <span className="text-3xl font-bold text-white">Tuition Barta</span>
                         </div>
 
                         {/* Headline */}
@@ -105,10 +105,10 @@ export default function Login({ status, canResetPassword }) {
                         {/* Mobile Logo */}
                         <div className="lg:hidden flex justify-center">
                             <div className="flex items-center space-x-3">
-                                <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center">
-                                    <GraduationCap className="h-8 w-8 text-white" />
+                                <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center p-1.5">
+                                    <img src="/assets/logo.png" alt="Tuition Barta" className="h-full w-full object-contain" />
                                 </div>
-                                <span className="text-2xl font-bold text-gray-900">TutorHub</span>
+                                <span className="text-2xl font-bold text-gray-900">Tuition Barta</span>
                             </div>
                         </div>
 

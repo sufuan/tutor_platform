@@ -43,14 +43,58 @@ export default function Welcome({
     heroImage = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop',
     promoBannerImage = '',
     showPromoBanner = false,
+    heroTitle = 'Find the Perfect Tutor',
+    heroSubtitle = 'Connect with Bangladesh\'s finest verified tutors. Transform your learning journey with personalized education tailored to your needs.',
+    statsTutors = '850',
+    statsJobs = '1250',
+    statsSuccessRate = '95',
+    statsStudents = '2400',
+    tuitionTypes = [],
+    servingCategories = [],
+    howItWorks = [],
 }) {
 
     const displayStats = {
-        totalJobs: stats.totalJobs || 1250,
-        activeTutors: stats.activeTutors || 850,
-        successRate: stats.successRate || 95,
-        happyGuardians: stats.happyGuardians || 2400
+        totalJobs: statsJobs || stats.totalJobs || '1250',
+        activeTutors: statsTutors || stats.activeTutors || '850',
+        successRate: statsSuccessRate || stats.successRate || '95',
+        happyGuardians: statsStudents || stats.happyGuardians || '2400'
     };
+
+    const iconMap = {
+        Home, UsersRound, Monitor, Package, BookOpen, GraduationCap,
+        Languages, Baby, Palette, Target, Users, CheckCircle, Award, TrendingUp
+    };
+
+    const defaultTuitionTypes = [
+        { title: 'Home Tutoring', description: 'Home tutoring allows students to learn various subjects in their own home.', icon: 'Home' },
+        { title: 'Group Tutoring', description: 'Group tutoring allows students to learn together and solve problems at an affordable cost.', icon: 'UsersRound' },
+        { title: 'Online Tutoring', description: 'Hire the best tutors from anywhere and take online classes by using tools such as Google Meet, Zoom and more.', icon: 'Monitor' },
+        { title: 'Package Tutoring', description: 'Package tutoring helps students to complete their studies within a specific time frame.', icon: 'Package' },
+    ];
+
+    const defaultServingCategories = [
+        { name: 'Bangla Medium', icon: 'Languages' },
+        { name: 'English Version', icon: 'BookOpen' },
+        { name: 'English Medium', icon: 'GraduationCap' },
+        { name: 'Madrasa Medium', icon: 'BookOpen' },
+        { name: 'Quran and Islamic Studies', icon: 'BookOpen' },
+        { name: 'Admission Preparation', icon: 'Target' },
+        { name: 'Skill Development', icon: 'TrendingUp' },
+        { name: 'Pre-school Education', icon: 'Baby' },
+        { name: 'Arts and Crafts', icon: 'Palette' },
+    ];
+
+    const defaultHowItWorks = [
+        { title: 'Search', description: 'Browse verified tutors by subject & location', icon: 'Target' },
+        { title: 'Compare', description: 'Review profiles, ratings & experience', icon: 'Users' },
+        { title: 'Connect', description: 'Book trial session instantly', icon: 'CheckCircle' },
+        { title: 'Excel', description: 'Achieve your academic goals', icon: 'Award' },
+    ];
+
+    const displayTuitionTypes = tuitionTypes.length > 0 ? tuitionTypes : defaultTuitionTypes;
+    const displayServingCategories = servingCategories.length > 0 ? servingCategories : defaultServingCategories;
+    const displayHowItWorks = howItWorks.length > 0 ? howItWorks : defaultHowItWorks;
 
     const defaultCategories = [
         { name: 'Mathematics', icon: '📐', count: 145, color: 'from-blue-500 to-cyan-500' },
@@ -85,16 +129,12 @@ export default function Welcome({
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         {/* Left Content */}
                         <div className="space-y-8">
-                            <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-tight">
-                                Find the fuckings
-                                <span className="block text-[#0675C1]">
-                                    Perfect Tutor
-                                </span>
-                                for Your Success
+                            <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-tight whitespace-pre-line">
+                                {heroTitle}
                             </h1>
                             
                             <p className="text-xl text-slate-600 leading-relaxed">
-                                Connect with Bangladesh's finest verified tutors. Transform your learning journey with personalized education tailored to your needs.
+                                {heroSubtitle}
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -174,45 +214,20 @@ export default function Welcome({
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
-                            <div className="w-16 h-16 bg-[#0675C1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0675C1] transition-colors">
-                                <Home className="h-8 w-8 text-[#0675C1] group-hover:text-white transition-colors" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-3">Home Tutoring</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                Home tutoring allows students to learn various subjects in their own home.
-                            </p>
-                        </div>
-
-                        <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
-                            <div className="w-16 h-16 bg-[#0675C1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0675C1] transition-colors">
-                                <UsersRound className="h-8 w-8 text-[#0675C1] group-hover:text-white transition-colors" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-3">Group Tutoring</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                Group tutoring allows students to learn together and solve problems at an affordable cost.
-                            </p>
-                        </div>
-
-                        <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
-                            <div className="w-16 h-16 bg-[#0675C1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0675C1] transition-colors">
-                                <Monitor className="h-8 w-8 text-[#0675C1] group-hover:text-white transition-colors" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-3">Online Tutoring</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                Hire the best tutors from anywhere and take online classes by using tools such as Google Meet, Zoom and more.
-                            </p>
-                        </div>
-
-                        <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
-                            <div className="w-16 h-16 bg-[#0675C1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0675C1] transition-colors">
-                                <Package className="h-8 w-8 text-[#0675C1] group-hover:text-white transition-colors" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-slate-900 mb-3">Package Tutoring</h3>
-                            <p className="text-slate-600 leading-relaxed">
-                                Package tutoring helps students to complete their studies within a specific time frame.
-                            </p>
-                        </div>
+                        {displayTuitionTypes.map((type, index) => {
+                            const IconComponent = iconMap[type.icon] || Package;
+                            return (
+                                <div key={index} className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
+                                    <div className="w-16 h-16 bg-[#0675C1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0675C1] transition-colors">
+                                        <IconComponent className="h-8 w-8 text-[#0675C1] group-hover:text-white transition-colors" />
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-3">{type.title}</h3>
+                                    <p className="text-slate-600 leading-relaxed">
+                                        {type.description}
+                                    </p>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -230,30 +245,23 @@ export default function Welcome({
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-                        {[
-                            { name: 'Bangla Medium', icon: Languages },
-                            { name: 'English Version', icon: BookOpen },
-                            { name: 'English Medium', icon: GraduationCap },
-                            { name: 'Madrasa Medium', icon: BookOpen },
-                            { name: 'Quran and Islamic Studies', icon: BookOpen },
-                            { name: 'Admission Preparation', icon: Target },
-                            { name: 'Skill Development', icon: TrendingUp },
-                            { name: 'Pre-school Education', icon: Baby },
-                            { name: 'Arts and Crafts', icon: Palette },
-                        ].map((category, index) => (
-                            <Link 
-                                key={index} 
-                                href={`/jobs?category=${category.name.toLowerCase()}`}
-                            >
-                                <div className="group relative overflow-hidden rounded-2xl bg-slate-50 p-6 hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:scale-105">
-                                    <div className="absolute inset-0 bg-[#0675C1] opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                                    <div className="relative flex items-center gap-4">
-                                        <category.icon className="h-8 w-8 text-[#0675C1]" />
-                                        <h3 className="font-bold text-slate-900">{category.name}</h3>
+                        {displayServingCategories.map((category, index) => {
+                            const IconComponent = iconMap[category.icon] || BookOpen;
+                            return (
+                                <Link 
+                                    key={index} 
+                                    href={`/jobs?category=${category.name.toLowerCase()}`}
+                                >
+                                    <div className="group relative overflow-hidden rounded-2xl bg-slate-50 p-6 hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:scale-105">
+                                        <div className="absolute inset-0 bg-[#0675C1] opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                                        <div className="relative flex items-center gap-4">
+                                            <IconComponent className="h-8 w-8 text-[#0675C1]" />
+                                            <h3 className="font-bold text-slate-900">{category.name}</h3>
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             </section>
@@ -271,28 +279,26 @@ export default function Welcome({
                     </div>
 
                     <div className="grid md:grid-cols-4 gap-8">
-                        {[
-                            { icon: Target, title: 'Search', desc: 'Browse verified tutors by subject & location' },
-                            { icon: Users, title: 'Compare', desc: 'Review profiles, ratings & experience' },
-                            { icon: CheckCircle, title: 'Connect', desc: 'Book trial session instantly' },
-                            { icon: Award, title: 'Excel', desc: 'Achieve your academic goals' },
-                        ].map((step, idx) => (
-                            <div key={idx} className="relative">
-                                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 border border-white/20">
-                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6">
-                                        <step.icon className="h-8 w-8 text-[#0675C1]" />
+                        {displayHowItWorks.map((step, idx) => {
+                            const IconComponent = iconMap[step.icon] || Target;
+                            return (
+                                <div key={idx} className="relative">
+                                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 border border-white/20">
+                                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6">
+                                            <IconComponent className="h-8 w-8 text-[#0675C1]" />
+                                        </div>
+                                        <div className="text-lg font-bold mb-2">
+                                            <span className="text-3xl font-black text-white/40 mr-2">{idx + 1}</span>
+                                            {step.title}
+                                        </div>
+                                        <p className="text-white/80">{step.description}</p>
                                     </div>
-                                    <div className="text-lg font-bold mb-2">
-                                        <span className="text-3xl font-black text-white/40 mr-2">{idx + 1}</span>
-                                        {step.title}
-                                    </div>
-                                    <p className="text-white/80">{step.desc}</p>
+                                    {idx < displayHowItWorks.length - 1 && (
+                                        <ChevronRight className="hidden md:block absolute top-1/2 -right-4 -translate-y-1/2 h-8 w-8 text-white/40" />
+                                    )}
                                 </div>
-                                {idx < 3 && (
-                                    <ChevronRight className="hidden md:block absolute top-1/2 -right-4 -translate-y-1/2 h-8 w-8 text-white/40" />
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </section>

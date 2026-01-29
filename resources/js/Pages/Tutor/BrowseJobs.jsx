@@ -10,8 +10,7 @@ import { Textarea } from '@/Components/ui/textarea';
 import { Label } from '@/Components/ui/label';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import { useToast } from "@/hooks/use-toast";
-import LocationDropdown from '@/Components/LocationDropdown';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
     Briefcase, 
     MapPin, 
@@ -24,18 +23,47 @@ import {
     Send,
     AlertCircle,
     FileText,
-    ExternalLink
+    ExternalLink,
+    X
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
-export default function BrowseJobs({ auth, jobs, locations, subjects, verificationStatus, tutorCv }) {
-    const [search, setSearch] = useState('');
-    const [divisionFilter, setDivisionFilter] = useState('');
-    const [districtFilter, setDistrictFilter] = useState('');
-    const [subjectFilter, setSubjectFilter] = useState('all');
+export default function BrowseJobs({ auth, jobs, districts, subjects, verificationStatus, tutorCv, filters }) {
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
+    const [selectedLocation, setSelectedLocation] = useState(filters.location || '');
+    const [selectedSubject, setSelectedSubject] = useState(filters.subject || '');
     const [showApplyModal, setShowApplyModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const { toast } = useToast();
+
+    // Debounce search to avoid too many requests
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            applyFilters();
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchTerm, selectedLocation, selectedSubject]);
+
+    const applyFilters = () => {
+        const params = {};
+        if (searchTerm) params.search = searchTerm;
+        if (selectedLocation && selectedLocation !== 'all') params.location = selectedLocation;
+        if (selectedSubject && selectedSubject !== 'all') params.subject = selectedSubject;
+
+        router.get(route('tutor.jobs.browse'), params, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setSelectedLocation('');
+        setSelectedSubject('');
+    };
+
+    const hasActiveFilters = searchTerm || (selectedLocation && selectedLocation !== 'all') || (selectedSubject && selectedSubject !== 'all');
 
     const { data, setData, post, processing, reset, errors } = useForm({
         cover_letter: '',
@@ -66,16 +94,6 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
             forceFormData: true,
         });
     };
-
-    const filteredJobs = jobs.filter(job => {
-        const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase()) ||
-                            job.description.toLowerCase().includes(search.toLowerCase());
-        const matchesDivision = !divisionFilter || job.division === divisionFilter;
-        const matchesDistrict = !districtFilter || job.district === districtFilter;
-        const matchesSubject = subjectFilter === 'all' || 
-                              (job.subjects && job.subjects.includes(subjectFilter));
-        return matchesSearch && matchesDivision && matchesDistrict && matchesSubject;
-    });
 
     const JobCard = ({ job }) => (
         <Card className="hover:shadow-lg transition-shadow">
@@ -202,26 +220,33 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
                                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                     <Input
                                         placeholder="Search jobs by title or description..."
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-9"
                                     />
                                 </div>
                                 <div className="grid md:grid-cols-2 gap-4">
-                                    <LocationDropdown
-                                        divisionValue={divisionFilter}
-                                        districtValue={districtFilter}
-                                        onDivisionChange={setDivisionFilter}
-                                        onDistrictChange={setDistrictFilter}
-                                        divisionLabel="Filter by Division"
-                                        districtLabel="Filter by District"
-                                        showLabels={true}
-                                    />
+                                    <div className="space-y-2">
+                                        <Label>District</Label>
+                                        <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="All Districts" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">All Districts</SelectItem>
+                                                {districts.map((district) => (
+                                                    <SelectItem key={district} value={district}>
+                                                        {district}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
                                     <div className="space-y-2">
                                         <Label>Subject</Label>
-                                        <Select value={subjectFilter} onValueChange={setSubjectFilter}>
+                                        <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                                             <SelectTrigger>
-                                                <SelectValue />
+                                                <SelectValue placeholder="All Subjects" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="all">All Subjects</SelectItem>
@@ -234,6 +259,14 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
                                         </Select>
                                     </div>
                                 </div>
+                                {hasActiveFilters && (
+                                    <div className="flex justify-end">
+                                        <Button onClick={clearFilters} variant="outline" size="sm">
+                                            <X className="h-4 w-4 mr-1" />
+                                            Clear Filters
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -241,12 +274,12 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
                     {/* Results Count */}
                     <div className="mb-4">
                         <p className="text-sm text-gray-600">
-                            Showing {filteredJobs.length} {filteredJobs.length === 1 ? 'job' : 'jobs'}
+                            Showing {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'}
                         </p>
                     </div>
 
                     {/* Jobs Grid */}
-                    {filteredJobs.length === 0 ? (
+                    {jobs.length === 0 ? (
                         <Card>
                             <CardContent className="pt-6 text-center py-12">
                                 <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -258,7 +291,7 @@ export default function BrowseJobs({ auth, jobs, locations, subjects, verificati
                         </Card>
                     ) : (
                         <div className="grid gap-4 md:grid-cols-2">
-                            {filteredJobs.map(job => (
+                            {jobs.map(job => (
                                 <JobCard key={job.id} job={job} />
                             ))}
                         </div>

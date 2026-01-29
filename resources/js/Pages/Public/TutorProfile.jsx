@@ -22,7 +22,7 @@ export default function TutorProfile({ tutor, subjectNames = [] }) {
                         <div className="flex items-center justify-between">
                             <Link href="/" className="flex items-center gap-2">
                                 <GraduationCap className="h-8 w-8 text-slate-900" />
-                                <span className="text-xl font-bold text-slate-900">TutorHub</span>
+                                <span className="text-xl font-bold text-slate-900">Tuition Barta</span>
                             </Link>
                             <div className="flex gap-3">
                                 <Button variant="outline" asChild>

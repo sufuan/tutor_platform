@@ -53,7 +53,7 @@ export default function AdminLogin({ status }) {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="admin@tutorhub.com"
+                                    placeholder="admin@Tuition Barta.com"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     className="h-12 bg-slate-900/50 border-slate-600 text-white placeholder:text-gray-500"
