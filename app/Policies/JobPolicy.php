@@ -21,7 +21,8 @@ class JobPolicy
             return false;
         }
 
-        return $job->guardian_id === $user->guardian->id;
+        // Use loose comparison to handle type differences (string vs int)
+        return $job->guardian_id == $user->guardian->id;
     }
 
     /**
@@ -38,7 +39,8 @@ class JobPolicy
             return false;
         }
 
-        return $job->guardian_id === $user->guardian->id;
+        // Use loose comparison to handle type differences (string vs int)
+        return $job->guardian_id == $user->guardian->id;
     }
 
     /**
@@ -55,7 +57,8 @@ class JobPolicy
             return false;
         }
 
-        return $job->guardian_id === $user->guardian->id;
+        // Use loose comparison to handle type differences (string vs int)
+        return $job->guardian_id == $user->guardian->id;
     }
 
     /**
@@ -72,6 +75,7 @@ class JobPolicy
             return false;
         }
 
-        return $job->guardian_id === $user->guardian->id;
+        // Use loose comparison to handle type differences (string vs int)
+        return $job->guardian_id == $user->guardian->id;
     }
 }

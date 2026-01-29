@@ -214,8 +214,8 @@ class GuardianController extends Controller
                 ->with('error', 'Guardian profile not found. Please contact support.');
         }
 
-        // Check if this job belongs to the guardian
-        if ($job->guardian_id !== $guardian->id) {
+        // Check if this job belongs to the guardian (use loose comparison to handle type differences)
+        if ($job->guardian_id != $guardian->id) {
             \Log::warning('Unauthorized job access attempt', [
                 'user_id' => auth()->id(),
                 'guardian_id' => $guardian->id,

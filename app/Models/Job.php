@@ -19,6 +19,10 @@ class Job extends Model
     ];
 
     protected $casts = [
+        'guardian_id' => 'integer',
+        'student_id' => 'integer',
+        'location_id' => 'integer',
+        'approved_by' => 'integer',
         'subjects' => 'array',
         'approved_at' => 'datetime',
         'filled_at' => 'datetime',
