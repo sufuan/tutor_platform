@@ -378,15 +378,38 @@ class AdminController extends Controller
             'status' => 'required|in:pending,shortlisted,accepted,rejected',
         ]);
 
-        $application->update([
-            'status' => $request->status,
-            'status_updated_at' => now(),
-        ]);
+        DB::beginTransaction();
+        try {
+            // Update application status
+            $application->update([
+                'status' => $request->status,
+                'status_updated_at' => now(),
+            ]);
 
-        // Clear any cache and force refresh
-        $application->refresh();
+            // If application is accepted, update job status and reject other applications
+            if ($request->status === 'accepted') {
+                // Update job status to filled
+                $application->job->update([
+                    'status' => 'filled',
+                    'filled_at' => now(),
+                ]);
 
-        return back()->with('success', 'Application status updated successfully.');
+                // Reject all other applications for this job
+                Application::where('job_id', $application->job_id)
+                    ->where('id', '!=', $application->id)
+                    ->update([
+                        'status' => 'rejected',
+                        'status_updated_at' => now(),
+                    ]);
+            }
+
+            DB::commit();
+
+            return back()->with('success', 'Application status updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to update application status. Please try again.');
+        }
     }
 
     public function allJobs()
