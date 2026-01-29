@@ -12,7 +12,16 @@ class JobPolicy
      */
     public function view(User $user, Job $job): bool
     {
-        return $user->role === 'guardian' && $job->guardian_id === $user->guardian->id;
+        if ($user->role !== 'guardian') {
+            return false;
+        }
+
+        // Ensure guardian relationship exists
+        if (!$user->guardian) {
+            return false;
+        }
+
+        return $job->guardian_id === $user->guardian->id;
     }
 
     /**
@@ -20,7 +29,16 @@ class JobPolicy
      */
     public function update(User $user, Job $job): bool
     {
-        return $user->role === 'guardian' && $job->guardian_id === $user->guardian->id;
+        if ($user->role !== 'guardian') {
+            return false;
+        }
+
+        // Ensure guardian relationship exists
+        if (!$user->guardian) {
+            return false;
+        }
+
+        return $job->guardian_id === $user->guardian->id;
     }
 
     /**
@@ -28,7 +46,16 @@ class JobPolicy
      */
     public function delete(User $user, Job $job): bool
     {
-        return $user->role === 'guardian' && $job->guardian_id === $user->guardian->id;
+        if ($user->role !== 'guardian') {
+            return false;
+        }
+
+        // Ensure guardian relationship exists
+        if (!$user->guardian) {
+            return false;
+        }
+
+        return $job->guardian_id === $user->guardian->id;
     }
 
     /**
@@ -36,6 +63,15 @@ class JobPolicy
      */
     public function manage(User $user, Job $job): bool
     {
-        return $user->role === 'guardian' && $job->guardian_id === $user->guardian->id;
+        if ($user->role !== 'guardian') {
+            return false;
+        }
+
+        // Ensure guardian relationship exists
+        if (!$user->guardian) {
+            return false;
+        }
+
+        return $job->guardian_id === $user->guardian->id;
     }
 }
