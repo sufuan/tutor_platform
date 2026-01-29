@@ -234,41 +234,93 @@ export default function Dashboard({
                             {recentJobs && recentJobs.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {recentJobs.map((job) => (
-                                        <Card key={job.id} className="border-2 border-gray-100 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
+                                        <Card key={job.id} className="hover:shadow-lg transition-shadow">
                                             <CardHeader>
-                                                <CardTitle className="text-lg flex items-start justify-between">
-                                                    <span className="text-gray-900">{job.title}</span>
-                                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                                        ${job.salary}/hr
-                                                    </Badge>
-                                                </CardTitle>
-                                                <CardDescription>
-                                                    <div className="flex items-center text-sm text-gray-600 mt-2">
-                                                        <MapPin className="h-4 w-4 mr-1" />
-                                                        {job.location?.city || job.location?.name || 'N/A'}
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex-1">
+                                                        <CardTitle className="text-xl mb-2">{job.title}</CardTitle>
+                                                        <CardDescription>
+                                                            Posted by {job.guardian?.first_name} {job.guardian?.last_name}
+                                                        </CardDescription>
                                                     </div>
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <div className="flex flex-wrap gap-2 mb-4">
-                                                    {Array.isArray(job.subject_names) && job.subject_names.slice(0, 3).map((subject, idx) => (
-                                                        <Badge key={idx} variant="secondary" className="bg-blue-100 text-blue-700">
-                                                            <BookOpen className="h-3 w-3 mr-1" />
-                                                            {subject}
-                                                        </Badge>
-                                                    ))}
-                                                    {Array.isArray(job.subject_names) && job.subject_names.length > 3 && (
-                                                        <Badge variant="secondary" className="bg-gray-100 text-gray-700">
-                                                            +{job.subject_names.length - 3} more
-                                                        </Badge>
+                                                    {job.has_applied && (
+                                                        <Badge variant="secondary">Applied</Badge>
                                                     )}
                                                 </div>
-                                                <Link href={route('tutor.jobs.show', job.id)}>
-                                                    <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700">
-                                                        <Send className="h-4 w-4 mr-2" />
-                                                        Apply Now
-                                                    </Button>
-                                                </Link>
+                                            </CardHeader>
+                                            <CardContent className="space-y-4">
+                                                <p className="text-sm text-gray-600 line-clamp-2">{job.description}</p>
+
+                                                <div className="grid grid-cols-2 gap-3 text-sm">
+                                                    <div className="flex items-center gap-2 text-gray-600">
+                                                        <MapPin className="h-4 w-4" />
+                                                        <span>
+                                                            {job.district && job.division
+                                                                ? `${job.district}, ${job.division}`
+                                                                : job.location?.city || 'Not specified'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-gray-600">
+                                                        <CurrencyBangladeshiIcon size={16} />
+                                                        <span className="font-semibold text-green-600">৳{parseInt(job.salary)}/month</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-gray-600">
+                                                        <Calendar className="h-4 w-4" />
+                                                        <span>{job.days_per_week} days/week</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-gray-600">
+                                                        <Clock className="h-4 w-4" />
+                                                        <span>{job.duration_per_session} mins</span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Posted Date */}
+                                                <div className="text-xs text-gray-500">
+                                                    Posted {new Date(job.created_at).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    })}
+                                                </div>
+
+                                                <div>
+                                                    <div className="text-xs text-gray-500 mb-2">Subjects Required:</div>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {Array.isArray(job.subject_names) && job.subject_names.slice(0, 4).map((subject, idx) => (
+                                                            <Badge key={idx} variant="secondary" className="text-xs">
+                                                                {subject}
+                                                            </Badge>
+                                                        ))}
+                                                        {Array.isArray(job.subject_names) && job.subject_names.length > 4 && (
+                                                            <Badge variant="secondary" className="text-xs">
+                                                                +{job.subject_names.length - 4} more
+                                                            </Badge>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex flex-wrap gap-2 items-center text-xs text-gray-500">
+                                                    <Badge variant="outline">{job.education_medium}</Badge>
+                                                    <Badge variant="outline">{job.tuition_type}</Badge>
+                                                    <Badge variant="outline">{job.class_level}</Badge>
+                                                </div>
+
+                                                <div className="flex gap-2 pt-2">
+                                                    <Link href={route('jobs.show', job.id)} className="flex-1">
+                                                        <Button variant="outline" size="sm" className="w-full">
+                                                            <Eye className="mr-2 h-4 w-4" />
+                                                            View Details
+                                                        </Button>
+                                                    </Link>
+                                                    {!job.has_applied && (
+                                                        <Link href={route('tutor.jobs.show', job.id)} className="flex-1">
+                                                            <Button size="sm" className="w-full">
+                                                                <Send className="mr-2 h-4 w-4" />
+                                                                Apply Now
+                                                            </Button>
+                                                        </Link>
+                                                    )}
+                                                </div>
                                             </CardContent>
                                         </Card>
                                     ))}

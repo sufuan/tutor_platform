@@ -88,7 +88,7 @@ export default function JobDetails({ job, auth }) {
                                             <CurrencyBangladeshiIcon size={20} className=" text-slate-500" />
                                             <div>
                                                 <p className="text-xs text-slate-500">Salary</p>
-                                                <p className="font-semibold text-green-600">{parseFloat(job.salary).toLocaleString()}/month</p>
+                                                <p className="font-semibold text-green-600">৳{parseInt(job.salary).toLocaleString()}/month</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">

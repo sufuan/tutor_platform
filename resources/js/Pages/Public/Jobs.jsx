@@ -218,9 +218,9 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                         <div className="flex items-center text-sm text-gray-600">
                                             <CurrencyBangladeshiIcon size={16} className=" mr-2 text-green-600" />
                                             <span className="font-semibold text-green-600">
-                                                {job.job_type === 'tutor' 
-                                                    ? `${job.monthly_salary}/month`
-                                                    : `${parseFloat(job.salary).toLocaleString()}/month`}
+                                                {job.job_type === 'tutor'
+                                                    ? `৳${parseInt(job.monthly_salary).toLocaleString()}/month`
+                                                    : `৳${parseInt(job.salary).toLocaleString()}/month`}
                                             </span>
                                         </div>
 

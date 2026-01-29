@@ -157,7 +157,7 @@ export default function AllJobs({ auth, jobs }) {
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-green-600">
-                                {jobs.reduce((sum, j) => sum + (j.pending_count + j.shortlisted_count + j.accepted_count), 0)}
+                                {jobs.reduce((sum, j) => sum + (parseInt(j.pending_count) || 0) + (parseInt(j.shortlisted_count) || 0) + (parseInt(j.accepted_count) || 0), 0)}
                             </div>
                         </CardContent>
                     </Card>
@@ -226,7 +226,7 @@ export default function AllJobs({ auth, jobs }) {
                                                 <TableCell>
                                                     <div className="flex items-center gap-1 text-green-600 font-semibold">
                                                         <CurrencyBangladeshiIcon size={16} />
-                                                        {job.salary}
+                                                        ৳{parseInt(job.salary)}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>

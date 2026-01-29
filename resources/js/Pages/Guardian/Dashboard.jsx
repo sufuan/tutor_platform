@@ -193,9 +193,9 @@ export default function Dashboard({
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className="flex items-center">
                                                             <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold mr-3">
-                                                                {application.tutor_name.charAt(0)}
+                                                                {application.tutor_name ? application.tutor_name.charAt(0) : 'T'}
                                                             </div>
-                                                            <span className="text-gray-900">{application.tutor_name}</span>
+                                                            <span className="text-gray-900">{application.tutor_name || 'Unknown Tutor'}</span>
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">

@@ -133,7 +133,7 @@ export default function JobApprovals({ auth, jobs, stats }) {
                     <div className="flex items-center gap-2 text-gray-600">
                         <CurrencyBangladeshiIcon size={16} className="" />
                         <span className="font-semibold text-green-600">
-                            {job.job_type === 'tutor' ? job.monthly_salary : job.salary}/month
+                            ৳{job.job_type === 'tutor' ? parseInt(job.monthly_salary) : parseInt(job.salary)}/month
                         </span>
                     </div>
                     {job.job_type === 'guardian' && job.days_per_week && (

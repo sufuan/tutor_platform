@@ -142,7 +142,7 @@ export default function MyJobRequests({ auth, jobRequests }) {
                                                         <CurrencyBangladeshiIcon size={16} className=" mr-1" />
                                                         Monthly Salary
                                                     </div>
-                                                    <div className="font-semibold">{request.monthly_salary}/mo</div>
+                                                    <div className="font-semibold">৳{parseInt(request.monthly_salary)}/mo</div>
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center text-sm text-gray-600 mb-1">

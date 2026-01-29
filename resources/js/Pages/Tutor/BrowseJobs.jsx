@@ -124,7 +124,7 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                         <CurrencyBangladeshiIcon size={16} className=" " />
-                        <span className="font-semibold text-green-600">{job.salary}/month</span>
+                        <span className="font-semibold text-green-600">৳{parseInt(job.salary)}/month</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="h-4 w-4" />

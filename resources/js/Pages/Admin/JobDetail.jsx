@@ -201,9 +201,9 @@ export default function JobDetail({ auth, job, jobType }) {
                                         <div>
                                             <p className="text-sm text-gray-500">Salary</p>
                                             <p className="font-semibold text-green-600">
-                                                {jobType === 'tutor' 
-                                                    ? `${job.monthly_salary}/month`
-                                                    : `৳${job.salary}/month`}
+                                                {jobType === 'tutor'
+                                                    ? `৳${parseInt(job.monthly_salary)}/month`
+                                                    : `৳${parseInt(job.salary)}/month`}
                                             </p>
                                         </div>
                                     </div>
