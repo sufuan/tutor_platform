@@ -528,15 +528,12 @@ class AdminController extends Controller
                 'filled_at' => null,
             ]);
 
-            // Reset all applications to pending
-            $job->applications()->update([
-                'status' => 'pending',
-                'status_updated_at' => now(),
-            ]);
+            // Delete all applications for this job
+            $job->applications()->delete();
 
             DB::commit();
 
-            return back()->with('success', 'Tutor unassigned successfully. Job is now open for applications.');
+            return back()->with('success', 'Tutor unassigned successfully. All applications have been removed and job is now open for new applications.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to unassign tutor: ' . $e->getMessage());
