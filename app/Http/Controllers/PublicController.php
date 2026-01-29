@@ -252,6 +252,19 @@ class PublicController extends Controller
         }
 
         $tutors = $query->latest()->paginate(12);
+        
+        // Transform tutors to include subject names
+        $tutors->getCollection()->transform(function ($tutor) {
+            // Convert subject IDs to names if they're numeric
+            if (is_array($tutor->subjects)) {
+                $subjectIds = array_filter($tutor->subjects, 'is_numeric');
+                if (!empty($subjectIds)) {
+                    $subjectNames = Subject::whereIn('id', $subjectIds)->pluck('name')->toArray();
+                    $tutor->subjects = $subjectNames;
+                }
+            }
+            return $tutor;
+        });
 
         return Inertia::render('Public/Tutors', [
             'tutors' => $tutors,

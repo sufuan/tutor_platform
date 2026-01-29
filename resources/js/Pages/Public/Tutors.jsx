@@ -34,7 +34,16 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
     };
 
     const getTutorInitials = (tutor) => {
-        return `${tutor.first_name?.[0] || ''}${tutor.last_name?.[0] || ''}`.toUpperCase();
+        if (tutor.first_name && tutor.last_name) {
+            return `${tutor.first_name[0]}${tutor.last_name[0]}`.toUpperCase();
+        }
+        if (tutor.user?.name) {
+            const nameParts = tutor.user.name.split(' ');
+            return nameParts.length > 1 
+                ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
+                : tutor.user.name.substring(0, 2).toUpperCase();
+        }
+        return 'T';
     };
 
     return (
@@ -131,7 +140,9 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
                                         
                                         <div className="flex items-center justify-center gap-2 mb-2">
                                             <CardTitle className="text-xl">
-                                                {tutor.first_name} {tutor.last_name}
+                                                {tutor.first_name && tutor.last_name 
+                                                    ? `${tutor.first_name} ${tutor.last_name}` 
+                                                    : tutor.user?.name || 'Tutor'}
                                             </CardTitle>
                                             {tutor.verification_status === 'verified' && (
                                                 <CheckCircle className="h-5 w-5 text-green-500" title="Verified Tutor" />
@@ -156,7 +167,7 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
                                     <CardContent className="flex-grow space-y-3">
                                         <div className="flex items-center text-sm text-gray-600">
                                             <MapPin className="h-4 w-4 mr-2 text-primary-blue" />
-                                            <span>{tutor.location?.city}</span>
+                                            <span>{tutor.location?.city || tutor.district || 'Location not specified'}</span>
                                         </div>
 
                                         {Array.isArray(tutor.subjects) && tutor.subjects.length > 0 && (
@@ -199,7 +210,7 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <CurrencyBangladeshiIcon size={16} className=" mr-2 text-green-600" />
                                                 <span className="font-semibold text-green-600">
-                                                    ${tutor.hourly_rate}/hour
+                                                    ৳{tutor.hourly_rate}/month
                                                 </span>
                                             </div>
                                         )}

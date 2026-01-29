@@ -183,28 +183,40 @@ export default function JobDetail({ auth, job }) {
                                     <CardTitle>Guardian Information</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
-                                            <User className="h-6 w-6 text-slate-600" />
+                                    {job.guardian === null ? (
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
+                                                <User className="h-6 w-6 text-slate-600" />
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">Admin</p>
+                                                <p className="text-sm text-slate-500">Admin</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="font-semibold">{job.guardian?.first_name} {job.guardian?.last_name}</p>
-                                            <p className="text-sm text-slate-500">Guardian</p>
-                                        </div>
-                                    </div>
-
-                                    {job.guardian?.phone && (
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <Phone className="h-4 w-4 text-slate-500" />
-                                            <span>{job.guardian.phone}</span>
-                                        </div>
-                                    )}
-
-                                    {job.guardian?.address && (
-                                        <div className="flex items-start gap-2 text-sm">
-                                            <MapPin className="h-4 w-4 text-slate-500 mt-0.5" />
-                                            <span>{job.guardian.address}</span>
-                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
+                                                    <User className="h-6 w-6 text-slate-600" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold">{job.guardian?.first_name} {job.guardian?.last_name}</p>
+                                                    <p className="text-sm text-slate-500">Guardian</p>
+                                                </div>
+                                            </div>
+                                            {job.guardian?.phone && (
+                                                <div className="flex items-center gap-2 text-sm">
+                                                    <Phone className="h-4 w-4 text-slate-500" />
+                                                    <span>{job.guardian.phone}</span>
+                                                </div>
+                                            )}
+                                            {job.guardian?.address && (
+                                                <div className="flex items-start gap-2 text-sm">
+                                                    <MapPin className="h-4 w-4 text-slate-500 mt-0.5" />
+                                                    <span>{job.guardian.address}</span>
+                                                </div>
+                                            )}
+                                        </>
                                     )}
 
                                     {!job.has_applied ? (

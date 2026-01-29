@@ -376,7 +376,14 @@ class TutorController extends Controller
             return redirect()->route('tutor.profile')
                 ->with('warning', 'Please complete at least 70% of your profile to view applications.');
         }
-        $applications = $tutor->applications()
+        
+        // Mark all unread application status updates as read
+        Application::where('tutor_id', $tutor->id)
+            ->where('status_read', false)
+            ->update(['status_read' => true]);
+        
+        // Force fresh query without caching
+        $applications = Application::where('tutor_id', $tutor->id)
             ->with(['job.guardian', 'job.location'])
             ->latest()
             ->get();

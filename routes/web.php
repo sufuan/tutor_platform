@@ -131,6 +131,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Job Approvals
         Route::get('/jobs/approvals', [AdminController::class, 'jobApprovals'])->name('jobs.approvals');
         
+        // All Jobs Management (Guardian Jobs, Tutor Job Requests, Admin Jobs)
+        Route::get('/all-jobs', [AdminController::class, 'allJobs'])->name('all-jobs.index');
+        Route::delete('/all-jobs/{type}/{id}', [AdminController::class, 'deleteJob'])->name('all-jobs.delete');
+        
         // Admin Post Job (must be before /jobs/{job} to avoid route conflict)
         Route::get('/jobs/create', [AdminController::class, 'jobsCreate'])->name('jobs.create');
         Route::post('/jobs', [AdminController::class, 'jobsStore'])->name('jobs.store');
@@ -140,6 +144,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/jobs/{job}/reject', [AdminController::class, 'rejectJob'])->name('jobs.reject');
         
         // Tutor Job Request Approval (unified with guardian jobs in JobApprovals page)
+        Route::get('/tutor-job-requests/{jobRequest}', [AdminController::class, 'viewTutorJobRequest'])->name('tutor-job-requests.view');
         Route::post('/tutor-job-requests/{jobRequest}/approve', [AdminController::class, 'approveTutorJobRequest'])->name('tutor-job-requests.approve');
         Route::post('/tutor-job-requests/{jobRequest}/reject', [AdminController::class, 'rejectTutorJobRequest'])->name('tutor-job-requests.reject');
 

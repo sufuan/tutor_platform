@@ -284,6 +284,16 @@ class AdminController extends Controller
         ]);
     }
 
+    public function viewTutorJobRequest(TutorJobRequest $jobRequest)
+    {
+        $jobRequest->load(['tutor.user']);
+        $jobRequest->append('subject_names');
+        
+        return Inertia::render('Admin/TutorJobDetail', [
+            'jobRequest' => $jobRequest,
+        ]);
+    }
+
     public function approveJob(Job $job)
     {
         $job->update([
@@ -370,9 +380,104 @@ class AdminController extends Controller
 
         $application->update([
             'status' => $request->status,
+            'status_updated_at' => now(),
         ]);
 
+        // Clear any cache and force refresh
+        $application->refresh();
+
         return back()->with('success', 'Application status updated successfully.');
+    }
+
+    public function allJobs()
+    {
+        // All Jobs (Guardian and Admin)
+        $allJobsFromJobsTable = Job::with(['guardian.user', 'location'])
+            ->withCount([
+                'applications as pending_count' => function ($query) {
+                    $query->where('status', 'pending');
+                },
+                'applications as shortlisted_count' => function ($query) {
+                    $query->where('status', 'shortlisted');
+                },
+                'applications as accepted_count' => function ($query) {
+                    $query->where('status', 'accepted');
+                }
+            ])
+            ->get()
+            ->map(function ($job) {
+                // Determine if job is posted by admin or guardian
+                $isAdminJob = is_null($job->guardian_id);
+                
+                return [
+                    'id' => $job->id,
+                    'type' => $isAdminJob ? 'admin' : 'guardian',
+                    'job_code' => $job->job_code,
+                    'title' => $job->title,
+                    'posted_by' => $isAdminJob ? 'Admin' : ($job->guardian ? $job->guardian->user->name : 'Unknown Guardian'),
+                    'posted_by_role' => $isAdminJob ? 'Admin' : 'Guardian',
+                    'location' => $job->location ? $job->location->name : 'N/A',
+                    'district' => $job->district ?? 'N/A',
+                    'division' => $job->division ?? 'N/A',
+                    'salary' => $job->salary,
+                    'status' => $job->status,
+                    'approval_status' => $job->approval_status,
+                    'pending_count' => $job->pending_count,
+                    'shortlisted_count' => $job->shortlisted_count,
+                    'accepted_count' => $job->accepted_count,
+                    'created_at' => $job->created_at,
+                ];
+            });
+
+        // Tutor Job Requests
+        $tutorJobs = TutorJobRequest::with(['tutor.user'])
+            ->get()
+            ->map(function ($job) {
+                return [
+                    'id' => $job->id,
+                    'type' => 'tutor',
+                    'job_code' => 'TJR-' . str_pad($job->id, 5, '0', STR_PAD_LEFT),
+                    'title' => $job->title,
+                    'posted_by' => $job->tutor ? $job->tutor->user->name : 'Unknown Tutor',
+                    'posted_by_role' => 'Tutor',
+                    'location' => 'N/A',
+                    'district' => $job->district ?? 'N/A',
+                    'division' => $job->division ?? 'N/A',
+                    'salary' => $job->monthly_salary ?? $job->hourly_rate ?? 0,
+                    'status' => $job->status,
+                    'approval_status' => $job->approval_status,
+                    'pending_count' => 0,
+                    'shortlisted_count' => 0,
+                    'accepted_count' => 0,
+                    'created_at' => $job->created_at,
+                ];
+            });
+
+        // Combine all jobs and sort by created_at
+        $allJobs = $allJobsFromJobsTable->concat($tutorJobs)->sortByDesc('created_at')->values();
+
+        return Inertia::render('Admin/AllJobs', [
+            'jobs' => $allJobs,
+        ]);
+    }
+
+    public function deleteJob($type, $id)
+    {
+        try {
+            if ($type === 'guardian' || $type === 'admin') {
+                $job = Job::findOrFail($id);
+                $job->delete();
+            } elseif ($type === 'tutor') {
+                $job = TutorJobRequest::findOrFail($id);
+                $job->delete();
+            } else {
+                return back()->with('error', 'Invalid job type.');
+            }
+
+            return back()->with('success', 'Job deleted successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete job: ' . $e->getMessage());
+        }
     }
 
     public function jobsCreate()
