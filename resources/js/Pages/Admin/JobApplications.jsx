@@ -85,7 +85,7 @@ export default function JobApplications({ auth, applications, stats }) {
                             <div className="space-y-2 text-sm">
                                 <div>
                                     <span className="text-gray-600">Name:</span>{' '}
-                                    <a 
+                                    <a
                                         href={route('admin.tutors.view', tutor?.id)}
                                         className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                                     >
@@ -132,7 +132,7 @@ export default function JobApplications({ auth, applications, stats }) {
                             <div className="space-y-2 text-sm">
                                 <div>
                                     <span className="text-gray-600">Title:</span>{' '}
-                                    <a 
+                                    <a
                                         href={route('admin.jobs.view', job?.id)}
                                         className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
                                     >
@@ -153,8 +153,8 @@ export default function JobApplications({ auth, applications, stats }) {
                                         {job?.preferred_location && job?.district
                                             ? `${job.preferred_location}, ${job.district}`
                                             : job?.district
-                                            ? job.district
-                                            : 'N/A'}
+                                                ? job.district
+                                                : 'N/A'}
                                     </span>
                                 </div>
                                 <div>
@@ -162,7 +162,7 @@ export default function JobApplications({ auth, applications, stats }) {
                                     {guardian ? (
                                         <span className="font-medium">
                                             Guardian:{' '}
-                                            <a 
+                                            <a
                                                 href={route('admin.guardians.view', guardian.id)}
                                                 className="text-blue-600 hover:text-blue-800 hover:underline"
                                             >
@@ -183,86 +183,6 @@ export default function JobApplications({ auth, applications, stats }) {
                         </div>
                     </div>
 
-                    {/* Cover Letter */}
-                    {application.cover_letter && (
-                        <div className="mt-4 pt-4 border-t">
-                            <h4 className="text-sm font-semibold mb-2">Cover Letter</h4>
-                            <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
-                                {application.cover_letter}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    {application.status === 'pending' && (
-                        <div className="mt-4 pt-4 border-t flex gap-2">
-                            <Button 
-                                size="sm" 
-                                variant="outline"
-                                className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                                onClick={() => handleStatusChange(application.id, 'shortlisted')}
-                                disabled={processingId === application.id}
-                            >
-                                <ThumbsUp className="h-4 w-4 mr-2" />
-                                Shortlist
-                            </Button>
-                            <Button 
-                                size="sm" 
-                                className="bg-green-600 hover:bg-green-700"
-                                onClick={() => handleStatusChange(application.id, 'accepted')}
-                                disabled={processingId === application.id}
-                            >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Accept
-                            </Button>
-                            <Button 
-                                size="sm" 
-                                variant="destructive"
-                                onClick={() => handleStatusChange(application.id, 'rejected')}
-                                disabled={processingId === application.id}
-                            >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Reject
-                            </Button>
-                        </div>
-                    )}
-                    {application.status === 'shortlisted' && (
-                        <div className="mt-4 pt-4 border-t flex gap-2">
-                            <Button 
-                                size="sm" 
-                                className="bg-green-600 hover:bg-green-700"
-                                onClick={() => handleStatusChange(application.id, 'accepted')}
-                                disabled={processingId === application.id}
-                            >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Accept
-                            </Button>
-                            <Button 
-                                size="sm" 
-                                variant="destructive"
-                                onClick={() => handleStatusChange(application.id, 'rejected')}
-                                disabled={processingId === application.id}
-                            >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Reject
-                            </Button>
-                        </div>
-                    )}
-
-                    {/* CV */}
-                    {application.cv_path && (
-                        <div className="mt-3">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => window.open(`/storage/${application.cv_path}`, '_blank')}
-                            >
-                                <FileText className="h-4 w-4 mr-2" />
-                                View CV
-                            </Button>
-                        </div>
-                    )}
-
                     {/* Guardian Recommendations */}
                     {application.guardian_recommendations && application.guardian_recommendations.length > 0 && (
                         <div className="mt-4 pt-4 border-t">
@@ -274,11 +194,10 @@ export default function JobApplications({ auth, applications, stats }) {
                                 {application.guardian_recommendations.map((rec, idx) => (
                                     <div
                                         key={idx}
-                                        className={`p-3 rounded-lg border ${
-                                            rec.recommendation_type === 'hire'
-                                                ? 'bg-green-50 border-green-200'
-                                                : 'bg-red-50 border-red-200'
-                                        }`}
+                                        className={`p-3 rounded-lg border ${rec.recommendation_type === 'hire'
+                                            ? 'bg-green-50 border-green-200'
+                                            : 'bg-red-50 border-red-200'
+                                            }`}
                                     >
                                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                                             {rec.recommendation_type === 'hire' ? (
@@ -310,6 +229,86 @@ export default function JobApplications({ auth, applications, stats }) {
                                     </div>
                                 ))}
                             </div>
+                        </div>
+                    )}
+
+                    {/* Cover Letter */}
+                    {application.cover_letter && (
+                        <div className="mt-4 pt-4 border-t">
+                            <h4 className="text-sm font-semibold mb-2">Cover Letter</h4>
+                            <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                                {application.cover_letter}
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    {application.status === 'pending' && (
+                        <div className="mt-4 pt-4 border-t flex gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                                onClick={() => handleStatusChange(application.id, 'shortlisted')}
+                                disabled={processingId === application.id}
+                            >
+                                <ThumbsUp className="h-4 w-4 mr-2" />
+                                Shortlist
+                            </Button>
+                            <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() => handleStatusChange(application.id, 'accepted')}
+                                disabled={processingId === application.id}
+                            >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Accept
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleStatusChange(application.id, 'rejected')}
+                                disabled={processingId === application.id}
+                            >
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Reject
+                            </Button>
+                        </div>
+                    )}
+                    {application.status === 'shortlisted' && (
+                        <div className="mt-4 pt-4 border-t flex gap-2">
+                            <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() => handleStatusChange(application.id, 'accepted')}
+                                disabled={processingId === application.id}
+                            >
+                                <CheckCircle className="h-4 w-4 mr-2" />
+                                Accept
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => handleStatusChange(application.id, 'rejected')}
+                                disabled={processingId === application.id}
+                            >
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Reject
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* CV */}
+                    {application.cv_path && (
+                        <div className="mt-3">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => window.open(`/storage/${application.cv_path}`, '_blank')}
+                            >
+                                <FileText className="h-4 w-4 mr-2" />
+                                View CV
+                            </Button>
                         </div>
                     )}
                 </CardContent>
