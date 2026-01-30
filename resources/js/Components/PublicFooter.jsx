@@ -41,22 +41,22 @@ export default function PublicFooter() {
                         <h3 className="text-white font-semibold mb-4">Useful Links</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/terms" className="text-sm hover:text-[#0675C1] transition-colors">
+                                <Link href="/terms" className="text-sm hover:text-[#0F48A1] transition-colors">
                                     Terms and Conditions
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/tutor/signup" className="text-sm hover:text-[#0675C1] transition-colors">
+                                <Link href="/tutor/signup" className="text-sm hover:text-[#0F48A1] transition-colors">
                                     Become a Tutor
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/jobs" className="text-sm hover:text-[#0675C1] transition-colors">
+                                <Link href="/jobs" className="text-sm hover:text-[#0F48A1] transition-colors">
                                     Hire a Tutor
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/faq" className="text-sm hover:text-[#0675C1] transition-colors">
+                                <Link href="/faq" className="text-sm hover:text-[#0F48A1] transition-colors">
                                     FAQ
                                 </Link>
                             </li>
@@ -71,23 +71,23 @@ export default function PublicFooter() {
                         </p>
                         <div className="space-y-3">
                             <div className="flex items-start space-x-2 text-sm">
-                                <MapPin className="h-5 w-5 text-[#0675C1] mt-0.5 flex-shrink-0" />
+                                <MapPin className="h-5 w-5 text-[#0F48A1] mt-0.5 flex-shrink-0" />
                                 <span>{footerSettings?.contact_address || 'Salmanpur, Kotbari, Comilla, Bangladesh'}</span>
                             </div>
                             <div className="flex items-center space-x-2 text-sm">
-                                <Phone className="h-5 w-5 text-[#0675C1]" />
-                                <a href={`tel:${footerSettings?.contact_phone?.replace(/\s/g, '') || '+8801818420012'}`} className="hover:text-[#0675C1] transition-colors">
+                                <Phone className="h-5 w-5 text-[#0F48A1]" />
+                                <a href={`tel:${footerSettings?.contact_phone?.replace(/\s/g, '') || '+8801818420012'}`} className="hover:text-[#0F48A1] transition-colors">
                                     {footerSettings?.contact_phone || '+880 1818 420012'}
                                 </a>
                             </div>
                             <div className="flex items-center space-x-2 text-sm">
-                                <Mail className="h-5 w-5 text-[#0675C1]" />
-                                <a href={`mailto:${footerSettings?.contact_email || 'tuitionbarta@gmail.com'}`} className="hover:text-[#0675C1] transition-colors">
+                                <Mail className="h-5 w-5 text-[#0F48A1]" />
+                                <a href={`mailto:${footerSettings?.contact_email || 'tuitionbarta@gmail.com'}`} className="hover:text-[#0F48A1] transition-colors">
                                     {footerSettings?.contact_email || 'tuitionbarta@gmail.com'}
                                 </a>
                             </div>
                             <div className="flex items-start space-x-2 text-sm">
-                                <Clock className="h-5 w-5 text-[#0675C1] mt-0.5" />
+                                <Clock className="h-5 w-5 text-[#0F48A1] mt-0.5" />
                                 <span>{footerSettings?.contact_hours || 'Sat - Thu, 10:00 AM - 8:00 PM'}</span>
                             </div>
                         </div>
@@ -107,7 +107,7 @@ export default function PublicFooter() {
                                     href={social.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="p-2 rounded-full bg-gray-800 hover:bg-[#0675C1] transition-colors"
+                                    className="p-2 rounded-full bg-gray-800 hover:bg-[#0F48A1] transition-colors"
                                     aria-label={social.label}
                                 >
                                     <social.icon className="h-5 w-5" />
@@ -120,3 +120,4 @@ export default function PublicFooter() {
         </footer>
     );
 }
+

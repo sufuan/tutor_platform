@@ -231,3 +231,4 @@ export default function GuardianView({ auth, guardian }) {
         </AuthenticatedLayout>
     );
 }
+

@@ -316,3 +316,4 @@ export default function AllJobs({ auth, jobs }) {
         </AuthenticatedLayout>
     );
 }
+

@@ -412,3 +412,4 @@ export default function HowItWorks({ blogs, popularBlogs, latestBlogs, filters }
         </PublicLayout>
     );
 }
+

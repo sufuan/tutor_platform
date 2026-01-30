@@ -29,3 +29,4 @@ export default function UserAvatar({ user, size = 'default', className = '' }) {
         </Avatar>
     );
 }
+

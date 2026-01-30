@@ -299,8 +299,8 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
             header={
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-[#0675C1]/10 rounded-xl">
-                            <LayoutDashboard className="h-6 w-6 text-[#0675C1]" />
+                        <div className="p-2 bg-[#0F48A1]/10 rounded-xl">
+                            <LayoutDashboard className="h-6 w-6 text-[#0F48A1]" />
                         </div>
                         <div>
                             <h2 className="text-3xl font-black text-gray-900">Frontend Settings</h2>
@@ -316,10 +316,10 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
         >
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Info Alert */}
-                <Alert className="border-[#0675C1]/30 bg-gradient-to-r from-[#0675C1]/5 to-blue-50/50 shadow-sm">
+                <Alert className="border-[#0F48A1]/30 bg-gradient-to-r from-[#0F48A1]/5 to-blue-50/50 shadow-sm">
                     <div className="flex items-start gap-3">
-                        <div className="p-2 bg-[#0675C1]/10 rounded-lg">
-                            <Sparkles className="h-5 w-5 text-[#0675C1]" />
+                        <div className="p-2 bg-[#0F48A1]/10 rounded-lg">
+                            <Sparkles className="h-5 w-5 text-[#0F48A1]" />
                         </div>
                         <div className="flex-1">
                             <h3 className="font-semibold text-slate-900 mb-1">Website Customization Center</h3>
@@ -532,7 +532,7 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
                     <div className="grid lg:grid-cols-2 gap-8">
                         {/* Hero Section Image Card */}
                         <Card className="border-slate-200 shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden group">
-                            <CardHeader className="bg-gradient-to-br from-[#0675C1] via-[#0675C1]/90 to-[#0675C1]/80 text-white pb-8">
+                            <CardHeader className="bg-gradient-to-br from-[#0F48A1] via-[#0F48A1]/90 to-[#0F48A1]/80 text-white pb-8">
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
                                         <ImageIcon className="h-6 w-6" />
@@ -586,13 +586,13 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
                                         )}
                                     </Label>
                                     {heroPreview ? (
-                                        <div className="relative rounded-xl overflow-hidden border-2 border-[#0675C1] bg-slate-50 shadow-lg">
+                                        <div className="relative rounded-xl overflow-hidden border-2 border-[#0F48A1] bg-slate-50 shadow-lg">
                                             <img
                                                 src={heroPreview}
                                                 alt="Preview"
                                                 className="w-full h-56 object-cover"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-[#0675C1]/20 to-transparent"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#0F48A1]/20 to-transparent"></div>
                                             <button
                                                 type="button"
                                                 onClick={clearHeroPreview}
@@ -601,20 +601,20 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
                                                 <X className="h-4 w-4" />
                                             </button>
                                             <div className="absolute top-3 left-3">
-                                                <div className="bg-[#0675C1] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                                                <div className="bg-[#0F48A1] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
                                                     <Sparkles className="h-3 w-3" />
                                                     Preview
                                                 </div>
                                             </div>
                                         </div>
                                     ) : (
-                                        <label className="group/upload relative flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-white hover:bg-slate-50 hover:border-[#0675C1] transition-all duration-300">
+                                        <label className="group/upload relative flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-white hover:bg-slate-50 hover:border-[#0F48A1] transition-all duration-300">
                                             <div className="flex flex-col items-center justify-center p-6 text-center">
-                                                <div className="p-4 bg-slate-100 rounded-full mb-4 group-hover/upload:bg-[#0675C1]/10 transition-colors">
-                                                    <Upload className="w-10 h-10 text-slate-400 group-hover/upload:text-[#0675C1] transition-colors" />
+                                                <div className="p-4 bg-slate-100 rounded-full mb-4 group-hover/upload:bg-[#0F48A1]/10 transition-colors">
+                                                    <Upload className="w-10 h-10 text-slate-400 group-hover/upload:text-[#0F48A1] transition-colors" />
                                                 </div>
                                                 <p className="mb-2 text-base font-semibold text-slate-700">
-                                                    <span className="text-[#0675C1]">Click to upload</span> or drag and drop
+                                                    <span className="text-[#0F48A1]">Click to upload</span> or drag and drop
                                                 </p>
                                                 <p className="text-sm text-slate-500 mb-1">PNG, JPG, or GIF</p>
                                                 <p className="text-xs text-slate-400">Maximum file size: 5MB</p>
@@ -666,7 +666,7 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
                                             id="show-promo"
                                             checked={imagesForm.data.show_promo_banner}
                                             onCheckedChange={(checked) => imagesForm.setData('show_promo_banner', checked)}
-                                            className="data-[state=checked]:bg-[#0675C1]"
+                                            className="data-[state=checked]:bg-[#0F48A1]"
                                         />
                                     </div>
                                     {imagesForm.data.show_promo_banner && (
@@ -783,7 +783,7 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
                         <Button
                             type="submit"
                             disabled={imagesForm.processing}
-                            className="bg-[#0675C1] hover:bg-[#0675C1]/90 text-white px-8 shadow-lg"
+                            className="bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-8 shadow-lg"
                         >
                             {imagesForm.processing ? (
                                 <>
@@ -1662,3 +1662,4 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
             </div>
         </AuthenticatedLayout>    );
 }
+

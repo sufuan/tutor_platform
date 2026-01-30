@@ -463,3 +463,4 @@ export default function JobApplications({ auth, applications, stats }) {
 }
 
 
+

@@ -35,7 +35,7 @@ export default function FeedbackCreate({ auth }) {
             <div className="py-6">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                        <div className="bg-gradient-to-r from-[#0675C1] to-blue-600 px-6 py-8">
+                        <div className="bg-gradient-to-r from-[#0F48A1] to-blue-600 px-6 py-8">
                             <h1 className="text-3xl font-bold text-white">Share Your Experience</h1>
                             <p className="text-blue-100 mt-2">
                                 Your feedback helps us improve our platform and helps other tutors join our community
@@ -66,7 +66,7 @@ export default function FeedbackCreate({ auth }) {
                                             />
                                         </button>
                                     ))}
-                                    <span className="ml-4 text-xl font-semibold text-[#0675C1]">
+                                    <span className="ml-4 text-xl font-semibold text-[#0F48A1]">
                                         {data.rating} / 5
                                     </span>
                                 </div>
@@ -98,7 +98,7 @@ export default function FeedbackCreate({ auth }) {
                                 </div>
                             </div>
 
-                            <div className="bg-blue-50 border-l-4 border-[#0675C1] p-4 rounded">
+                            <div className="bg-blue-50 border-l-4 border-[#0F48A1] p-4 rounded">
                                 <p className="text-sm text-gray-700">
                                     <strong>Note:</strong> Your feedback will be reviewed by our admin team before being published on the website. This helps us maintain quality and authenticity.
                                 </p>
@@ -108,7 +108,7 @@ export default function FeedbackCreate({ auth }) {
                                 <Button
                                     type="submit"
                                     disabled={processing}
-                                    className="flex-1 bg-[#0675C1] hover:bg-blue-700 text-lg py-6"
+                                    className="flex-1 bg-[#0F48A1] hover:bg-blue-700 text-lg py-6"
                                 >
                                     {processing ? 'Submitting...' : 'Submit Feedback'}
                                 </Button>
@@ -127,4 +127,5 @@ export default function FeedbackCreate({ auth }) {
         </AuthenticatedLayout>
     );
 }
+
 

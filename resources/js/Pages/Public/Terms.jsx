@@ -12,7 +12,7 @@ export default function Terms() {
                     {/* Section 1: Membership Eligibility */}
                     <div className="mb-12 bg-slate-50 rounded-2xl p-8 border border-slate-200">
                         <div className="flex items-start gap-4 mb-6">
-                            <div className="w-12 h-12 bg-[#0675C1] rounded-xl flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 bg-[#0F48A1] rounded-xl flex items-center justify-center flex-shrink-0">
                                 <CheckCircle className="h-6 w-6 text-white" />
                             </div>
                             <div>
@@ -32,7 +32,7 @@ export default function Terms() {
 
                             <div className="space-y-4 mt-6">
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">বয়সসীমা:</h3>
                                         <p className="text-slate-700">
@@ -42,7 +42,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">অভিভাবকের ভূমিকা:</h3>
                                         <p className="text-slate-700">
@@ -52,7 +52,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">তথ্যের সঠিকতা:</h3>
                                         <p className="text-slate-700">
@@ -62,7 +62,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">নিরাপত্তা:</h3>
                                         <p className="text-slate-700">
@@ -72,7 +72,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">দায়বদ্ধতা:</h3>
                                         <p className="text-slate-700">
@@ -85,9 +85,9 @@ export default function Terms() {
                     </div>
 
                     {/* Section 2: Applicable Charges */}
-                    <div className="mb-12 bg-gradient-to-br from-[#0675C1]/5 to-white rounded-2xl p-8 border border-[#0675C1]/20">
+                    <div className="mb-12 bg-gradient-to-br from-[#0F48A1]/5 to-white rounded-2xl p-8 border border-[#0F48A1]/20">
                         <div className="flex items-start gap-4 mb-6">
-                            <div className="w-12 h-12 bg-[#0675C1] rounded-xl flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 bg-[#0F48A1] rounded-xl flex items-center justify-center flex-shrink-0">
                                 <span className="text-2xl text-white font-bold">৳</span>
                             </div>
                             <div>
@@ -108,25 +108,25 @@ export default function Terms() {
                             <div className="space-y-6 mt-6">
                                 <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <Shield className="h-6 w-6 text-[#0675C1]" />
+                                        <Shield className="h-6 w-6 text-[#0F48A1]" />
                                         <h3 className="font-bold text-slate-900 text-xl">ভেরিফিকেশন ফি (একবারই)</h3>
                                     </div>
                                     <p className="text-slate-700 leading-relaxed">
-                                        টিউটর প্রোফাইল যাচাই প্রশ্নিকার জন্য <span className="font-bold text-[#0675C1]">১০০ টাকা</span> একবারী ফি প্রদান করতে হবে। এই ফি অফেরতযোগ্য (Non-refundable)। এটি টিউটরের নির্ভরযোগ্যতা নিশ্চিত করে।
+                                        টিউটর প্রোফাইল যাচাই প্রশ্নিকার জন্য <span className="font-bold text-[#0F48A1]">১০০ টাকা</span> একবারী ফি প্রদান করতে হবে। এই ফি অফেরতযোগ্য (Non-refundable)। এটি টিউটরের নির্ভরযোগ্যতা নিশ্চিত করে।
                                     </p>
                                 </div>
 
                                 <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <AlertCircle className="h-6 w-6 text-[#0675C1]" />
+                                        <AlertCircle className="h-6 w-6 text-[#0F48A1]" />
                                         <h3 className="font-bold text-slate-900 text-xl">প্ল্যাটফর্ম চার্জ</h3>
                                     </div>
                                     <p className="text-slate-700 leading-relaxed mb-3">
-                                        টিউশন সফলভাবে নিশ্চিত হওয়ার পর, প্রথম মাসের বেতনের <span className="font-bold text-[#0675C1]">৪০% যুক্ত ৫০% পর্যন্ত</span> একবারী প্ল্যাটফর্ম চার্জ প্রদান করতে হবে।
+                                        টিউশন সফলভাবে নিশ্চিত হওয়ার পর, প্রথম মাসের বেতনের <span className="font-bold text-[#0F48A1]">৪০% যুক্ত ৫০% পর্যন্ত</span> একবারী প্ল্যাটফর্ম চার্জ প্রদান করতে হবে।
                                     </p>
-                                    <div className="bg-[#0675C1]/10 rounded-lg p-4 mt-4">
+                                    <div className="bg-[#0F48A1]/10 rounded-lg p-4 mt-4">
                                         <div className="flex items-start gap-2">
-                                            <Clock className="h-5 w-5 text-[#0675C1] mt-0.5" />
+                                            <Clock className="h-5 w-5 text-[#0F48A1] mt-0.5" />
                                             <p className="text-slate-700 text-sm">
                                                 এই পেমেন্টটি টিউশন নিশ্চিত হওয়ার <span className="font-bold">৭ দিনের মধ্যে</span> সম্পন্ন করতে হবে। নির্দিষ্ট সময়ের মধ্যে চার্জ পরিশোধ না করলে অ্যাকাউন্ট সাময়িকভাবে বন্ধ (Block) হয়ে যেতে পারে। তবে, ভেরিফাইড টিউটরদের ক্ষেত্রে সময়সীমার বিষয়ে কিছুটা শিথিলতা থাকবে।
                                             </p>
@@ -140,7 +140,7 @@ export default function Terms() {
                     {/* Section 3: Refund Policy */}
                     <div className="mb-12 bg-slate-50 rounded-2xl p-8 border border-slate-200">
                         <div className="flex items-start gap-4 mb-6">
-                            <div className="w-12 h-12 bg-[#0675C1] rounded-xl flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 bg-[#0F48A1] rounded-xl flex items-center justify-center flex-shrink-0">
                                 <span className="text-2xl text-white font-bold">↻</span>
                             </div>
                             <div>
@@ -162,21 +162,21 @@ export default function Terms() {
                                 <div className="bg-green-50 border-l-4 border-green-500 rounded-r-xl p-6">
                                     <h3 className="font-bold text-slate-900 text-lg mb-2">১ মাসের মধ্যে বাতিল (বেতন পাওয়ার আগে)</h3>
                                     <p className="text-slate-700">
-                                        বেতন পাওয়ার আগে যদি অভিভাবক টিউশন বাতিল করেন, তবে পরিশোধকৃত প্ল্যাটফর্ম চার্জ থেকে <span className="font-bold text-[#0675C1]">৫% সার্ভিস চার্জ</span> কেটে বাকি টাকা ফেরত দেওয়া হবে।
+                                        বেতন পাওয়ার আগে যদি অভিভাবক টিউশন বাতিল করেন, তবে পরিশোধকৃত প্ল্যাটফর্ম চার্জ থেকে <span className="font-bold text-[#0F48A1]">৫% সার্ভিস চার্জ</span> কেটে বাকি টাকা ফেরত দেওয়া হবে।
                                     </p>
                                 </div>
 
                                 <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-r-xl p-6">
                                     <h3 className="font-bold text-slate-900 text-lg mb-2">১ মাস পড়ানোর পর বাতিল</h3>
                                     <p className="text-slate-700">
-                                        অভিভাবক ঠিক ১ মাস পড়ানোর পর টিউশন বাতিল করলে, প্ল্যাটফর্ম চার্জের <span className="font-bold text-[#0675C1]">৩০% কেটে</span> বাকি টাকা ফেরত দেওয়া হবে।
+                                        অভিভাবক ঠিক ১ মাস পড়ানোর পর টিউশন বাতিল করলে, প্ল্যাটফর্ম চার্জের <span className="font-bold text-[#0F48A1]">৩০% কেটে</span> বাকি টাকা ফেরত দেওয়া হবে।
                                     </p>
                                 </div>
 
                                 <div className="bg-orange-50 border-l-4 border-orange-500 rounded-r-xl p-6">
                                     <h3 className="font-bold text-slate-900 text-lg mb-2">২ মাস পড়ানোর পর বাতিল</h3>
                                     <p className="text-slate-700">
-                                        যদি ২ মাস পড়ানোর পর টিউশন বাতিল হয়, তবে প্ল্যাটফর্ম চার্জের <span className="font-bold text-[#0675C1]">৭৫% কেটে</span> বাকি টাকা ফেরত দেওয়া হবে।
+                                        যদি ২ মাস পড়ানোর পর টিউশন বাতিল হয়, তবে প্ল্যাটফর্ম চার্জের <span className="font-bold text-[#0F48A1]">৭৫% কেটে</span> বাকি টাকা ফেরত দেওয়া হবে।
                                     </p>
                                 </div>
 
@@ -188,7 +188,7 @@ export default function Terms() {
                                 </div>
                             </div>
 
-                            <div className="bg-[#0675C1] text-white rounded-xl p-6 mt-6">
+                            <div className="bg-[#0F48A1] text-white rounded-xl p-6 mt-6">
                                 <h3 className="font-bold text-xl mb-4">আবেদনের নিয়ম:</h3>
                                 <ol className="space-y-2 list-decimal list-inside">
                                     <li>টিউশন বাতিল হওয়ার <span className="font-bold">৩ দিনের মধ্যেই</span> ই-মেইলের মাধ্যমে আবেদন করতে হবে।</li>
@@ -200,9 +200,9 @@ export default function Terms() {
                     </div>
 
                     {/* Section 4: Guardian's Responsibility */}
-                    <div className="mb-12 bg-gradient-to-br from-[#0675C1]/5 to-white rounded-2xl p-8 border border-[#0675C1]/20">
+                    <div className="mb-12 bg-gradient-to-br from-[#0F48A1]/5 to-white rounded-2xl p-8 border border-[#0F48A1]/20">
                         <div className="flex items-start gap-4 mb-6">
-                            <div className="w-12 h-12 bg-[#0675C1] rounded-xl flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 bg-[#0F48A1] rounded-xl flex items-center justify-center flex-shrink-0">
                                 <Shield className="h-6 w-6 text-white" />
                             </div>
                             <div>
@@ -218,7 +218,7 @@ export default function Terms() {
                         <div className="prose prose-lg max-w-none" style={{ fontFamily: 'SolaimanLipi, Arial, sans-serif' }}>
                             <div className="space-y-4 mt-6">
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">তথ্য যাচাইকরণ:</h3>
                                         <p className="text-slate-700">
@@ -228,7 +228,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">নিরাপত্তা:</h3>
                                         <p className="text-slate-700">
@@ -238,7 +238,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">সঠিক তথ্য:</h3>
                                         <p className="text-slate-700">
@@ -248,7 +248,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">বেতন ও লেনদেন:</h3>
                                         <p className="text-slate-700">
@@ -258,7 +258,7 @@ export default function Terms() {
                                 </div>
 
                                 <div className="flex gap-3">
-                                    <span className="text-[#0675C1] font-bold text-xl">•</span>
+                                    <span className="text-[#0F48A1] font-bold text-xl">•</span>
                                     <div>
                                         <h3 className="font-bold text-slate-900 mb-1">অসদাচরণ:</h3>
                                         <p className="text-slate-700">
@@ -271,7 +271,7 @@ export default function Terms() {
                     </div>
 
                     {/* Contact Box */}
-                    <div className="bg-gradient-to-r from-[#0675C1] to-[#0675C1]/80 text-white rounded-2xl p-8 text-center">
+                    <div className="bg-gradient-to-r from-[#0F48A1] to-[#0F48A1]/80 text-white rounded-2xl p-8 text-center">
                         <h3 className="text-2xl font-bold mb-4">প্রশ্ন বা সহায়তা প্রয়োজন?</h3>
                         <p className="mb-6 text-white/90">
                             আমাদের সাথে যোগাযোগ করুন এবং আমরা আপনাকে সাহায্য করতে পারব
@@ -291,4 +291,5 @@ export default function Terms() {
         </PublicLayout>
     );
 }
+
 

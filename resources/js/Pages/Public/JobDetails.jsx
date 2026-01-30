@@ -264,7 +264,7 @@ export default function JobDetails({ job, auth }) {
                                                     </>
                                                 ) : verificationStatus === 'verified' ? (
                                                     <>
-                                                        <Button className="w-full bg-[#0675C1] hover:bg-blue-700" size="lg" asChild>
+                                                        <Button className="w-full bg-[#0F48A1] hover:bg-blue-700" size="lg" asChild>
                                                             <Link href={route('tutor.jobs.show', job.id)}>
                                                                 Apply for This Job
                                                             </Link>
@@ -315,5 +315,6 @@ export default function JobDetails({ job, auth }) {
         </GuestLayout>
     );
 }
+
 
 

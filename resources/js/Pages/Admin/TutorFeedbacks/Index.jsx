@@ -158,7 +158,7 @@ export default function Index({ auth, feedbacks }) {
                                             href={link.url || '#'}
                                             className={`px-3 py-2 text-sm rounded-md ${
                                                 link.active
-                                                    ? 'bg-[#0675C1] text-white'
+                                                    ? 'bg-[#0F48A1] text-white'
                                                     : 'bg-white text-gray-700 hover:bg-gray-50 border'
                                             } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
@@ -173,4 +173,5 @@ export default function Index({ auth, feedbacks }) {
         </AuthenticatedLayout>
     );
 }
+
 

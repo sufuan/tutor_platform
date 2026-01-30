@@ -33,11 +33,11 @@ import {
     Quote,
 } from 'lucide-react';
 
-export default function Welcome({ 
-    auth, 
-    featuredJobs = [], 
-    categories = [], 
-    stats = {}, 
+export default function Welcome({
+    auth,
+    featuredJobs = [],
+    categories = [],
+    stats = {},
     guardianTestimonials = [],
     tutorTestimonials = [],
     heroImage = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop',
@@ -114,17 +114,17 @@ export default function Welcome({
     return (
         <PublicLayout title="Welcome">
             {/* Promotional Modal */}
-            <PromotionalModal 
-                imageUrl={promoBannerImage} 
+            <PromotionalModal
+                imageUrl={promoBannerImage}
                 enabled={showPromoBanner}
             />
 
             {/* Hero Section - Simplified */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-[#0675C1]/5">
+            <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-[#0F48A1]/5">
                 {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-[#0675C1]/5 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#0675C1]/5 rounded-full blur-3xl"></div>
-                
+                <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F48A1]/5 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#0F48A1]/5 rounded-full blur-3xl"></div>
+
                 <div className="relative max-w-7xl mx-auto px-4 py-20 lg:py-32">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         {/* Left Content */}
@@ -132,19 +132,19 @@ export default function Welcome({
                             <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-tight whitespace-pre-line">
                                 {heroTitle}
                             </h1>
-                            
+
                             <p className="text-xl text-slate-600 leading-relaxed">
                                 {heroSubtitle}
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <Button asChild size="lg" className="bg-[#0675C1] hover:bg-[#0675C1]/90 text-white px-8 rounded-xl">
+                                <Button asChild size="lg" className="bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-8 rounded-xl">
                                     <Link href="/jobs">
                                         Find a Tutor
                                         <ArrowRight className="ml-2 h-5 w-5" />
                                     </Link>
                                 </Button>
-                                <Button asChild size="lg" variant="outline" className="border-2 border-[#0675C1] text-[#0675C1] hover:bg-[#0675C1] hover:text-white px-8 rounded-xl">
+                                <Button asChild size="lg" variant="outline" className="border-2 border-[#0F48A1] text-[#0F48A1] hover:bg-[#0F48A1] hover:text-white px-8 rounded-xl">
                                     <Link href="/tutor/signup">
                                         Become a Tutor
                                     </Link>
@@ -154,16 +154,16 @@ export default function Welcome({
 
                         {/* Right Image */}
                         <div className="relative">
-                            <div className="absolute inset-0 bg-[#0675C1] rounded-3xl rotate-3"></div>
-                            <img 
-                                src={heroImage} 
-                                alt="Students Learning" 
+                            <div className="absolute inset-0 bg-[#0F48A1] rounded-3xl rotate-3"></div>
+                            <img
+                                src={heroImage}
+                                alt="Students Learning"
                                 className="relative rounded-3xl shadow-2xl w-full h-[500px] object-cover"
                             />
                             {/* Floating Card */}
                             <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 bg-[#0675C1] rounded-full flex items-center justify-center">
+                                    <div className="w-12 h-12 bg-[#0F48A1] rounded-full flex items-center justify-center">
                                         <CheckCircle className="h-6 w-6 text-white" />
                                     </div>
                                     <div>
@@ -182,19 +182,19 @@ export default function Welcome({
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0675C1] mb-2">{displayStats.activeTutors}+</div>
+                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.activeTutors}+</div>
                             <div className="text-lg text-slate-600">Expert Tutors</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0675C1] mb-2">{displayStats.totalJobs}+</div>
+                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.totalJobs}+</div>
                             <div className="text-lg text-slate-600">Active Jobs</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0675C1] mb-2">{displayStats.successRate}%</div>
+                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.successRate}%</div>
                             <div className="text-lg text-slate-600">Success Rate</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0675C1] mb-2">{displayStats.happyGuardians}+</div>
+                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.happyGuardians}+</div>
                             <div className="text-lg text-slate-600">Happy Students</div>
                         </div>
                     </div>
@@ -218,8 +218,8 @@ export default function Welcome({
                             const IconComponent = iconMap[type.icon] || Package;
                             return (
                                 <div key={index} className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
-                                    <div className="w-16 h-16 bg-[#0675C1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0675C1] transition-colors">
-                                        <IconComponent className="h-8 w-8 text-[#0675C1] group-hover:text-white transition-colors" />
+                                    <div className="w-16 h-16 bg-[#0F48A1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0F48A1] transition-colors">
+                                        <IconComponent className="h-8 w-8 text-[#0F48A1] group-hover:text-white transition-colors" />
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 mb-3">{type.title}</h3>
                                     <p className="text-slate-600 leading-relaxed">
@@ -248,14 +248,14 @@ export default function Welcome({
                         {displayServingCategories.map((category, index) => {
                             const IconComponent = iconMap[category.icon] || BookOpen;
                             return (
-                                <Link 
-                                    key={index} 
+                                <Link
+                                    key={index}
                                     href={`/jobs?category=${category.name.toLowerCase()}`}
                                 >
                                     <div className="group relative overflow-hidden rounded-2xl bg-slate-50 p-6 hover:shadow-2xl transition-all duration-300 border border-slate-200 hover:scale-105">
-                                        <div className="absolute inset-0 bg-[#0675C1] opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                                        <div className="absolute inset-0 bg-[#0F48A1] opacity-0 group-hover:opacity-5 transition-opacity"></div>
                                         <div className="relative flex items-center gap-4">
-                                            <IconComponent className="h-8 w-8 text-[#0675C1]" />
+                                            <IconComponent className="h-8 w-8 text-[#0F48A1]" />
                                             <h3 className="font-bold text-slate-900">{category.name}</h3>
                                         </div>
                                     </div>
@@ -267,7 +267,7 @@ export default function Welcome({
             </section>
 
             {/* How It Works - Modern Timeline */}
-            <section className="py-20 bg-[#0675C1] text-white">
+            <section className="py-20 bg-[#0F48A1] text-white">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl lg:text-5xl font-black mb-4">
@@ -285,7 +285,7 @@ export default function Welcome({
                                 <div key={idx} className="relative">
                                     <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 border border-white/20">
                                         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6">
-                                            <IconComponent className="h-8 w-8 text-[#0675C1]" />
+                                            <IconComponent className="h-8 w-8 text-[#0F48A1]" />
                                         </div>
                                         <div className="text-lg font-bold mb-2">
                                             <span className="text-3xl font-black text-white/40 mr-2">{idx + 1}</span>
@@ -315,7 +315,7 @@ export default function Welcome({
                         </p>
                     </div>
 
-                    <Carousel 
+                    <Carousel
                         className="w-full max-w-6xl mx-auto"
                         plugins={[
                             Autoplay({
@@ -333,12 +333,12 @@ export default function Welcome({
                                                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                                                 ))}
                                             </div>
-                                            <Quote className="h-8 w-8 text-[#0675C1]/20 mb-4" />
+                                            <Quote className="h-8 w-8 text-[#0F48A1]/20 mb-4" />
                                             <p className="text-slate-700 leading-relaxed mb-6 italic">
                                                 "{testimonial.feedback}"
                                             </p>
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-[#0675C1] rounded-full flex items-center justify-center text-white font-bold">
+                                                <div className="w-12 h-12 bg-[#0F48A1] rounded-full flex items-center justify-center text-white font-bold">
                                                     {testimonial.name.charAt(0)}
                                                 </div>
                                                 <div>
@@ -351,8 +351,8 @@ export default function Welcome({
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
-                        <CarouselPrevious className="-left-12 bg-[#0675C1] text-white hover:bg-[#0675C1]/90" />
-                        <CarouselNext className="-right-12 bg-[#0675C1] text-white hover:bg-[#0675C1]/90" />
+                        <CarouselPrevious className="-left-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
+                        <CarouselNext className="-right-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
                     </Carousel>
                 </div>
             </section>
@@ -369,7 +369,7 @@ export default function Welcome({
                         </p>
                     </div>
 
-                    <Carousel 
+                    <Carousel
                         className="w-full max-w-6xl mx-auto"
                         plugins={[
                             Autoplay({
@@ -387,12 +387,12 @@ export default function Welcome({
                                                     <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                                                 ))}
                                             </div>
-                                            <Quote className="h-8 w-8 text-[#0675C1]/20 mb-4" />
+                                            <Quote className="h-8 w-8 text-[#0F48A1]/20 mb-4" />
                                             <p className="text-slate-700 leading-relaxed mb-6 italic">
                                                 "{testimonial.feedback}"
                                             </p>
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-[#0675C1] rounded-full flex items-center justify-center text-white font-bold">
+                                                <div className="w-12 h-12 bg-[#0F48A1] rounded-full flex items-center justify-center text-white font-bold">
                                                     {testimonial.name.charAt(0)}
                                                 </div>
                                                 <div>
@@ -405,12 +405,12 @@ export default function Welcome({
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
-                        <CarouselPrevious className="-left-12 bg-[#0675C1] text-white hover:bg-[#0675C1]/90" />
-                        <CarouselNext className="-right-12 bg-[#0675C1] text-white hover:bg-[#0675C1]/90" />
+                        <CarouselPrevious className="-left-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
+                        <CarouselNext className="-right-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
                     </Carousel>
 
                     <div className="text-center mt-12">
-                        <Button asChild size="lg" className="bg-[#0675C1] hover:bg-[#0675C1]/90 text-white px-10 rounded-xl">
+                        <Button asChild size="lg" className="bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-10 rounded-xl">
                             <Link href="/tutor/signup">
                                 Join as a Tutor
                                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -422,9 +422,9 @@ export default function Welcome({
 
             {/* CTA Section - Modern */}
             <section className="relative py-20 overflow-hidden">
-                <div className="absolute inset-0 bg-[#0675C1]"></div>
+                <div className="absolute inset-0 bg-[#0F48A1]"></div>
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20"></div>
-                
+
                 <div className="relative max-w-7xl mx-auto px-4 text-center">
                     <h2 className="text-4xl lg:text-6xl font-black text-white mb-6">
                         Ready to Transform Your Learning?
@@ -433,13 +433,13 @@ export default function Welcome({
                         Join thousands of students already achieving their academic dreams
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button asChild size="lg" className="bg-white text-[#0675C1] hover:bg-slate-100 text-lg px-10 h-14 rounded-full shadow-2xl">
+                        <Button asChild size="lg" className="bg-white text-[#0F48A1] hover:bg-slate-100 text-lg px-10 h-14 rounded-full shadow-2xl">
                             <Link href="/jobs">
                                 Find a Tutor
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Link>
                         </Button>
-                        <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-[#0675C1] text-lg px-10 h-14 rounded-full">
+                        <Button asChild size="lg" variant="outline" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#0F48A1] text-lg px-10 h-14 rounded-full">
                             <Link href="/tutor/signup">
                                 Become a Tutor
                             </Link>
@@ -450,4 +450,6 @@ export default function Welcome({
         </PublicLayout>
     );
 }
+
+
 
