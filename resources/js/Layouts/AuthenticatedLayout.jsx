@@ -285,9 +285,11 @@ export default function AuthenticatedLayout({ children, header }) {
                 <Sidebar collapsible="offcanvas">
                     <SidebarHeader className="border-b border-sidebar-border">
                         <div className="flex items-center gap-2 px-2 py-2">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-blue text-white font-bold text-lg">
-                                CT
-                            </div>
+                            <img
+                                src="/assets/logo.png"
+                                alt="CareTutors Logo"
+                                className="h-10 w-10 rounded-lg object-contain"
+                            />
                             <div className="flex flex-col flex-1 min-w-0">
                                 <span className="font-bold text-base truncate">Tuition Barta</span>
                                 <span className="text-xs text-muted-foreground capitalize truncate">

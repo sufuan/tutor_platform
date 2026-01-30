@@ -53,6 +53,8 @@ class TutorController extends Controller
                 'address' => 'nullable|string|max:500',
                 'institution' => 'nullable|string|max:255',
                 'education_level' => 'nullable|string|max:50',
+                'department' => 'nullable|string|max:255',
+                'cgpa' => 'nullable|numeric|min:0|max:4',
                 'subjects' => 'nullable',
                 'experience_years' => 'nullable|integer|min:0',
                 'experience_details' => 'nullable|string|max:1000',
@@ -60,7 +62,8 @@ class TutorController extends Controller
                 'bio' => 'nullable|string|max:1000',
                 'location_id' => 'nullable|exists:locations,id',
                 'photo' => 'nullable|image|max:2048',
-                'available_days' => 'nullable|string|max:255',
+                'available_days' => 'nullable|array',
+                'available_days.*' => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
                 'available_time_from' => 'nullable|string|max:10',
                 'available_time_to' => 'nullable|string|max:10',
                 'preferred_locations' => 'nullable|string|max:500',
@@ -133,23 +136,27 @@ class TutorController extends Controller
             \Log::info('Tutor profile updated', ['tutor' => $tutor->toArray()]);
 
             // Calculate profile completion percentage based on 4 tabs
-            $tuitionFields = ['hourly_rate', 'location_id', 'available_days', 'available_time_from', 'available_time_to', 'tutoring_method', 'place_of_tutoring'];
+            // Tuition Related Tab: 7 fields
+            $tuitionFields = ['hourly_rate', 'available_days', 'available_time_from', 'available_time_to', 'tutoring_method', 'division', 'district'];
+            // Educational Tab: 3 fields
             $educationFields = ['institution', 'education_level', 'subjects'];
-            $personalFields = ['phone', 'gender', 'address', 'bio', 'experience_years', 'experience_details', 'photo'];
+            // Personal Tab: 6 fields (removed photo as it's optional)
+            $personalFields = ['phone', 'gender', 'address', 'bio', 'experience_years', 'experience_details'];
+            // Credential Tab: 1 field
             $credentialFields = ['cv_path'];
-            
+
             $tuitionComplete = collect($tuitionFields)->filter(fn($field) => !empty($tutor->$field))->count();
             $educationComplete = collect($educationFields)->filter(fn($field) => !empty($tutor->$field))->count();
             $personalComplete = collect($personalFields)->filter(fn($field) => !empty($tutor->$field))->count();
             $credentialComplete = collect($credentialFields)->filter(fn($field) => !empty($tutor->$field))->count();
-            
+
             $tuitionPercent = (count($tuitionFields) > 0) ? ($tuitionComplete / count($tuitionFields)) * 25 : 0;
             $educationPercent = (count($educationFields) > 0) ? ($educationComplete / count($educationFields)) * 25 : 0;
             $personalPercent = (count($personalFields) > 0) ? ($personalComplete / count($personalFields)) * 25 : 0;
             $credentialPercent = (count($credentialFields) > 0) ? ($credentialComplete / count($credentialFields)) * 25 : 0;
-            
+
             $totalCompletion = round($tuitionPercent + $educationPercent + $personalPercent + $credentialPercent);
-            
+
             $tutor->update(['profile_completion_percentage' => $totalCompletion]);
 
             return redirect()->route('tutor.profile')
@@ -420,8 +427,9 @@ class TutorController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'documents' => 'required|array',
+            'documents' => 'required|array|min:1|max:3',
             'documents.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         // Delete old documents if resubmitting

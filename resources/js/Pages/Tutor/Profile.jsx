@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
@@ -16,7 +16,8 @@ import {
     CheckCircle2,
     Download,
     Eye,
-    FileText
+    FileText,
+    Camera
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
@@ -39,13 +40,15 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
         address: tutor.address || '',
         institution: tutor.institution || '',
         education_level: tutor.education_level || '',
+        department: tutor.department || '',
+        cgpa: tutor.cgpa || '',
         subjects: tutor.subjects || [],
         experience_years: tutor.experience_years || '',
         experience_details: tutor.experience_details || '',
         hourly_rate: tutor.hourly_rate || '',
         bio: tutor.bio || '',
         location_id: tutor.location_id || '',
-        available_days: tutor.available_days || '',
+        available_days: tutor.available_days || [],
         available_time_from: tutor.available_time_from || '',
         available_time_to: tutor.available_time_to || '',
         preferred_locations: tutor.preferred_locations || '',
@@ -61,6 +64,8 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
     const [photoPreview, setPhotoPreview] = useState(
         photoUrl || null
     );
+    const [photoFile, setPhotoFile] = useState(null);
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
     // Sync form data when tutor prop changes (after save) or when entering edit mode
     useEffect(() => {
@@ -70,14 +75,52 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
         }
     }, [isEditing, tutor.subjects]);
 
+    // Update photo preview when photoUrl prop changes (after upload)
+    useEffect(() => {
+        if (photoUrl) {
+            setPhotoPreview(photoUrl);
+        }
+    }, [photoUrl]);
+
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setData('photo', file);
+            setPhotoFile(file);
             const reader = new FileReader();
             reader.onloadend = () => setPhotoPreview(reader.result);
             reader.readAsDataURL(file);
         }
+    };
+
+    const handlePhotoUpload = () => {
+        if (!photoFile) return;
+
+        setUploadingPhoto(true);
+
+        // Use Inertia router to post with file and required gender field
+        router.post(route('tutor.profile.update'), {
+            photo: photoFile,
+            gender: tutor.gender, // Required field
+        }, {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                toast({
+                    title: "Success",
+                    description: "Profile photo updated successfully",
+                });
+                setPhotoFile(null);
+                setUploadingPhoto(false);
+            },
+            onError: (errors) => {
+                console.error('Upload errors:', errors);
+                toast({
+                    title: "Error",
+                    description: Object.values(errors).join(', '),
+                    variant: "destructive",
+                });
+                setUploadingPhoto(false);
+            },
+        });
     };
 
     const toggleSubject = (subjectId) => {
@@ -148,16 +191,63 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                     <div className="col-span-1 lg:col-span-4 order-1">
                         <Card className="rounded-xl border shadow-sm">
                             <CardContent className="p-6 text-center">
-                                {/* Photo */}
-                                {photoPreview ? (
-                                    <img
-                                        src={photoPreview}
-                                        alt="Profile"
-                                        className="mx-auto h-24 w-24 rounded-full object-cover bg-slate-200"
-                                    />
-                                ) : (
-                                    <div className="mx-auto h-24 w-24 rounded-full bg-slate-200 flex items-center justify-center">
-                                        <User className="h-12 w-12 text-slate-400" />
+                                {/* Photo with Camera Icon Overlay */}
+                                <div className="relative inline-block">
+                                    {photoPreview ? (
+                                        <img
+                                            src={photoPreview}
+                                            alt="Profile"
+                                            className="mx-auto h-24 w-24 rounded-full object-cover bg-slate-200"
+                                        />
+                                    ) : (
+                                        <div className="mx-auto h-24 w-24 rounded-full bg-slate-200 flex items-center justify-center">
+                                            <User className="h-12 w-12 text-slate-400" />
+                                        </div>
+                                    )}
+                                    {isEditing && (
+                                        <button
+                                            type="button"
+                                            onClick={() => document.getElementById('photo-upload').click()}
+                                            className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-slate-900 hover:bg-slate-800 flex items-center justify-center text-white shadow-lg transition-colors"
+                                            title="Upload profile photo"
+                                        >
+                                            <Camera className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                </div>
+                                {/* Hidden file input */}
+                                <input
+                                    id="photo-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handlePhotoChange}
+                                />
+
+                                {/* Save Photo Button - appears when photo is selected */}
+                                {photoFile && isEditing && (
+                                    <div className="mt-4 space-y-2">
+                                        <Button
+                                            type="button"
+                                            onClick={handlePhotoUpload}
+                                            disabled={uploadingPhoto}
+                                            className="w-full bg-blue-600 hover:bg-blue-700"
+                                            size="sm"
+                                        >
+                                            {uploadingPhoto ? 'Uploading...' : 'Save Photo'}
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            onClick={() => {
+                                                setPhotoFile(null);
+                                                setPhotoPreview(photoUrl || null);
+                                            }}
+                                            variant="outline"
+                                            className="w-full"
+                                            size="sm"
+                                        >
+                                            Cancel
+                                        </Button>
                                     </div>
                                 )}
 
@@ -366,15 +456,27 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                     Tuition Related Information
                                                 </h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div>
-                                                        <Label htmlFor="available_days" className="text-sm">Available Days</Label>
-                                                        <Input
-                                                            id="available_days"
-                                                            className="rounded-md"
-                                                            placeholder="Available Days"
-                                                            value={data.available_days}
-                                                            onChange={(e) => setData('available_days', e.target.value)}
-                                                        />
+                                                    <div className="space-y-2">
+                                                        <Label className="text-sm">Available Days</Label>
+                                                        <div className="grid grid-cols-4 gap-2">
+                                                            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                                                                <Button
+                                                                    key={day}
+                                                                    type="button"
+                                                                    variant={data.available_days.includes(day) ? 'default' : 'outline'}
+                                                                    size="sm"
+                                                                    onClick={() => {
+                                                                        if (data.available_days.includes(day)) {
+                                                                            setData('available_days', data.available_days.filter(d => d !== day));
+                                                                        } else {
+                                                                            setData('available_days', [...data.available_days, day]);
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {day.substring(0, 3)}
+                                                                </Button>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                     <div>
                                                         <Label htmlFor="hourly_rate" className="text-sm">Expected Salary (Monthly)</Label>
@@ -408,16 +510,6 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                         />
                                                     </div>
                                                     <div>
-                                                        <Label htmlFor="preferred_locations" className="text-sm">Preferred Locations</Label>
-                                                        <Input
-                                                            id="preferred_locations"
-                                                            className="rounded-md"
-                                                            placeholder="Preferred Locations"
-                                                            value={data.preferred_locations}
-                                                            onChange={(e) => setData('preferred_locations', e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div>
                                                         <Label htmlFor="tutoring_styles" className="text-sm">Tutoring Styles</Label>
                                                         <Input
                                                             id="tutoring_styles"
@@ -443,17 +535,31 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             </SelectContent>
                                                         </Select>
                                                     </div>
-                                                    <div>
-                                                        <Label className="text-sm">Place of Tutoring (District)</Label>
-                                                        <LocationDropdown
-                                                            divisionValue={data.division}
-                                                            districtValue={data.district}
-                                                            onDivisionChange={(value) => setData('division', value)}
-                                                            onDistrictChange={(value) => setData('district', value)}
-                                                            divisionLabel="Division"
-                                                            districtLabel="District"
-                                                            showLabels={true}
-                                                        />
+                                                    <div className="md:col-span-2 space-y-4 p-4 border rounded-lg bg-slate-50">
+                                                        <h4 className="text-sm font-semibold text-slate-700">Location Preferences</h4>
+                                                        <div>
+                                                            <Label className="text-sm">Place of Tutoring (Division & District)</Label>
+                                                            <LocationDropdown
+                                                                divisionValue={data.division}
+                                                                districtValue={data.district}
+                                                                onDivisionChange={(value) => setData('division', value)}
+                                                                onDistrictChange={(value) => setData('district', value)}
+                                                                divisionLabel="Division"
+                                                                districtLabel="District"
+                                                                showLabels={true}
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <Label htmlFor="preferred_locations" className="text-sm">Preferred Locations/Areas</Label>
+                                                            <Input
+                                                                id="preferred_locations"
+                                                                className="rounded-md bg-white"
+                                                                placeholder="e.g., Gulshan, Banani, Dhanmondi"
+                                                                value={data.preferred_locations}
+                                                                onChange={(e) => setData('preferred_locations', e.target.value)}
+                                                            />
+                                                            <p className="text-xs text-slate-500 mt-1">Specify specific areas within the selected district</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -496,6 +602,30 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                         </Select>
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
+                                                        <Label htmlFor="department" className="text-sm">Department</Label>
+                                                        <Input
+                                                            id="department"
+                                                            className="rounded-md"
+                                                            placeholder="e.g., Computer Science, Mathematics"
+                                                            value={data.department}
+                                                            onChange={(e) => setData('department', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-1 md:col-span-2">
+                                                        <Label htmlFor="cgpa" className="text-sm">Result (CGPA) <span className="text-gray-400 text-xs">(Optional)</span></Label>
+                                                        <Input
+                                                            id="cgpa"
+                                                            type="number"
+                                                            step="0.01"
+                                                            min="0"
+                                                            max="4"
+                                                            className="rounded-md"
+                                                            placeholder="e.g., 3.75"
+                                                            value={data.cgpa}
+                                                            onChange={(e) => setData('cgpa', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-span-1 md:col-span-2">
                                                         <SubjectSelector
                                                             subjects={subjects}
                                                             selectedSubjects={data.subjects}
@@ -516,16 +646,6 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                     Personal Information
                                                 </h3>
                                                 <div className="space-y-4">
-                                                    <div className="col-span-1 md:col-span-2">
-                                                        <Label htmlFor="photo" className="text-sm">Profile Photo</Label>
-                                                        <Input
-                                                            id="photo"
-                                                            type="file"
-                                                            accept="image/*"
-                                                            className="rounded-md"
-                                                            onChange={handlePhotoChange}
-                                                        />
-                                                    </div>
                                                     <div className="col-span-1 md:col-span-2">
                                                         <Label htmlFor="name" className="text-sm">Full Name</Label>
                                                         <Input

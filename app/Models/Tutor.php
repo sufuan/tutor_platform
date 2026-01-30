@@ -12,7 +12,7 @@ class Tutor extends Model
     protected $fillable = [
         'user_id', 'tutor_code', 'verification_status', 'verified_at', 'verified_by',
         'verification_notes', 'profile_completion_percentage', 'photo', 'first_name',
-        'last_name', 'phone', 'address', 'gender', 'institution', 'education_level', 'subjects', 
+        'last_name', 'phone', 'address', 'gender', 'institution', 'education_level', 'department', 'cgpa', 'subjects',
         'experience_years', 'experience_details', 'hourly_rate', 'bio', 'location_id',
         'available_days', 'available_time_from', 'available_time_to', 'preferred_locations',
         'tutoring_styles', 'tutoring_method', 'preferred_categories', 'preferred_classes',
@@ -23,6 +23,7 @@ class Tutor extends Model
         'subjects' => 'array',
         'preferred_categories' => 'array',
         'preferred_classes' => 'array',
+        'available_days' => 'array',
         'verified_at' => 'datetime',
     ];
 

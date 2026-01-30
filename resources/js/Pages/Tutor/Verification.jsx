@@ -7,7 +7,8 @@ import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Textarea } from '@/Components/ui/textarea';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
-import { Upload, FileText, CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, CheckCircle, Clock, XCircle, AlertCircle, X } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Verification({ auth, tutor, verificationStatus, verificationNotes, rejectionReason }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -16,11 +17,55 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
     });
 
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const { toast } = useToast();
+    const MAX_FILES = 3;
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        setData('documents', files);
-        setUploadedFiles(files.map(f => f.name));
+        const newFiles = Array.from(e.target.files);
+
+        // Get existing files
+        const existingFiles = data.documents ? Array.from(data.documents) : [];
+
+        // Combine existing and new files
+        const allFiles = [...existingFiles, ...newFiles];
+
+        // Check if total files exceed max limit
+        if (allFiles.length > MAX_FILES) {
+            toast({
+                title: "Too many files",
+                description: `You can only upload a maximum of ${MAX_FILES} files. You currently have ${existingFiles.length} file(s).`,
+                variant: "destructive",
+            });
+            e.target.value = ''; // Reset input
+            return;
+        }
+
+        // Validate file types for new files only
+        const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+        const invalidFiles = newFiles.filter(file => !validTypes.includes(file.type));
+
+        if (invalidFiles.length > 0) {
+            toast({
+                title: "Invalid file type",
+                description: "Only PDF, JPG, JPEG, and PNG files are allowed.",
+                variant: "destructive",
+            });
+            e.target.value = ''; // Reset input
+            return;
+        }
+
+        // Update with all files
+        setData('documents', allFiles);
+        setUploadedFiles(allFiles.map(f => ({ name: f.name, size: f.size })));
+
+        // Reset input so same file can be selected again if needed
+        e.target.value = '';
+    };
+
+    const removeFile = (index) => {
+        const newFiles = Array.from(data.documents).filter((_, i) => i !== index);
+        setData('documents', newFiles.length > 0 ? newFiles : null);
+        setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
     };
 
     const handleSubmit = (e) => {
@@ -129,12 +174,17 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
                                     <Alert>
                                         <AlertCircle className="h-4 w-4" />
                                         <AlertDescription>
-                                            Please upload clear, readable copies of your documents. Supported formats: PDF, JPG, PNG (Max 5MB each)
+                                            Please upload clear, readable copies of your documents. Maximum {MAX_FILES} files. Supported formats: PDF, JPG, JPEG, PNG (Max 5MB each)
                                         </AlertDescription>
                                     </Alert>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="documents">Upload Documents *</Label>
+                                        <Label htmlFor="documents">
+                                            Upload Documents *
+                                            <span className="text-xs text-gray-500 ml-2">
+                                                ({uploadedFiles.length}/{MAX_FILES} files)
+                                            </span>
+                                        </Label>
                                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
                                             <Input
                                                 id="documents"
@@ -143,23 +193,44 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
                                                 accept=".pdf,.jpg,.jpeg,.png"
                                                 onChange={handleFileChange}
                                                 className="hidden"
+                                                disabled={uploadedFiles.length >= MAX_FILES}
                                             />
-                                            <label htmlFor="documents" className="cursor-pointer">
+                                            <label
+                                                htmlFor="documents"
+                                                className={`cursor-pointer ${uploadedFiles.length >= MAX_FILES ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            >
                                                 <Upload className="h-12 w-12 text-gray-400 mx-auto mb-3" />
                                                 <p className="text-sm text-gray-600 mb-1">
-                                                    Click to upload or drag and drop
+                                                    {uploadedFiles.length >= MAX_FILES
+                                                        ? `Maximum ${MAX_FILES} files reached`
+                                                        : 'Click to upload or drag and drop'}
                                                 </p>
                                                 <p className="text-xs text-gray-500">
-                                                    PDF, JPG, PNG up to 5MB
+                                                    PDF, JPG, JPEG, PNG up to 5MB each
                                                 </p>
                                             </label>
                                         </div>
                                         {uploadedFiles.length > 0 && (
                                             <div className="mt-3 space-y-2">
                                                 {uploadedFiles.map((file, idx) => (
-                                                    <div key={idx} className="flex items-center space-x-2 p-2 bg-gray-50 rounded">
-                                                        <FileText className="h-4 w-4 text-blue-600" />
-                                                        <span className="text-sm text-gray-700">{file}</span>
+                                                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                                        <div className="flex items-center space-x-3 flex-1">
+                                                            <FileText className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-sm text-gray-700 font-medium truncate">{file.name}</p>
+                                                                <p className="text-xs text-gray-500">
+                                                                    {(file.size / 1024).toFixed(2)} KB
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeFile(idx)}
+                                                            className="ml-2 p-1 hover:bg-red-100 rounded-full transition-colors"
+                                                            title="Remove file"
+                                                        >
+                                                            <X className="h-4 w-4 text-red-600" />
+                                                        </button>
                                                     </div>
                                                 ))}
                                             </div>
