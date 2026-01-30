@@ -118,10 +118,16 @@ export default function JobApprovals({ auth, jobs, stats }) {
                 <p className="text-sm text-gray-600 line-clamp-3">{job.description}</p>
 
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                    {job.job_type === 'guardian' && job.location?.name && (
+                    {job.job_type === 'guardian' && (job.preferred_location || job.district || job.location?.name) && (
                         <div className="flex items-center gap-2 text-gray-600">
                             <MapPin className="h-4 w-4" />
-                            <span>{job.location?.name}</span>
+                            <span>
+                                {job.preferred_location && job.district
+                                    ? `${job.preferred_location}, ${job.district}`
+                                    : job.district
+                                    ? job.district
+                                    : job.location?.name || 'N/A'}
+                            </span>
                         </div>
                     )}
                     {job.job_type === 'tutor' && (job.division || job.district) && (

@@ -97,7 +97,11 @@ export default function MyJobs({ auth, jobs, stats }) {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="flex items-center gap-2 text-gray-600">
                         <MapPin className="h-4 w-4" />
-                        <span>{job.district || 'Not specified'}</span>
+                        <span>
+                            {job.preferred_location && job.district
+                                ? `${job.preferred_location}, ${job.district}`
+                                : job.district || 'Not specified'}
+                        </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                         <CurrencyBangladeshiIcon size={16} className="" />

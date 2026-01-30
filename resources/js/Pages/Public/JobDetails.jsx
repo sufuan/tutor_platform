@@ -110,8 +110,10 @@ export default function JobDetails({ job, auth }) {
                                             <div>
                                                 <p className="text-xs text-slate-500">Location</p>
                                                 <p className="font-semibold">
-                                                    {job.district && job.division 
-                                                        ? `${job.district}, ${job.division}` 
+                                                    {job.preferred_location && job.district
+                                                        ? `${job.preferred_location}, ${job.district}`
+                                                        : job.district
+                                                        ? job.district
                                                         : job.location?.city || 'Not specified'}
                                                 </p>
                                             </div>

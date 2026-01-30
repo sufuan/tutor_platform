@@ -150,8 +150,10 @@ export default function JobApplications({ auth, applications, stats }) {
                                 <div>
                                     <span className="text-gray-600">Location:</span>{' '}
                                     <span className="font-medium">
-                                        {job?.district && job?.division 
-                                            ? `${job.district}, ${job.division}` 
+                                        {job?.preferred_location && job?.district
+                                            ? `${job.preferred_location}, ${job.district}`
+                                            : job?.district
+                                            ? job.district
                                             : 'N/A'}
                                     </span>
                                 </div>
@@ -250,14 +252,64 @@ export default function JobApplications({ auth, applications, stats }) {
                     {/* CV */}
                     {application.cv_path && (
                         <div className="mt-3">
-                            <Button 
-                                size="sm" 
+                            <Button
+                                size="sm"
                                 variant="outline"
                                 onClick={() => window.open(`/storage/${application.cv_path}`, '_blank')}
                             >
                                 <FileText className="h-4 w-4 mr-2" />
                                 View CV
                             </Button>
+                        </div>
+                    )}
+
+                    {/* Guardian Recommendations */}
+                    {application.guardian_recommendations && application.guardian_recommendations.length > 0 && (
+                        <div className="mt-4 pt-4 border-t">
+                            <h4 className="font-semibold text-sm text-purple-600 mb-3 flex items-center gap-2">
+                                <MessageSquare className="h-4 w-4" />
+                                Guardian Recommendations
+                            </h4>
+                            <div className="space-y-2">
+                                {application.guardian_recommendations.map((rec, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`p-3 rounded-lg border ${
+                                            rec.recommendation_type === 'hire'
+                                                ? 'bg-green-50 border-green-200'
+                                                : 'bg-red-50 border-red-200'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                            {rec.recommendation_type === 'hire' ? (
+                                                <ThumbsUp className="h-4 w-4 text-green-600" />
+                                            ) : (
+                                                <ThumbsDown className="h-4 w-4 text-red-600" />
+                                            )}
+                                            <Badge
+                                                variant="outline"
+                                                className={rec.recommendation_type === 'hire'
+                                                    ? 'bg-green-100 text-green-800 border-green-300'
+                                                    : 'bg-red-100 text-red-800 border-red-300'
+                                                }
+                                            >
+                                                {rec.recommendation_type === 'hire' ? 'Recommends Hire' : 'Not Interested'}
+                                            </Badge>
+                                            {rec.guardian && (
+                                                <span className="text-xs text-gray-600">
+                                                    by {rec.guardian.first_name} {rec.guardian.last_name}
+                                                </span>
+                                            )}
+                                            <span className="text-xs text-gray-500">
+                                                {new Date(rec.created_at).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                        {rec.message && (
+                                            <p className="text-sm text-gray-700 mt-1">{rec.message}</p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </CardContent>

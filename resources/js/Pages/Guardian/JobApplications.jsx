@@ -107,7 +107,9 @@ export default function JobApplications({ auth, job, applications }) {
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <MapPin className="h-4 w-4" />
-                                    <span>{tutor.location?.name}</span>
+                                    <span>{job.preferred_location && job.district
+                                ? `${job.preferred_location}, ${job.district}`
+                                : job.district || 'Not specified'}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
                                     <CurrencyBangladeshiIcon size={16} className="" />
@@ -156,13 +158,7 @@ export default function JobApplications({ auth, job, applications }) {
 
                                 {application.status === 'pending' && (
                                     <>
-                                        <Button
-                                            size="sm"
-                                            onClick={() => handleShortlist(application.id)}
-                                        >
-                                            <Star className="mr-2 h-4 w-4" />
-                                            Shortlist
-                                        </Button>
+                                       
                                         <Button
                                             variant="outline"
                                             size="sm"

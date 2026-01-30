@@ -151,9 +151,11 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                         <div className="flex items-center text-sm text-gray-600">
                                             <MapPin className="h-4 w-4 mr-2 text-primary-blue" />
                                             <span>
-                                                {job.job_type === 'tutor' 
-                                                    ? `${job.district || 'N/A'}, ${job.division || 'N/A'}`
-                                                    : (job.district && job.division ? `${job.district}, ${job.division}` : 'N/A')}
+                                                {job.preferred_location && job.district
+                                                    ? `${job.preferred_location}, ${job.district}`
+                                                    : job.district
+                                                    ? job.district
+                                                    : 'N/A'}
                                             </span>
                                         </div>
                                         

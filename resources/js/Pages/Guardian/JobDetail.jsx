@@ -3,10 +3,10 @@ import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
-import { 
+import {
     ArrowLeft,
-    MapPin, 
-    Calendar, 
+    MapPin,
+    Calendar,
     Clock,
     BookOpen,
     User,
@@ -42,8 +42,8 @@ export default function JobDetail({ auth, job }) {
             <div className="py-12">
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
                     {/* Back Button */}
-                    <Button 
-                        variant="ghost" 
+                    <Button
+                        variant="ghost"
                         className="mb-4"
                         asChild
                     >
@@ -103,7 +103,9 @@ export default function JobDetail({ auth, job }) {
                                             <MapPin className="h-5 w-5 text-slate-500" />
                                             <div>
                                                 <p className="text-xs text-slate-500">Location</p>
-                                                <p className="font-semibold">{job.district || 'Not specified'}</p>
+                                                {job.preferred_location && job.district
+                                                    ? `${job.preferred_location}, ${job.district}`
+                                                    : job.district || 'Not specified'}
                                             </div>
                                         </div>
                                     </div>
@@ -190,8 +192,8 @@ export default function JobDetail({ auth, job }) {
                                     )}
 
                                     <div className="pt-4 border-t">
-                                        <Button 
-                                            className="w-full" 
+                                        <Button
+                                            className="w-full"
                                             asChild
                                         >
                                             <Link href={route('guardian.job-applications', job.id)}>

@@ -23,12 +23,13 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
         description: '',
         division: '',
         district: '',
+        preferred_location: '',
         subjects: [],
         class_level: '',
         education_medium: '',
         tutor_gender_preference: 'any',
         tuition_type: 'home',
-        sessions_per_week: '',
+        sessions_per_week: [],
         session_duration: '',
         salary: '',
     });
@@ -105,9 +106,17 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
                                         <p className="text-xs text-gray-500">Preferred Tutor Gender</p>
                                         <p className="font-semibold capitalize">{data.tutor_gender_preference}</p>
                                     </div>
-                                    <div>
+                                    <div className="col-span-2">
                                         <p className="text-xs text-gray-500">Sessions per Week</p>
-                                        <p className="font-semibold">{data.sessions_per_week} days</p>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                            {data.sessions_per_week.length > 0 ? (
+                                                data.sessions_per_week.map(day => (
+                                                    <Badge key={day} variant="secondary">{day.substring(0, 3)}</Badge>
+                                                ))
+                                            ) : (
+                                                <p className="font-semibold text-gray-400">Not selected</p>
+                                            )}
+                                        </div>
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-500">Session Duration</p>
@@ -142,8 +151,10 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
                                         Location
                                     </h4>
                                     <p className="text-gray-600">
-                                        {data.district && data.division 
-                                            ? `${data.district}, ${data.division}` 
+                                        {data.preferred_location && data.district
+                                            ? `${data.preferred_location}, ${data.district}`
+                                            : data.district && data.division
+                                            ? `${data.district}, ${data.division}`
                                             : 'Not specified'}
                                     </p>
                                 </div>
@@ -338,18 +349,29 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
                                 </div>
 
                                 {/* Schedule */}
-                                <div className="grid md:grid-cols-2 gap-4">
+                                <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="sessions_per_week">Sessions per Week *</Label>
-                                        <Input
-                                            id="sessions_per_week"
-                                            type="number"
-                                            min="1"
-                                            max="7"
-                                            placeholder="e.g., 3"
-                                            value={data.sessions_per_week}
-                                            onChange={(e) => setData('sessions_per_week', e.target.value)}
-                                        />
+                                        <Label>Sessions per Week *</Label>
+                                        <p className="text-xs text-gray-500">Select the days when tuition will be held</p>
+                                        <div className="grid grid-cols-4 gap-2">
+                                            {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                                                <Button
+                                                    key={day}
+                                                    type="button"
+                                                    variant={data.sessions_per_week.includes(day) ? 'default' : 'outline'}
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        if (data.sessions_per_week.includes(day)) {
+                                                            setData('sessions_per_week', data.sessions_per_week.filter(d => d !== day));
+                                                        } else {
+                                                            setData('sessions_per_week', [...data.sessions_per_week, day]);
+                                                        }
+                                                    }}
+                                                >
+                                                    {day.substring(0, 3)}
+                                                </Button>
+                                            ))}
+                                        </div>
                                         {errors.sessions_per_week && (
                                             <p className="text-sm text-red-500">{errors.sessions_per_week}</p>
                                         )}
@@ -373,19 +395,35 @@ export default function PostJob({ auth, locations = [], subjects = [], categorie
                                 </div>
 
                                 {/* Location */}
-                                <div className="space-y-2">
-                                    <Label>Location *</Label>
-                                    <LocationDropdown
-                                        divisionValue={data.division}
-                                        districtValue={data.district}
-                                        onDivisionChange={(division) => setData('division', division)}
-                                        onDistrictChange={(district) => setData('district', district)}
-                                    />
-                                    {(errors.division || errors.district) && (
-                                        <p className="text-sm text-red-500">
-                                            {errors.division || errors.district}
-                                        </p>
-                                    )}
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Division & District *</Label>
+                                        <LocationDropdown
+                                            divisionValue={data.division}
+                                            districtValue={data.district}
+                                            onDivisionChange={(division) => setData('division', division)}
+                                            onDistrictChange={(district) => setData('district', district)}
+                                        />
+                                        {(errors.division || errors.district) && (
+                                            <p className="text-sm text-red-500">
+                                                {errors.division || errors.district}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="preferred_location">Preferred Location</Label>
+                                        <Input
+                                            id="preferred_location"
+                                            placeholder="e.g., Dhanmondi, Road 27"
+                                            value={data.preferred_location}
+                                            onChange={(e) => setData('preferred_location', e.target.value)}
+                                        />
+                                        <p className="text-xs text-gray-500">Specific area or landmark within the district</p>
+                                        {errors.preferred_location && (
+                                            <p className="text-sm text-red-500">{errors.preferred_location}</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {/* Salary */}

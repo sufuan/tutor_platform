@@ -16,6 +16,7 @@ class Job extends Model
         'subjects', 'class_level', 'education_medium', 'tuition_type', 'days_per_week',
         'duration_per_session', 'salary', 'location_id', 'detailed_address',
         'preferred_tutor_gender', 'special_requirements', 'division', 'district',
+        'preferred_location', 'sessions_per_week',
     ];
 
     protected $casts = [
@@ -24,6 +25,7 @@ class Job extends Model
         'location_id' => 'integer',
         'approved_by' => 'integer',
         'subjects' => 'array',
+        'sessions_per_week' => 'array',
         'approved_at' => 'datetime',
         'filled_at' => 'datetime',
         'salary' => 'decimal:2',

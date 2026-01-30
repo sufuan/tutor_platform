@@ -120,7 +120,11 @@ export default function JobDetail({ auth, job }) {
                                             <MapPin className="h-5 w-5 text-slate-500" />
                                             <div>
                                                 <p className="text-xs text-slate-500">Location</p>
-                                                <p className="font-semibold">{job.location?.city}</p>
+                                                <p className="font-semibold">
+                                                    {job.preferred_location && job.district
+                                                        ? `${job.preferred_location}, ${job.district}`
+                                                        : job.district || job.preferred_location || 'N/A'}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>

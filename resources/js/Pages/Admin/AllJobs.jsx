@@ -216,10 +216,12 @@ export default function AllJobs({ auth, jobs }) {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-sm">
-                                                    {job.location !== 'N/A' 
-                                                        ? job.location 
-                                                        : (job.district && job.division 
-                                                            ? `${job.district}, ${job.division}` 
+                                                    {job.location !== 'N/A'
+                                                        ? job.location
+                                                        : (job.preferred_location && job.district
+                                                            ? `${job.preferred_location}, ${job.district}`
+                                                            : job.district
+                                                            ? job.district
                                                             : 'N/A')
                                                     }
                                                 </TableCell>

@@ -144,11 +144,13 @@ class GuardianController extends Controller
             'class_level' => 'required|string',
             'education_medium' => 'required|in:bangla,english,english_version',
             'tuition_type' => 'required|in:home,online,group',
-            'sessions_per_week' => 'required|integer|min:1|max:7',
+            'sessions_per_week' => 'required|array|min:1',
+            'sessions_per_week.*' => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
             'session_duration' => 'required|integer|min:30|max:180',
             'salary' => 'required|numeric|min:0',
             'division' => 'required|string|max:255',
             'district' => 'required|string|max:255',
+            'preferred_location' => 'nullable|string|max:500',
             'tutor_gender_preference' => 'nullable|in:any,male,female',
         ]);
 
@@ -156,12 +158,12 @@ class GuardianController extends Controller
         $validated['job_code'] = 'JOB-' . strtoupper(uniqid());
         $validated['approval_status'] = 'pending';
         $validated['status'] = 'open';
-        $validated['days_per_week'] = $validated['sessions_per_week'];
+        $validated['days_per_week'] = count($validated['sessions_per_week']); // Store count for backward compatibility
         $validated['duration_per_session'] = $validated['session_duration'];
         $validated['preferred_tutor_gender'] = $validated['tutor_gender_preference'] ?? 'any';
         $validated['detailed_address'] = '';
-        
-        unset($validated['sessions_per_week'], $validated['session_duration'], $validated['tutor_gender_preference']);
+
+        unset($validated['session_duration'], $validated['tutor_gender_preference']);
 
         try {
             $job = Job::create($validated);

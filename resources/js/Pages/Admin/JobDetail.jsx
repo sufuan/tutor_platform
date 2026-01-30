@@ -213,9 +213,9 @@ export default function JobDetail({ auth, job, jobType }) {
                                         <div>
                                             <p className="text-sm text-gray-500">Location</p>
                                             <p className="font-medium">
-                                                {jobType === 'tutor' 
-                                                    ? `${job.district || 'N/A'}, ${job.division || 'N/A'}`
-                                                    : `${job.district || 'N/A'}, ${job.division || 'N/A'}`}
+                                                {job.preferred_location && job.district
+                                                    ? `${job.preferred_location}, ${job.district}`
+                                                    : job.district || 'N/A'}
                                             </p>
                                         </div>
                                     </div>
