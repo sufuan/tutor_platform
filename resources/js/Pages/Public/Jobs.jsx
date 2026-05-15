@@ -1,53 +1,78 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Input } from '@/Components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Badge } from '@/Components/ui/badge';
-import { MapPin, Search, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User, X } from 'lucide-react';
+import { MapPin, Search, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, ChevronRight, User, X, Building2 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
-export default function Jobs({ jobs, districts, subjects, filters }) {
-    const [searchTerm, setSearchTerm] = useState(filters.search || '');
-    const [selectedLocation, setSelectedLocation] = useState(filters.location || '');
-    const [selectedSubject, setSelectedSubject] = useState(filters.subject || '');
+export default function Jobs({ jobs, divisions, subjects, filters }) {
+    const [searchTerm, setSearchTerm]         = useState(filters.search || '');
+    const [selectedDivision, setSelectedDivision] = useState(filters.division || '');
+    const [selectedDistrict, setSelectedDistrict] = useState(filters.location || '');
+    const [selectedSubject, setSelectedSubject]   = useState(filters.subject || '');
 
-    // Debounce search to avoid too many requests
+    // All districts flat list (for when no division is selected)
+    const allDistricts = useMemo(() => {
+        return Object.values(divisions).flat().sort();
+    }, [divisions]);
+
+    // Districts shown in the district dropdown — filtered by division if one is picked
+    const availableDistricts = useMemo(() => {
+        if (selectedDivision && selectedDivision !== 'all') {
+            return divisions[selectedDivision] || [];
+        }
+        return allDistricts;
+    }, [selectedDivision, divisions, allDistricts]);
+
+    // When division changes, clear district if it doesn't belong to the new division
+    const handleDivisionChange = (val) => {
+        setSelectedDivision(val);
+        const div = val === 'all' ? null : val;
+        if (div && selectedDistrict) {
+            const districtsForDiv = divisions[div] || [];
+            if (!districtsForDiv.includes(selectedDistrict)) {
+                setSelectedDistrict('');
+            }
+        }
+    };
+
+    // Debounced apply — fires whenever any filter changes
     useEffect(() => {
-        const timer = setTimeout(() => {
-            applyFilters();
-        }, 500);
-
+        const timer = setTimeout(() => applyFilters(), 500);
         return () => clearTimeout(timer);
-    }, [searchTerm, selectedLocation, selectedSubject]);
+    }, [searchTerm, selectedDivision, selectedDistrict, selectedSubject]);
 
     const applyFilters = () => {
         const params = {};
         if (searchTerm) params.search = searchTerm;
-        if (selectedLocation && selectedLocation !== 'all') params.location = selectedLocation;
+        if (selectedDivision && selectedDivision !== 'all') params.division = selectedDivision;
+        if (selectedDistrict && selectedDistrict !== 'all') params.location = selectedDistrict;
         if (selectedSubject && selectedSubject !== 'all') params.subject = selectedSubject;
 
-        router.get('/jobs', params, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+        router.get('/jobs', params, { preserveState: true, preserveScroll: true });
     };
 
     const clearFilters = () => {
         setSearchTerm('');
-        setSelectedLocation('');
+        setSelectedDivision('');
+        setSelectedDistrict('');
         setSelectedSubject('');
     };
 
-    const hasActiveFilters = searchTerm || (selectedLocation && selectedLocation !== 'all') || (selectedSubject && selectedSubject !== 'all');
+    const hasActiveFilters = searchTerm
+        || (selectedDivision && selectedDivision !== 'all')
+        || (selectedDistrict && selectedDistrict !== 'all')
+        || (selectedSubject && selectedSubject !== 'all');
 
     const getJobTypeColor = (type) => {
         const colors = {
             'one-time': 'bg-blue-100 text-blue-800',
-            'regular': 'bg-green-100 text-green-800',
-            'both': 'bg-purple-100 text-purple-800',
+            'regular':  'bg-green-100 text-green-800',
+            'both':     'bg-purple-100 text-purple-800',
         };
         return colors[type] || 'bg-gray-100 text-gray-800';
     };
@@ -72,32 +97,21 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
 
             {/* Filters Section */}
             <div className="bg-white shadow-md sticky top-16 z-40 border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="md:col-span-2">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                <Input
-                                    placeholder="Search jobs by title or description..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10"
-                                />
-                            </div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+                    {/* Row 1: Search + Subject */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        {/* Search */}
+                        <div className="md:col-span-2 relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <Input
+                                placeholder="Search jobs by title or description..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-10"
+                            />
                         </div>
-                        <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select District" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Districts</SelectItem>
-                                {districts.map((district) => (
-                                    <SelectItem key={district} value={district}>
-                                        {district}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+
+                        {/* Subject */}
                         <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                             <SelectTrigger>
                                 <SelectValue placeholder="All Subjects" />
@@ -112,14 +126,100 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="flex justify-between items-center mt-4">
-                        <p className="text-sm text-gray-600">
-                            Showing {jobs.data.length} of {jobs.total} jobs
-                        </p>
+
+                    {/* Row 2: Division + District (dependent) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Division */}
+                        <div>
+                            <Select value={selectedDivision} onValueChange={handleDivisionChange}>
+                                <SelectTrigger>
+                                    <Building2 className="h-4 w-4 mr-2 text-gray-400 shrink-0" />
+                                    <SelectValue placeholder="All Divisions" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Divisions</SelectItem>
+                                    {Object.keys(divisions).map((div) => (
+                                        <SelectItem key={div} value={div}>
+                                            {div} Division ({divisions[div].length} districts)
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {/* District — shows all 64 or filtered by division */}
+                        <div>
+                            <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+                                <SelectTrigger>
+                                    <MapPin className="h-4 w-4 mr-2 text-gray-400 shrink-0" />
+                                    <SelectValue placeholder={
+                                        selectedDivision && selectedDivision !== 'all'
+                                            ? `All ${selectedDivision} Districts`
+                                            : 'All Districts'
+                                    } />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-72">
+                                    <SelectItem value="all">
+                                        {selectedDivision && selectedDivision !== 'all'
+                                            ? `All ${selectedDivision} Districts`
+                                            : 'All Districts'}
+                                    </SelectItem>
+                                    {/* If a division is selected, show flat list */}
+                                    {selectedDivision && selectedDivision !== 'all' ? (
+                                        availableDistricts.map((district) => (
+                                            <SelectItem key={district} value={district}>
+                                                {district}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        /* Otherwise show grouped by division */
+                                        Object.entries(divisions).map(([div, dists]) => (
+                                            <SelectGroup key={div}>
+                                                <SelectLabel className="text-xs font-bold text-primary-blue">
+                                                    {div} Division
+                                                </SelectLabel>
+                                                {dists.map((district) => (
+                                                    <SelectItem key={district} value={district}>
+                                                        {district}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectGroup>
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {/* Active filter tags + count */}
+                    <div className="flex flex-wrap justify-between items-center mt-4 gap-2">
+                        <div className="flex flex-wrap gap-2 items-center">
+                            <p className="text-sm text-gray-600">
+                                Showing <span className="font-semibold">{jobs.data.length}</span> of <span className="font-semibold">{jobs.total}</span> jobs
+                            </p>
+                            {selectedDivision && selectedDivision !== 'all' && (
+                                <Badge variant="secondary" className="text-xs">
+                                    Division: {selectedDivision}
+                                    <button onClick={() => handleDivisionChange('all')} className="ml-1 hover:text-red-500">×</button>
+                                </Badge>
+                            )}
+                            {selectedDistrict && selectedDistrict !== 'all' && (
+                                <Badge variant="secondary" className="text-xs">
+                                    District: {selectedDistrict}
+                                    <button onClick={() => setSelectedDistrict('')} className="ml-1 hover:text-red-500">×</button>
+                                </Badge>
+                            )}
+                            {selectedSubject && selectedSubject !== 'all' && (
+                                <Badge variant="secondary" className="text-xs">
+                                    Subject: {selectedSubject}
+                                    <button onClick={() => setSelectedSubject('')} className="ml-1 hover:text-red-500">×</button>
+                                </Badge>
+                            )}
+                        </div>
                         {hasActiveFilters && (
                             <Button onClick={clearFilters} variant="outline" size="sm">
                                 <X className="h-4 w-4 mr-1" />
-                                Clear Filters
+                                Clear All
                             </Button>
                         )}
                     </div>
@@ -158,23 +258,23 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                                     : 'N/A'}
                                             </span>
                                         </div>
-                                        
+
                                         <div className="flex items-start text-sm text-gray-600">
                                             <BookOpen className="h-4 w-4 mr-2 text-primary-blue mt-0.5" />
                                             <div className="flex flex-wrap gap-1">
                                                 {(() => {
-                                                    const subjects = job.subject_names || [];
-                                                    return subjects.slice(0, 3).map((subject, idx) => (
+                                                    const subs = job.subject_names || [];
+                                                    return subs.slice(0, 3).map((subject, idx) => (
                                                         <Badge key={idx} variant="secondary" className="text-xs">
                                                             {subject}
                                                         </Badge>
                                                     ));
                                                 })()}
                                                 {(() => {
-                                                    const subjects = job.subject_names || [];
-                                                    return subjects.length > 3 && (
+                                                    const subs = job.subject_names || [];
+                                                    return subs.length > 3 && (
                                                         <Badge variant="secondary" className="text-xs">
-                                                            +{subjects.length - 3}
+                                                            +{subs.length - 3}
                                                         </Badge>
                                                     );
                                                 })()}
@@ -186,14 +286,10 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                                 <GraduationCap className="h-4 w-4 mr-2 text-primary-blue mt-0.5" />
                                                 <div className="flex flex-wrap gap-1">
                                                     {job.class_levels.slice(0, 2).map((level, idx) => (
-                                                        <Badge key={idx} variant="outline" className="text-xs">
-                                                            {level}
-                                                        </Badge>
+                                                        <Badge key={idx} variant="outline" className="text-xs">{level}</Badge>
                                                     ))}
                                                     {job.class_levels.length > 2 && (
-                                                        <Badge variant="outline" className="text-xs">
-                                                            +{job.class_levels.length - 2}
-                                                        </Badge>
+                                                        <Badge variant="outline" className="text-xs">+{job.class_levels.length - 2}</Badge>
                                                     )}
                                                 </div>
                                             </div>
@@ -202,23 +298,19 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                         {job.job_type === 'tutor' && job.preferred_gender && (
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <User className="h-4 w-4 mr-2 text-primary-blue" />
-                                                <Badge variant="outline" className="text-xs capitalize">
-                                                    {job.preferred_gender} tutor
-                                                </Badge>
+                                                <Badge variant="outline" className="text-xs capitalize">{job.preferred_gender} tutor</Badge>
                                             </div>
                                         )}
 
                                         {job.job_type === 'guardian' && job.preferred_tutor_gender && (
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <User className="h-4 w-4 mr-2 text-primary-blue" />
-                                                <Badge variant="outline" className="text-xs capitalize">
-                                                    {job.preferred_tutor_gender} tutor
-                                                </Badge>
+                                                <Badge variant="outline" className="text-xs capitalize">{job.preferred_tutor_gender} tutor</Badge>
                                             </div>
                                         )}
 
                                         <div className="flex items-center text-sm text-gray-600">
-                                            <CurrencyBangladeshiIcon size={16} className=" mr-2 text-green-600" />
+                                            <CurrencyBangladeshiIcon size={16} className="mr-2 text-green-600" />
                                             <span className="font-semibold text-green-600">
                                                 {job.job_type === 'tutor'
                                                     ? `৳${parseInt(job.monthly_salary).toLocaleString()}/month`
@@ -250,14 +342,12 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                                 ✓ Applied
                                             </Badge>
                                         ) : (
-                                            <Button 
+                                            <Button
                                                 className="w-full bg-primary-blue hover:bg-primary-blue/90 mt-4"
                                                 onClick={() => {
-                                                    if (job.job_type === 'tutor') {
-                                                        window.location.href = `/tutor-jobs/${job.id}`;
-                                                    } else {
-                                                        window.location.href = `/jobs/${job.id}`;
-                                                    }
+                                                    window.location.href = job.job_type === 'tutor'
+                                                        ? `/tutor-jobs/${job.id}`
+                                                        : `/jobs/${job.id}`;
                                                 }}
                                             >
                                                 View Details
@@ -272,14 +362,13 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                         {jobs.last_page > 1 && (
                             <div className="flex items-center justify-center gap-2 mt-8">
                                 <Button
-                                    variant="outline"
-                                    size="icon"
+                                    variant="outline" size="icon"
                                     disabled={jobs.current_page === 1}
                                     onClick={() => router.get(jobs.prev_page_url)}
                                 >
                                     <ChevronLeft className="h-4 w-4" />
                                 </Button>
-                                
+
                                 <div className="flex items-center gap-1">
                                     {Array.from({ length: jobs.last_page }, (_, i) => i + 1).map((page) => {
                                         if (
@@ -297,10 +386,7 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                                     {page}
                                                 </Button>
                                             );
-                                        } else if (
-                                            page === jobs.current_page - 2 ||
-                                            page === jobs.current_page + 2
-                                        ) {
+                                        } else if (page === jobs.current_page - 2 || page === jobs.current_page + 2) {
                                             return <span key={page} className="px-2">...</span>;
                                         }
                                         return null;
@@ -308,8 +394,7 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
                                 </div>
 
                                 <Button
-                                    variant="outline"
-                                    size="icon"
+                                    variant="outline" size="icon"
                                     disabled={jobs.current_page === jobs.last_page}
                                     onClick={() => router.get(jobs.next_page_url)}
                                 >
@@ -334,6 +419,3 @@ export default function Jobs({ jobs, districts, subjects, filters }) {
         </PublicLayout>
     );
 }
-
-
-

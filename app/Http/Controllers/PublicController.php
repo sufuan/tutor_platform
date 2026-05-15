@@ -170,7 +170,7 @@ class PublicController extends Controller
 
         // Merge and paginate
         $allJobs = $guardianJobs->concat($tutorJobs)->sortByDesc('created_at')->values();
-        
+
         // Manual pagination
         $page = $request->get('page', 1);
         $perPage = 12;
@@ -182,19 +182,23 @@ class PublicController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        // Get unique districts from both job types
-        $districts = collect()
-            ->merge(Job::where('approval_status', 'approved')->where('status', 'open')->whereNotNull('district')->pluck('district'))
-            ->merge(TutorJobRequest::where('approval_status', 'approved')->where('status', 'active')->whereNotNull('district')->pluck('district'))
-            ->unique()
-            ->sort()
-            ->values();
+        // All 64 Bangladesh districts grouped by division (static — no DB needed)
+        $divisions = [
+            'Dhaka'      => ['Dhaka','Faridpur','Gazipur','Gopalganj','Kishoreganj','Madaripur','Manikganj','Munshiganj','Narayanganj','Narsingdi','Rajbari','Shariatpur','Tangail'],
+            'Chittagong' => ['Bandarban','Brahmanbaria','Chandpur','Chittagong','Comilla','Cox\'s Bazar','Feni','Khagrachhari','Lakshmipur','Noakhali','Rangamati'],
+            'Rajshahi'   => ['Bogra','Chapainawabganj','Joypurhat','Naogaon','Natore','Pabna','Rajshahi','Sirajganj'],
+            'Khulna'     => ['Bagerhat','Chuadanga','Jessore','Jhenaidah','Khulna','Kushtia','Magura','Meherpur','Narail','Satkhira'],
+            'Barisal'    => ['Barguna','Barisal','Bhola','Jhalokati','Patuakhali','Pirojpur'],
+            'Sylhet'     => ['Habiganj','Moulvibazar','Sunamganj','Sylhet'],
+            'Rangpur'    => ['Dinajpur','Gaibandha','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Rangpur','Thakurgaon'],
+            'Mymensingh' => ['Jamalpur','Mymensingh','Netrokona','Sherpur'],
+        ];
 
         return Inertia::render('Public/Jobs', [
-            'jobs' => $jobs,
-            'districts' => $districts,
-            'subjects' => Subject::orderBy('name')->get(),
-            'filters' => $request->only(['location', 'subject', 'search']),
+            'jobs'      => $jobs,
+            'divisions' => $divisions,
+            'subjects'  => Subject::orderBy('name')->get(),
+            'filters'   => $request->only(['location', 'subject', 'search', 'division']),
         ]);
     }
 
