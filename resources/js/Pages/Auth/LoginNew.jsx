@@ -5,9 +5,11 @@ import { Label } from '@/Components/ui/label';
 import { Checkbox } from '@/Components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { GraduationCap, Users, ArrowLeft, ArrowRight, CheckCircle2, Mail, Lock } from 'lucide-react';
+import { GraduationCap, Users, ArrowLeft, ArrowRight, CheckCircle2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
+    const [showPassword, setShowPassword] = useState(false);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         role: 'guardian',
         email: '',
@@ -201,13 +203,22 @@ export default function Login({ status, canResetPassword }) {
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                                     <Input
                                         id="password"
-                                        type="password"
+                                        type={showPassword ? 'text' : 'password'}
                                         placeholder="••••••••"
                                         value={data.password}
                                         onChange={(e) => setData('password', e.target.value)}
-                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
+                                        className="pl-11 pr-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => setShowPassword((current) => !current)}
+                                        className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-[#275AAA] hover:bg-transparent"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </Button>
                                 </div>
                                 {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
                             </div>

@@ -6,9 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { GraduationCap, Users, Shield, CheckCircle, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { GraduationCap, Users, Shield, CheckCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
+    const [showPassword, setShowPassword] = useState(false);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -93,15 +96,27 @@ export default function Login({ status, canResetPassword }) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="password">Password</Label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        name="password"
-                                        value={data.password}
-                                        autoComplete="current-password"
-                                        onChange={(e) => setData('password', e.target.value)}
-                                        placeholder="••••••••"
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            type={showPassword ? 'text' : 'password'}
+                                            name="password"
+                                            value={data.password}
+                                            autoComplete="current-password"
+                                            onChange={(e) => setData('password', e.target.value)}
+                                            placeholder="••••••••"
+                                            className="pr-11"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => setShowPassword((current) => !current)}
+                                            className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-[#275AAA] hover:bg-transparent"
+                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        >
+                                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                        </Button>
+                                    </div>
                                     {errors.password && (
                                         <p className="text-sm text-red-500">{errors.password}</p>
                                     )}

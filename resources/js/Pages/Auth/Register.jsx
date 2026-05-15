@@ -6,9 +6,12 @@ import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { GraduationCap, Users, CheckCircle, Mail, Lock, User, Shield, ArrowLeft } from 'lucide-react';
+import { GraduationCap, Users, CheckCircle, Mail, Lock, User, Shield, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function Register({ defaultRole = 'tutor', tutorOnly = false }) {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -229,15 +232,24 @@ export default function Register({ defaultRole = 'tutor', tutorOnly = false }) {
                                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                                     <Input
                                         id="password"
-                                        type="password"
+                                        type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         value={data.password}
                                         autoComplete="new-password"
                                         onChange={(e) => setData('password', e.target.value)}
                                         placeholder="••••••••"
-                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
+                                        className="pl-11 pr-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => setShowPassword((current) => !current)}
+                                        className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-[#275AAA] hover:bg-transparent"
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </Button>
                                 </div>
                                 {errors.password && (
                                     <p className="text-sm text-red-500">{errors.password}</p>
@@ -250,7 +262,7 @@ export default function Register({ defaultRole = 'tutor', tutorOnly = false }) {
                                     <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                                     <Input
                                         id="password_confirmation"
-                                        type="password"
+                                        type={showPasswordConfirmation ? 'text' : 'password'}
                                         name="password_confirmation"
                                         value={data.password_confirmation}
                                         autoComplete="new-password"
@@ -258,9 +270,18 @@ export default function Register({ defaultRole = 'tutor', tutorOnly = false }) {
                                             setData('password_confirmation', e.target.value)
                                         }
                                         placeholder="••••••••"
-                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
+                                        className="pl-11 pr-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => setShowPasswordConfirmation((current) => !current)}
+                                        className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 p-0 text-slate-400 hover:text-[#275AAA] hover:bg-transparent"
+                                        aria-label={showPasswordConfirmation ? 'Hide confirm password' : 'Show confirm password'}
+                                    >
+                                        {showPasswordConfirmation ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </Button>
                                 </div>
                                 {errors.password_confirmation && (
                                     <p className="text-sm text-red-500">{errors.password_confirmation}</p>
