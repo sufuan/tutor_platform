@@ -59,9 +59,11 @@ class PublicController extends Controller
             ->get()
             ->map(function ($feedback) {
                 return [
-                    'name' => $feedback->tutor->name,
-                    'feedback' => $feedback->feedback,
-                    'rating' => $feedback->rating,
+                    'name'        => $feedback->tutor->name,
+                    'feedback'    => $feedback->feedback,
+                    'rating'      => $feedback->rating,
+                    'institution' => $feedback->institution,
+                    'photo_url'   => $feedback->photo_url,
                 ];
             });
 
