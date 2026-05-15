@@ -49,9 +49,15 @@ export default function Jobs({ jobs, divisions, subjects, filters }) {
     const applyFilters = () => {
         const params = {};
         if (searchTerm) params.search = searchTerm;
-        if (selectedDivision && selectedDivision !== 'all') params.division = selectedDivision;
-        if (selectedDistrict && selectedDistrict !== 'all') params.location = selectedDistrict;
         if (selectedSubject && selectedSubject !== 'all') params.subject = selectedSubject;
+
+        if (selectedDistrict && selectedDistrict !== 'all') {
+            // Specific district selected — filter by it directly
+            params.location = selectedDistrict;
+        } else if (selectedDivision && selectedDivision !== 'all') {
+            // Division selected but no specific district — pass all districts of that division
+            params.districts = (divisions[selectedDivision] || []).join(',');
+        }
 
         router.get('/jobs', params, { preserveState: true, preserveScroll: true });
     };
@@ -140,7 +146,7 @@ export default function Jobs({ jobs, divisions, subjects, filters }) {
                                     <SelectItem value="all">All Divisions</SelectItem>
                                     {Object.keys(divisions).map((div) => (
                                         <SelectItem key={div} value={div}>
-                                            {div} Division ({divisions[div].length} districts)
+                                            {div} Division
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

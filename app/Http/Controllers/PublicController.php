@@ -122,6 +122,11 @@ class PublicController extends Controller
 
         if ($request->location) {
             $guardianJobs->where('district', $request->location);
+        } elseif ($request->districts) {
+            $districtList = array_filter(array_map('trim', explode(',', $request->districts)));
+            if (!empty($districtList)) {
+                $guardianJobs->whereIn('district', $districtList);
+            }
         }
 
         if ($subjectId) {
@@ -150,6 +155,11 @@ class PublicController extends Controller
 
         if ($request->location) {
             $tutorJobs->where('district', $request->location);
+        } elseif ($request->districts) {
+            $districtList = array_filter(array_map('trim', explode(',', $request->districts)));
+            if (!empty($districtList)) {
+                $tutorJobs->whereIn('district', $districtList);
+            }
         }
 
         if ($subjectId) {
