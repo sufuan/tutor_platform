@@ -70,12 +70,12 @@ export default function Dashboard({
         <AuthenticatedLayout
             user={auth}
             header={
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center pt-4 sm:pt-0 lg:pt-6">
                     <div>
-                        <h2 className="font-semibold text-3xl text-gray-800 leading-tight">
+                        <h2 className="font-semibold text-2xl sm:text-3xl text-gray-800 leading-tight">
                             Welcome back, {auth.name}! 👋
                         </h2>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1">
                             Guardian Code: <span className="font-semibold">{auth.guardian?.guardian_code || 'Not Set'}</span>
                         </p>
                     </div>
@@ -84,8 +84,8 @@ export default function Dashboard({
         >
             <Head title="Guardian Dashboard" />
 
-            <div className="py-8">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div className="pt-16 sm:pt-10 lg:pt-24 pb-16 sm:pb-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                     
                     {/* Profile Completion Card */}
                     {!profileComplete && (

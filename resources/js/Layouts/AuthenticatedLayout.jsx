@@ -92,8 +92,10 @@ export default function AuthenticatedLayout({ children, header }) {
         const role = user.role;
 
         if (role === 'guardian') {
-            const profileComplete = badgeCounts?.profileComplete ?? true;
-            return [
+            const profilePercentage = user.guardian?.profile_completion_percentage || 0;
+            const isProfileComplete = profilePercentage >= 100;
+
+            const guardianMenuItems = [
                 {
                     title: 'Dashboard',
                     url: route('dashboard'),
@@ -101,10 +103,11 @@ export default function AuthenticatedLayout({ children, header }) {
                     isActive: route().current('dashboard'),
                 },
                 {
-                    title: 'Complete Profile',
-                    url: route('guardian.profile.complete'),
-                    icon: User,
-                    badge: !profileComplete ? { value: '!', variant: 'destructive' } : null,
+                    title: 'Tutor View',
+                    url: route('tutors.index'),
+                    icon: Users,
+                    isActive: route().current('tutors.index'),
+                    requiresProfile: true,
                 },
                 {
                     title: 'Post a Job',
@@ -118,7 +121,24 @@ export default function AuthenticatedLayout({ children, header }) {
                     icon: Briefcase,
                     badge: badgeCounts?.totalJobs ? { value: badgeCounts.totalJobs } : null,
                 },
+                {
+                    title: 'Share Feedback',
+                    url: route('guardian.feedback.create'),
+                    icon: MessageSquare,
+                },
             ];
+
+            if (!isProfileComplete) {
+                guardianMenuItems.splice(2, 0, {
+                    title: 'Complete Profile',
+                    url: route('guardian.profile.complete'),
+                    icon: User,
+                    badge: { value: '!', variant: 'destructive' },
+                    requiresProfile: false,
+                });
+            }
+
+            return guardianMenuItems;
         }
 
         if (role === 'tutor') {
@@ -279,6 +299,21 @@ export default function AuthenticatedLayout({ children, header }) {
         router.post(route('logout'));
     };
 
+    const getProfileUrl = () => {
+        if (user.role === 'guardian') {
+            return route('guardian.profile.complete');
+        }
+
+        if (user.role === 'tutor') {
+            return route('tutor.profile');
+        }
+
+        return route('profile.edit');
+    };
+
+    const profileUrl = getProfileUrl();
+    const guardianProfilePercentage = user.role === 'guardian' ? (user.guardian?.profile_completion_percentage || 0) : null;
+
     return (
         <SidebarProvider>
             <div className="flex min-h-screen w-full">
@@ -365,21 +400,38 @@ export default function AuthenticatedLayout({ children, header }) {
                     <SidebarFooter className="border-t border-sidebar-border">
                         <SidebarMenu>
                             <SidebarMenuItem>
+                                <SidebarMenuButton asChild className="h-auto p-0">
+                                    <Link href={profileUrl} className="flex items-center gap-2 rounded-md px-2 py-2 transition-colors hover:bg-sidebar-accent w-full">
+                                        <UserAvatar user={user} size="default" />
+                                        <div className="flex flex-col flex-1 min-w-0 text-left">
+                                            <span className="text-sm font-semibold truncate">
+                                                {user.name}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground truncate">
+                                                {user.role === 'guardian'
+                                                    ? guardianProfilePercentage >= 100
+                                                        ? 'Profile complete'
+                                                        : 'Complete your guardian profile'
+                                                    : user.email}
+                                            </span>
+                                        </div>
+                                        {user.role === 'guardian' && guardianProfilePercentage !== null && (
+                                            <Badge variant={guardianProfilePercentage >= 100 ? 'secondary' : 'outline'} className="ml-auto text-[10px]">
+                                                {guardianProfilePercentage >= 100 ? 'Profile ready' : `${guardianProfilePercentage}%`}
+                                            </Badge>
+                                        )}
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            <SidebarMenuItem>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <SidebarMenuButton
                                             size="lg"
                                             className="data-[state=open]:bg-sidebar-accent"
                                         >
-                                            <UserAvatar user={user} size="default" />
-                                            <div className="flex flex-col flex-1 min-w-0 text-left">
-                                                <span className="text-sm font-semibold truncate">
-                                                    {user.name}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground truncate">
-                                                    {user.email}
-                                                </span>
-                                            </div>
+                                            <LogOut className="h-4 w-4" />
+                                            <span className="text-sm font-medium">Logout</span>
                                             <ChevronUp className="ml-auto h-4 w-4" />
                                         </SidebarMenuButton>
                                     </DropdownMenuTrigger>
@@ -417,7 +469,7 @@ export default function AuthenticatedLayout({ children, header }) {
                     <SidebarRail />
                 </Sidebar>
 
-                <SidebarInset className="flex flex-col flex-1">
+                <SidebarInset className="flex flex-col flex-1 pt-4 sm:pt-0">
                     <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
                         <SidebarTrigger className="-ml-1" />
                         <Separator orientation="vertical" className="mr-2 h-4" />

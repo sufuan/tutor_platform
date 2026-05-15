@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button } from '@/Components/ui/button';
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/Components/ui/checkbox';
 import { Badge } from '@/Components/ui/badge';
 import { Progress } from '@/Components/ui/progress';
-import { CheckCircle, Circle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import LocationDropdown from '@/Components/LocationDropdown';
 import SubjectSelector from '@/Components/SubjectSelector';
 
@@ -18,6 +18,8 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
     const [currentStep, setCurrentStep] = useState(1);
     const [canSubmit, setCanSubmit] = useState(false);
     const totalSteps = 4;
+    const profileCompletion = guardian?.profile_completion_percentage ?? auth?.guardian?.profile_completion_percentage ?? 0;
+    const isProfileComplete = profileCompletion >= 100;
 
     const { data, setData, post, processing, errors } = useForm({
         name: auth?.name || '',
@@ -33,18 +35,6 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
         'Play', 'Nursery', 'KG', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5',
         'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10', 'SSC', 'HSC', 'A Level', 'O Level'
     ];
-
-    const calculateProgress = () => {
-        let filledFields = 0;
-        if (data.name) filledFields++;
-        if (data.phone) filledFields++;
-        if (data.division) filledFields++;
-        if (data.district) filledFields++;
-        if (data.detailed_address) filledFields++;
-        if (data.preferred_subjects.length > 0) filledFields++;
-        if (data.preferred_class_levels.length > 0) filledFields++;
-        return Math.round((filledFields / 7) * 100);
-    };
 
     const isStepValid = (step) => {
         switch (step) {
@@ -103,53 +93,121 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
         { number: 4, title: 'Preferences' },
     ];
 
+    useEffect(() => {
+        if (isProfileComplete) {
+            setCurrentStep(totalSteps);
+        }
+    }, [isProfileComplete, totalSteps]);
+
+    const stepProgress = isProfileComplete ? 100 : Math.round((currentStep / totalSteps) * 100);
+    const currentStepMeta = steps[currentStep - 1];
+
     return (
         <AuthenticatedLayout header={<h2 className="font-heading text-xl font-semibold text-gray-800">Complete Your Profile</h2>}>
-            <div className="py-12">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Progress Bar */}
-                    <Card className="mb-8">
-                        <CardContent className="pt-6">
-                            <div className="mb-4">
-                                <div className="flex justify-between mb-2">
-                                    <span className="text-sm font-medium">Profile Completion</span>
-                                    <span className="text-sm font-medium text-primary-blue">{calculateProgress()}%</span>
-                                </div>
-                                <Progress value={calculateProgress()} className="h-3" />
-                            </div>
-                            <div className="flex justify-between mt-6">
-                                {steps.map((step) => (
-                                    <div key={step.number} className="flex flex-col items-center">
-                                        <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                                            currentStep >= step.number
-                                                ? 'border-primary-blue bg-primary-blue text-white'
-                                                : 'border-gray-300 text-gray-400'
-                                        }`}>
-                                            {currentStep > step.number ? (
-                                                <CheckCircle className="h-6 w-6" />
-                                            ) : (
-                                                <span>{step.number}</span>
-                                            )}
-                                        </div>
-                                        <span className="text-xs mt-2 text-center">{step.title}</span>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 py-12">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                    <Card className="overflow-hidden border-0 bg-gradient-to-br from-[#275AAA] via-[#1F4A92] to-[#183B73] text-white shadow-2xl">
+                        <CardContent className="p-8 lg:p-10">
+                            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                                <div className="max-w-2xl space-y-4">
+                                    <Badge className="w-fit border border-white/20 bg-white/10 text-white hover:bg-white/10">
+                                        Guardian onboarding
+                                    </Badge>
+                                    <div>
+                                        <h1 className="text-4xl lg:text-5xl font-black tracking-tight">
+                                            Finish your guardian profile
+                                        </h1>
+                                        <p className="mt-4 text-white/80 text-base lg:text-lg leading-7">
+                                            Complete these four steps to unlock guardian features and keep your dashboard clean once your profile reaches 100%.
+                                        </p>
                                     </div>
-                                ))}
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3 min-w-[240px]">
+                                    <div className="rounded-2xl bg-white/10 border border-white/10 p-4 backdrop-blur-sm">
+                                        <div className="text-2xl font-bold">{profileCompletion}%</div>
+                                        <div className="text-xs uppercase tracking-[0.2em] text-white/70">Profile completion</div>
+                                    </div>
+                                    <div className="rounded-2xl bg-white/10 border border-white/10 p-4 backdrop-blur-sm">
+                                        <div className="text-2xl font-bold">{currentStep}/{totalSteps}</div>
+                                        <div className="text-xs uppercase tracking-[0.2em] text-white/70">Form step</div>
+                                    </div>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    {/* Form */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Step {currentStep}: {steps[currentStep - 1].title}</CardTitle>
-                            <CardDescription>
-                                {currentStep === 1 && 'Enter your personal information'}
-                                {currentStep === 2 && 'Select your location'}
-                                {currentStep === 3 && 'Provide your detailed address'}
-                                {currentStep === 4 && 'Set your preferences for tutors'}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                    <div className="grid gap-8 lg:grid-cols-[1.65fr_0.95fr] items-start">
+                        <div className="space-y-8">
+                            {/* Progress Bar */}
+                            <Card className="border-slate-200 shadow-lg">
+                                <CardContent className="pt-6">
+                                    <div className="mb-5">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-semibold text-slate-700">Step Progress</span>
+                                            <span className="text-sm font-semibold text-[#275AAA]">{stepProgress}%</span>
+                                        </div>
+                                        <Progress value={stepProgress} className="h-3" />
+                                        <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+                                            <span>Step {currentStep} of {totalSteps}</span>
+                                            <span>{currentStepMeta?.title}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                                        {steps.map((step) => {
+                                            const isActive = currentStep === step.number;
+                                            const isComplete = currentStep > step.number;
+
+                                            return (
+                                                <div
+                                                    key={step.number}
+                                                    className={`rounded-2xl border p-4 transition-all ${
+                                                        isComplete
+                                                            ? 'border-[#275AAA]/20 bg-[#275AAA]/5'
+                                                            : isActive
+                                                                ? 'border-[#275AAA] bg-[#275AAA] text-white shadow-lg'
+                                                                : 'border-slate-200 bg-white'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div className={`flex h-9 w-9 items-center justify-center rounded-full border ${
+                                                            isComplete
+                                                                ? 'border-[#275AAA] bg-[#275AAA] text-white'
+                                                                : isActive
+                                                                    ? 'border-white/30 bg-white/15 text-white'
+                                                                    : 'border-slate-300 text-slate-400'
+                                                        }`}>
+                                                            {isComplete ? <CheckCircle className="h-5 w-5" /> : step.number}
+                                                        </div>
+                                                        <span className={`text-[10px] uppercase tracking-[0.2em] ${isActive ? 'text-white/70' : 'text-slate-400'}`}>
+                                                            Step
+                                                        </span>
+                                                    </div>
+                                                    <div className={`mt-4 text-sm font-semibold ${isActive ? 'text-white' : 'text-slate-900'}`}>
+                                                        {step.title}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Form */}
+                            <Card className="border-slate-200 shadow-xl">
+                                <CardHeader className="border-b border-slate-100 bg-slate-50/80">
+                                    <CardTitle className="text-2xl text-slate-900">
+                                        Step {currentStep}: {currentStepMeta?.title}
+                                    </CardTitle>
+                                    <CardDescription>
+                                        {currentStep === 1 && 'Enter your personal information'}
+                                        {currentStep === 2 && 'Select your location'}
+                                        {currentStep === 3 && 'Provide your detailed address'}
+                                        {currentStep === 4 && 'Set your preferences for tutors'}
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="pt-6">
                             <form onSubmit={handleSubmit} className="space-y-6" onKeyDown={(e) => {
                                 if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
                                     e.preventDefault();
@@ -263,7 +321,7 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
                                 <div className="flex justify-between pt-6 border-t">
                                     <div>
                                         {currentStep > 1 && (
-                                            <Button type="button" variant="outline" onClick={prevStep}>
+                                            <Button type="button" variant="outline" onClick={prevStep} className="border-slate-300 hover:bg-slate-50">
                                                 Previous
                                             </Button>
                                         )}
@@ -274,6 +332,7 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
                                                 type="button" 
                                                 onClick={nextStep}
                                                 disabled={!isStepValid(currentStep)}
+                                                className="bg-[#275AAA] hover:bg-[#1F4A92] text-white"
                                             >
                                                 Next
                                             </Button>
@@ -281,7 +340,7 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
                                             <Button 
                                                 type="submit" 
                                                 disabled={processing || !isStepValid(currentStep)} 
-                                                className="bg-success hover:bg-success/90"
+                                                className="bg-[#275AAA] hover:bg-[#1F4A92] text-white"
                                                 onClick={handleCompleteProfile}
                                             >
                                                 {processing ? 'Saving...' : 'Complete Profile'}
@@ -290,8 +349,49 @@ export default function GuardianProfileComplete({ auth, guardian = {}, locations
                                     </div>
                                 </div>
                             </form>
-                        </CardContent>
-                    </Card>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        <Card className="border-slate-200 shadow-xl sticky top-6">
+                            <CardHeader className="bg-white">
+                                <CardTitle className="text-xl text-slate-900">Profile status</CardTitle>
+                                <CardDescription>
+                                    {isProfileComplete
+                                        ? 'Your profile is fully completed and your dashboard prompt is hidden.'
+                                        : 'Complete the flow to get a clean dashboard and full access.'}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm text-slate-500">Current completion</p>
+                                            <p className="text-3xl font-black text-slate-900">{profileCompletion}%</p>
+                                        </div>
+                                        <div className={`rounded-full px-3 py-1 text-xs font-semibold ${isProfileComplete ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                                            {isProfileComplete ? 'Completed' : 'In progress'}
+                                        </div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <Progress value={profileCompletion} className="h-3" />
+                                    </div>
+                                </div>
+
+                                {[
+                                    'A cleaner dashboard with the completion prompt removed at 100%',
+                                    'Direct access to tutor browsing and guardian actions',
+                                    'Better tutor matching with your subjects and class levels',
+                                    'A profile that looks complete and trustworthy to tutors',
+                                ].map((item) => (
+                                    <div key={item} className="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                        <CheckCircle className="mt-0.5 h-5 w-5 text-[#275AAA]" />
+                                        <p className="text-sm text-slate-700 leading-6">{item}</p>
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

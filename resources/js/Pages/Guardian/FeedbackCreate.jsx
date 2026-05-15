@@ -3,11 +3,12 @@ import { Head, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Textarea } from '@/Components/ui/textarea';
 import { Label } from '@/Components/ui/label';
-import { Star } from 'lucide-react';
+import { Star, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export default function FeedbackCreate({ auth }) {
     const [hoveredRating, setHoveredRating] = useState(0);
+    const [focusedField, setFocusedField] = useState(null);
     const { flash } = usePage().props;
     
     const { data, setData, post, processing, errors } = useForm({
@@ -28,89 +29,174 @@ export default function FeedbackCreate({ auth }) {
         setData('rating', rating);
     };
 
+    const charPercent = (data.feedback.length / 1000) * 100;
+
     return (
         <AuthenticatedLayout user={auth}>
             <Head title="Submit Feedback" />
 
-            <div className="py-6">
-                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                        <div className="bg-gradient-to-r from-[#0F48A1] to-blue-600 px-6 py-8">
-                            <h1 className="text-3xl font-bold text-white">Share Your Experience</h1>
-                            <p className="text-blue-100 mt-2">
-                                Your feedback helps us improve our services and helps other parents make informed decisions
-                            </p>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8 sm:py-12 lg:py-16">
+                <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Header Section */}
+                    <div className="mb-8 sm:mb-12 text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#0F48A1] to-[#275AAA] shadow-lg mb-6">
+                            <Send className="w-8 h-8 text-white" />
                         </div>
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0F48A1] to-[#275AAA] mb-3">
+                            Share Your Experience
+                        </h1>
+                        <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto leading-relaxed">
+                            Your feedback helps us improve our services and guides other parents in finding the perfect tutor for their children.
+                        </p>
+                    </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                            <div>
-                                <Label htmlFor="rating" className="text-lg font-semibold text-gray-900">
-                                    Rate Your Experience
-                                </Label>
-                                <div className="flex items-center gap-2 mt-3">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <button
-                                            key={star}
-                                            type="button"
-                                            onClick={() => handleRatingClick(star)}
-                                            onMouseEnter={() => setHoveredRating(star)}
-                                            onMouseLeave={() => setHoveredRating(0)}
-                                            className="transition-transform hover:scale-110"
-                                        >
-                                            <Star
-                                                className={`h-10 w-10 transition-colors ${
-                                                    star <= (hoveredRating || data.rating)
-                                                        ? 'text-yellow-400 fill-yellow-400'
-                                                        : 'text-gray-300'
-                                                }`}
-                                            />
-                                        </button>
-                                    ))}
-                                    <span className="ml-4 text-xl font-semibold text-[#0F48A1]">
-                                        {data.rating} / 5
-                                    </span>
+                    {/* Main Card */}
+                    <div className="bg-white/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+                        <form onSubmit={handleSubmit} className="p-6 sm:p-8 lg:p-10 space-y-8">
+                            {/* Rating Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <Label htmlFor="rating" className="text-lg sm:text-xl font-bold text-gray-900">
+                                            How would you rate your experience?
+                                        </Label>
+                                        <p className="text-sm text-gray-500 mt-1">Your honest rating helps us maintain quality</p>
+                                    </div>
                                 </div>
+                                
+                                <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-4">
+                                    <div className="flex gap-2 sm:gap-3">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <button
+                                                key={star}
+                                                type="button"
+                                                onClick={() => handleRatingClick(star)}
+                                                onMouseEnter={() => setHoveredRating(star)}
+                                                onMouseLeave={() => setHoveredRating(0)}
+                                                className="group relative transition-all duration-200 transform hover:scale-125"
+                                            >
+                                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 opacity-0 group-hover:opacity-20 blur-lg transition-opacity" />
+                                                <Star
+                                                    className={`w-8 h-8 sm:w-10 sm:h-10 transition-all duration-200 ${
+                                                        star <= (hoveredRating || data.rating)
+                                                            ? 'text-yellow-400 fill-yellow-400 drop-shadow-lg scale-110'
+                                                            : 'text-gray-300'
+                                                    }`}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200">
+                                        <span className="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-amber-600">
+                                            {data.rating}
+                                        </span>
+                                        <span className="text-sm text-gray-600">/ 5</span>
+                                    </div>
+                                </div>
+                                
+                                {/* Rating Description */}
+                                <div className="mt-4 text-sm font-medium">
+                                    {data.rating === 5 && <span className="text-green-600">Excellent! We're thrilled to hear that! 🎉</span>}
+                                    {data.rating === 4 && <span className="text-blue-600">Great! We appreciate your positive feedback. 😊</span>}
+                                    {data.rating === 3 && <span className="text-amber-600">Good feedback. We'll work on improvements. 💪</span>}
+                                    {data.rating === 2 && <span className="text-orange-600">We're sorry to hear that. Help us improve! 🙏</span>}
+                                    {data.rating === 1 && <span className="text-red-600">We'd love to make this right. Please share details. 🤝</span>}
+                                </div>
+
                                 {errors.rating && (
-                                    <p className="text-red-500 text-sm mt-2">{errors.rating}</p>
+                                    <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                        <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                                        <p className="text-sm text-red-600">{errors.rating}</p>
+                                    </div>
                                 )}
                             </div>
 
-                            <div>
-                                <Label htmlFor="feedback" className="text-lg font-semibold text-gray-900">
-                                    Your Feedback
-                                </Label>
-                                <Textarea
-                                    id="feedback"
-                                    value={data.feedback}
-                                    onChange={(e) => setData('feedback', e.target.value)}
-                                    placeholder="Tell us about your experience with our tutors and services. What did you like? What could we improve?"
-                                    rows={6}
-                                    className="mt-3 resize-none"
-                                    maxLength={1000}
-                                />
-                                <div className="flex justify-between items-center mt-2">
-                                    <p className="text-sm text-gray-500">
-                                        {data.feedback.length} / 1000 characters
-                                    </p>
-                                    {errors.feedback && (
-                                        <p className="text-red-500 text-sm">{errors.feedback}</p>
-                                    )}
+                            {/* Divider */}
+                            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+                            {/* Feedback Section */}
+                            <div className="space-y-4">
+                                <div>
+                                    <Label htmlFor="feedback" className="text-lg sm:text-xl font-bold text-gray-900">
+                                        Tell us more about your experience
+                                    </Label>
+                                    <p className="text-sm text-gray-500 mt-1">Be specific and help us understand what you valued most</p>
+                                </div>
+
+                                <div className="relative">
+                                    <Textarea
+                                        id="feedback"
+                                        value={data.feedback}
+                                        onChange={(e) => setData('feedback', e.target.value)}
+                                        onFocus={() => setFocusedField('feedback')}
+                                        onBlur={() => setFocusedField(null)}
+                                        placeholder="Share your honest feedback. What did you love? What could be better? How has this helped your child?"
+                                        rows={6}
+                                        className={`resize-none text-base transition-all duration-200 ${
+                                            focusedField === 'feedback'
+                                                ? 'ring-2 ring-[#0F48A1] border-transparent shadow-lg'
+                                                : 'border-gray-200'
+                                        }`}
+                                        maxLength={1000}
+                                    />
+                                    
+                                    {/* Character Counter with Animation */}
+                                    <div className="mt-4 space-y-2">
+                                        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-[#0F48A1] to-[#275AAA] transition-all duration-300 rounded-full"
+                                                style={{ width: `${charPercent}%` }}
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className={`text-sm font-medium transition-colors ${
+                                                data.feedback.length > 900 ? 'text-orange-600' : 
+                                                data.feedback.length > 800 ? 'text-blue-600' : 
+                                                'text-gray-600'
+                                            }`}>
+                                                {data.feedback.length.toLocaleString()} / 1,000 characters
+                                            </span>
+                                            {data.feedback.length > 0 && (
+                                                <span className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 font-medium">
+                                                    {Math.round(charPercent)}% complete
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {errors.feedback && (
+                                    <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                        <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                                        <p className="text-sm text-red-600">{errors.feedback}</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Info Box */}
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 sm:p-5 space-y-2">
+                                <div className="flex items-start gap-3">
+                                    <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                                    <div className="space-y-1">
+                                        <p className="font-semibold text-blue-900 text-sm sm:text-base">Your feedback is valued & protected</p>
+                                        <p className="text-sm text-blue-700">
+                                            Our admin team will review your feedback for authenticity. Once approved, it'll be featured on our homepage to help other parents make informed decisions.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="bg-blue-50 border-l-4 border-[#0F48A1] p-4 rounded">
-                                <p className="text-sm text-gray-700">
-                                    <strong>Note:</strong> Your feedback will be reviewed by our admin team before being published on the website. This helps us maintain quality and authenticity.
-                                </p>
-                            </div>
-
-                            <div className="flex gap-4">
+                            {/* Submit Button */}
+                            <div className="pt-4">
                                 <Button
                                     type="submit"
                                     disabled={processing}
-                                    className="flex-1 bg-[#0F48A1] hover:bg-blue-700 text-lg py-6"
+                                    className="w-full bg-gradient-to-r from-[#0F48A1] to-[#275AAA] hover:from-blue-700 hover:to-blue-800 text-white font-bold text-base sm:text-lg py-3 sm:py-4 rounded-xl transition-all duration-200 transform hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed group"
                                 >
-                                    {processing ? 'Submitting...' : 'Submit Feedback'}
+                                    <span className="flex items-center justify-center gap-2">
+                                        <Send className={`w-5 h-5 transition-transform ${processing ? 'animate-spin' : 'group-hover:translate-x-1'}`} />
+                                        {processing ? 'Submitting your feedback...' : 'Submit Feedback'}
+                                    </span>
                                 </Button>
                             </div>
                         </form>
@@ -118,10 +204,27 @@ export default function FeedbackCreate({ auth }) {
 
                     {/* Success Message */}
                     {flash?.success && (
-                        <div className="mt-6 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg">
-                            <p className="font-semibold">✓ {flash.success}</p>
+                        <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-xl p-4 sm:p-6 shadow-lg">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 flex-shrink-0">
+                                        <CheckCircle className="w-6 h-6 text-green-600" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-green-900 text-base sm:text-lg">Success!</p>
+                                        <p className="text-green-700 text-sm sm:text-base mt-1">{flash.success}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
+
+                    {/* Footer Text */}
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-gray-600">
+                            Typical review time: <span className="font-semibold text-gray-900">24-48 hours</span>
+                        </p>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

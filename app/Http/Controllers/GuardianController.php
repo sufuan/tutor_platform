@@ -12,6 +12,7 @@ use App\Models\Subject;
 use App\Models\GuardianFeedback;
 use App\Models\GuardianRecommendation;
 use App\Models\User;
+use App\Services\ProfileCompletionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -49,8 +50,8 @@ class GuardianController extends Controller
             ->take(5)
             ->get();
 
-        $profileComplete = $guardian->profile_completion_status === 'completed';
-        $profilePercentage = $guardian->profile_completion_percentage;
+        $profilePercentage = ProfileCompletionService::calculateGuardianCompletion($guardian);
+        $profileComplete = $profilePercentage >= 100;
 
         return Inertia::render('Guardian/Dashboard', [
             'stats' => $stats,
@@ -386,11 +387,14 @@ class GuardianController extends Controller
 
         $locations = Location::orderBy('city')->get();
         $subjects = Subject::orderBy('name')->get();
+        $profileCompletion = ProfileCompletionService::calculateGuardianCompletion($guardian);
 
         return Inertia::render('Guardian/ProfileComplete', [
             'guardian' => $guardian,
             'locations' => $locations,
             'subjects' => $subjects,
+            'profileCompletion' => $profileCompletion,
+            'profileComplete' => $profileCompletion >= 100,
         ]);
     }
 
@@ -426,7 +430,7 @@ class GuardianController extends Controller
         $guardian->update($guardianData);
 
         // Update profile completion status
-        $guardian->updateProfileCompletion();
+        ProfileCompletionService::updateGuardianCompletion($guardian);
 
         return redirect()->route('guardian.dashboard')->with('success', 'Profile completed successfully!');
     }

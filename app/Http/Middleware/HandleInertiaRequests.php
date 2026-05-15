@@ -43,6 +43,9 @@ class HandleInertiaRequests extends Middleware
 
             // Add role-specific data
             if ($user->role === 'guardian' && $user->guardian) {
+                $guardianProfilePercentage = \App\Services\ProfileCompletionService::calculateGuardianCompletion($user->guardian);
+                $guardianProfileStatus = $guardianProfilePercentage >= 100 ? 'completed' : 'incomplete';
+
                 $auth['guardian'] = [
                     'id' => $user->guardian->id,
                     'guardian_code' => $user->guardian->guardian_code,
@@ -50,8 +53,8 @@ class HandleInertiaRequests extends Middleware
                     'last_name' => $user->guardian->last_name,
                     'phone' => $user->guardian->phone,
                     'photo' => $user->guardian->photo,
-                    'profile_completion_status' => $user->guardian->profile_completion_status,
-                    'profile_completion_percentage' => $user->guardian->profile_completion_percentage,
+                    'profile_completion_status' => $guardianProfileStatus,
+                    'profile_completion_percentage' => $guardianProfilePercentage,
                 ];
 
                 $badgeCounts = [

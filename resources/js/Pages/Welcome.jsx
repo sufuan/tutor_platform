@@ -435,62 +435,142 @@ export default function Welcome({
                 </div>
             </section> */}
 
-            {/* Guardian Feedback Section */}
-            <section className="  py-20 bg-slate-50">
+            {/* Guardian Feedback Section - Premium */}
+            <section className="relative py-24 bg-gradient-to-b from-white via-slate-50 to-white overflow-visible">
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F48A1]/3 rounded-full blur-3xl -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-300/10 rounded-full blur-3xl -z-10"></div>
+
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4">
-                            Guardian Feedback
+                    {/* Header with premium styling */}
+                    <div className="text-center mb-20">
+                        <span className="inline-block bg-[#0F48A1]/10 text-[#0F48A1] text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6">
+                            ⭐ Guardian Reviews
+                        </span>
+                        <h2 className="text-5xl lg:text-6xl font-black text-slate-900 mb-6 leading-tight">
+                            Parents Trust Our Platform
                         </h2>
-                        <p className="text-xl text-slate-600">
-                            What parents and students say about us
+                        <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
+                            Discover why thousands of parents and students choose CareTutors for quality education
                         </p>
+                        <Link href={auth?.user ? route('guardian.feedback.create') : route('login')} className="inline-block">
+                            <Button className="bg-[#0F48A1] hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                                Share Your Experience
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </Button>
+                        </Link>
                     </div>
 
-                    <Carousel
-                        className="w-full max-w-6xl mx-auto"
-                        plugins={[
-                            Autoplay({
-                                delay: 3000,
-                            }),
-                        ]}
-                    >
-                        <CarouselContent>
-                            {guardianTestimonials.map((testimonial, idx) => (
-                                <CarouselItem key={idx} className="md:basis-1/2 lg:basis-1/3">
-                                    <div className="p-2">
-                                        <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200 h-full">
-                                            <div className="flex items-center gap-1 mb-4">
-                                                {[...Array(testimonial.rating || 5)].map((_, i) => (
-                                                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                                                ))}
-                                            </div>
-                                            <Quote className="h-8 w-8 text-[#0F48A1]/20 mb-4" />
-                                            <p className="text-slate-700 leading-relaxed mb-6 italic">
-                                                "{testimonial.feedback}"
-                                            </p>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-[#0F48A1] rounded-full flex items-center justify-center text-white font-bold">
-                                                    {testimonial.name.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <div className="font-bold text-slate-900">{testimonial.name}</div>
-                                                    <div className="text-sm text-slate-600">Guardian</div>
+                    {/* Testimonials Carousel */}
+                    {guardianTestimonials.length > 0 ? (
+                        <Carousel
+                            className="w-full overflow-visible"
+                            opts={{ align: 'start', loop: true }}
+                            plugins={[Autoplay({ delay: 4000 })]}
+                        >
+                            <CarouselContent className="-ml-4">
+                                {guardianTestimonials.map((testimonial, idx) => (
+                                    <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3 overflow-visible">
+                                        <div className="h-full">
+                                            {/* Premium Testimonial Card */}
+                                            <div className="relative h-full group">
+                                                {/* Glow effect */}
+                                                <div className="absolute inset-0 bg-gradient-to-br from-[#0F48A1]/20 via-transparent to-blue-300/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl blur-xl"></div>
+
+                                                {/* Card */}
+                                                <div className="relative h-full bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 hover:border-[#0F48A1]/30 flex flex-col backdrop-blur-sm">
+                                                    {/* Rating Stars - Premium */}
+                                                    <div className="flex items-center justify-between mb-5">
+                                                        <div className="flex items-center gap-1">
+                                                            {[...Array(5)].map((_, i) => (
+                                                                <Star
+                                                                    key={i}
+                                                                    className={`h-5 w-5 transition-all ${
+                                                                        i < (testimonial.rating || 5)
+                                                                            ? 'text-yellow-400 fill-yellow-400'
+                                                                            : 'text-gray-300'
+                                                                    }`}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                        <span className="text-sm font-bold text-[#0F48A1] bg-[#0F48A1]/10 px-3 py-1 rounded-full">
+                                                            {testimonial.rating}/5
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Quote Icon */}
+                                                    <svg className="h-8 w-8 text-[#0F48A1]/15 mb-4" fill="currentColor" viewBox="0 0 512 512">
+                                                        <path d="M464 256h-80v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8c-88.4 0-160 71.6-160 160v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zm-288 0H96v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8C71.6 32 0 103.6 0 192v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48z" />
+                                                    </svg>
+
+                                                    {/* Feedback Text */}
+                                                    <p className="text-slate-700 leading-relaxed mb-8 flex-1 text-sm font-medium line-clamp-4 hover:line-clamp-none transition-all">
+                                                        "{testimonial.feedback}"
+                                                    </p>
+
+                                                    {/* Divider */}
+                                                    <div className="h-px bg-gradient-to-r from-transparent via-[#0F48A1]/20 to-transparent mb-5"></div>
+
+                                                    {/* Guardian Info - Premium */}
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="relative">
+                                                            <div className="absolute inset-0 bg-gradient-to-br from-[#0F48A1] to-blue-600 rounded-full blur-md opacity-30 group-hover:opacity-50 transition-all"></div>
+                                                            <div className="relative w-14 h-14 bg-gradient-to-br from-[#0F48A1] to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                                                {testimonial.name.charAt(0).toUpperCase()}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="font-bold text-slate-900 text-base truncate">
+                                                                {testimonial.name}
+                                                            </div>
+                                                            <div className="text-xs text-[#0F48A1] font-semibold">
+                                                                Verified Guardian
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="-left-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
-                        <CarouselNext className="-right-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
-                    </Carousel>
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                            <CarouselPrevious className="-left-4 lg:-left-16 bg-[#0F48A1] text-white hover:bg-blue-700 border-0 shadow-lg h-12 w-12 transition-all duration-300 hover:scale-110" />
+                            <CarouselNext className="-right-4 lg:-right-16 bg-[#0F48A1] text-white hover:bg-blue-700 border-0 shadow-lg h-12 w-12 transition-all duration-300 hover:scale-110" />
+                        </Carousel>
+                    ) : (
+                        <div className="text-center py-12 bg-slate-100 rounded-2xl">
+                            <p className="text-slate-600 text-lg">No reviews yet. Be the first to share your experience!</p>
+                        </div>
+                    )}
+
+                    {/* Stats below testimonials */}
+                    {guardianTestimonials.length > 0 && (
+                        <div className="grid md:grid-cols-3 gap-8 mt-20">
+                            <div className="text-center">
+                                <div className="text-4xl font-black text-[#0F48A1] mb-2">
+                                    {guardianTestimonials.length}+
+                                </div>
+                                <p className="text-slate-600">Happy Families</p>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-4xl font-black text-[#0F48A1] mb-2">
+                                    {(guardianTestimonials.reduce((sum, t) => sum + t.rating, 0) / guardianTestimonials.length).toFixed(1)}
+                                </div>
+                                <p className="text-slate-600">Average Rating</p>
+                            </div>
+                            <div className="text-center">
+                                <div className="text-4xl font-black text-[#0F48A1] mb-2">
+                                    100%
+                                </div>
+                                <p className="text-slate-600">Verified Reviews</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
 
             {/* Tutor Testimonials Section */}
-            <section className="py-24 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
+            <section className="py-24 bg-gradient-to-b from-slate-50 to-white overflow-visible">
                 <div className="max-w-7xl mx-auto px-4">
                     {/* Header */}
                     <div className="text-center mb-16">
@@ -516,15 +596,15 @@ export default function Welcome({
 
                     {/* Carousel */}
                     <Carousel
-                        className="w-full"
+                        className="w-full overflow-visible"
                         opts={{ align: 'start', loop: true }}
                         plugins={[Autoplay({ delay: 3500 })]}
                     >
                         <CarouselContent className="-ml-4">
                             {tutorTestimonials.map((testimonial, idx) => (
-                                <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                                <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3 overflow-visible">
                                     {/* Card with floating avatar */}
-                                    <div className="relative pt-14 pb-2 px-2">
+                                    <div className="relative pt-14 pb-2 px-2 overflow-visible">
                                         {/* Floating Avatar */}
                                         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10">
                                             {testimonial.photo_url ? (
@@ -541,7 +621,7 @@ export default function Welcome({
                                         </div>
 
                                         {/* Card Body */}
-                                        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 pt-12 pb-6 px-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-h-[280px] flex flex-col">
+                                        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 pt-12 pb-6 px-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-h-[280px] flex flex-col overflow-visible">
                                             {/* Name & Institution */}
                                             <div className="text-center mb-4">
                                                 <h3 className="text-base font-bold text-[#0F48A1]">{testimonial.name}</h3>

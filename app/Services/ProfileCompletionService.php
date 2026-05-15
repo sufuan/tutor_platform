@@ -12,9 +12,9 @@ class ProfileCompletionService
         $totalFields = 7;
         
         if ($guardian->first_name) $filledCount++;
-        if ($guardian->last_name) $filledCount++;
         if ($guardian->phone) $filledCount++;
-        if ($guardian->location_id) $filledCount++;
+        if ($guardian->division) $filledCount++;
+        if ($guardian->district) $filledCount++;
         if ($guardian->detailed_address) $filledCount++;
         if (is_array($guardian->preferred_subjects) && count($guardian->preferred_subjects) >= 1) $filledCount++;
         if (is_array($guardian->preferred_class_levels) && count($guardian->preferred_class_levels) >= 1) $filledCount++;
