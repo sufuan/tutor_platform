@@ -12,6 +12,8 @@ class TutorFeedback extends Model
         'tutor_id',
         'feedback',
         'rating',
+        'institution',
+        'photo_url',
         'status',
         'approved_at',
         'approved_by',

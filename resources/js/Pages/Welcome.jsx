@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { useState, useEffect, useRef } from 'react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { Button } from '@/Components/ui/button';
 import PromotionalModal from '@/Components/PromotionalModal';
@@ -66,6 +67,50 @@ export default function Welcome({
         Languages, Baby, Palette, Target, Users, CheckCircle, Award, TrendingUp
     };
 
+    const CountUp = ({ end, duration = 2000 }) => {
+        const [count, setCount] = useState(0);
+        const countRef = useRef(null);
+        const [hasStarted, setHasStarted] = useState(false);
+
+        useEffect(() => {
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    if (entry.isIntersecting && !hasStarted) {
+                        setHasStarted(true);
+                    }
+                },
+                { threshold: 0.1 }
+            );
+
+            if (countRef.current) {
+                observer.observe(countRef.current);
+            }
+
+            return () => observer.disconnect();
+        }, [hasStarted]);
+
+        useEffect(() => {
+            if (!hasStarted) return;
+
+            let startTime;
+            const endValue = parseInt(end);
+
+            const animate = (currentTime) => {
+                if (!startTime) startTime = currentTime;
+                const progress = Math.min((currentTime - startTime) / duration, 1);
+                setCount(Math.floor(progress * endValue));
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            };
+
+            requestAnimationFrame(animate);
+        }, [hasStarted, end, duration]);
+
+        return <span ref={countRef}>{count}</span>;
+    };
+
     const defaultTuitionTypes = [
         { title: 'Home Tutoring', description: 'Home tutoring allows students to learn various subjects in their own home.', icon: 'Home' },
         { title: 'Group Tutoring', description: 'Group tutoring allows students to learn together and solve problems at an affordable cost.', icon: 'UsersRound' },
@@ -125,11 +170,11 @@ export default function Welcome({
                 <div className="absolute top-0 right-0 w-96 h-96 bg-[#0F48A1]/5 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#0F48A1]/5 rounded-full blur-3xl"></div>
 
-                <div className="relative max-w-7xl mx-auto px-4 py-20 lg:py-32">
+                <div className="relative max-w-7xl mx-auto px-4 pt-12 pb-24 lg:pt-30 lg:pb-24">
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         {/* Left Content */}
-                        <div className="space-y-8">
-                            <h1 className="text-5xl lg:text-7xl font-black text-slate-900 leading-tight whitespace-pre-line">
+                        <div className="space-y-6">
+                            <h1 className="text-4xl lg:text-7xl font-black text-slate-900 leading-tight whitespace-pre-line">
                                 {heroTitle}
                             </h1>
 
@@ -177,54 +222,141 @@ export default function Welcome({
                 </div>
             </section>
 
-            {/* Stats Section - Separate with proper padding */}
-            <section className="py-16 bg-white">
+            {/* Stats & Quick Actions Section */}
+            <section className="relative mt-20 z-20 pb-16">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.activeTutors}+</div>
-                            <div className="text-lg text-slate-600">Expert Tutors</div>
+                    <div className="bg-[#0F48A1] rounded-[2rem] shadow-2xl overflow-hidden border border-white/10">
+                        {/* Main Stats Row */}
+                        <div className="px-4 py-8 md:px-12 lg:px-16">
+                            <div className="flex flex-row items-center justify-between gap-2 md:gap-6 lg:gap-4 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+                                {/* Active Tutors */}
+                                <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                                    <div className="shrink-0">
+                                        <img src="https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/total_apply.png" alt="Tutors" className="w-8 h-8 md:w-16 md:h-16 object-contain" />
+                                    </div>
+                                    <div className="text-white">
+                                        <p className="text-sm md:text-2xl font-bold leading-none">
+                                            <CountUp end={displayStats.activeTutors} />+
+                                        </p>
+                                        <p className="text-[10px] md:text-sm text-white/70 mt-1 uppercase tracking-tight md:tracking-wider font-semibold whitespace-nowrap">Tutors</p>
+                                    </div>
+                                </div>
+
+                                {/* Live Jobs */}
+                                <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                                    <div className="shrink-0">
+                                        <img src="https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/total_jobs.png" alt="Jobs" className="w-8 h-8 md:w-16 md:h-16 object-contain" />
+                                    </div>
+                                    <div className="text-white">
+                                        <p className="text-sm md:text-2xl font-bold leading-none">
+                                            <CountUp end={displayStats.totalJobs} />+
+                                        </p>
+                                        <p className="text-[10px] md:text-sm text-white/70 mt-1 uppercase tracking-tight md:tracking-wider font-semibold whitespace-nowrap">Live Jobs</p>
+                                    </div>
+                                </div>
+
+                                {/* Happy Students */}
+                                <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                                    <div className="shrink-0">
+                                        <img src="https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/total_happy.png" alt="Students" className="w-8 h-8 md:w-16 md:h-16 object-contain" />
+                                    </div>
+                                    <div className="text-white">
+                                        <p className="text-sm md:text-2xl font-bold leading-none">
+                                            <CountUp end={displayStats.happyGuardians} />+
+                                        </p>
+                                        <p className="text-[10px] md:text-sm text-white/70 mt-1 uppercase tracking-tight md:tracking-wider font-semibold whitespace-nowrap">Students</p>
+                                    </div>
+                                </div>
+
+                                {/* Success Rate */}
+                                <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                                    <div className="shrink-0">
+                                        <img src="https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/total_rating.png" alt="Rating" className="w-8 h-8 md:w-16 md:h-16 object-contain" />
+                                    </div>
+                                    <div className="text-white">
+                                        <p className="text-sm md:text-2xl font-bold leading-none">
+                                            <CountUp end={displayStats.successRate} />%
+                                        </p>
+                                        <p className="text-[10px] md:text-sm text-white/70 mt-1 uppercase tracking-tight md:tracking-wider font-semibold whitespace-nowrap">Success</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.totalJobs}+</div>
-                            <div className="text-lg text-slate-600">Active Jobs</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.successRate}%</div>
-                            <div className="text-lg text-slate-600">Success Rate</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-5xl font-bold text-[#0F48A1] mb-2">{displayStats.happyGuardians}+</div>
-                            <div className="text-lg text-slate-600">Happy Students</div>
+
+                        {/* Location Quick Links Carousel */}
+                        <div className="bg-white/5 border-t border-white/10 px-5 py-5">
+                            <div className="flex flex-col md:flex-row items-center gap-6">
+                                <div className="shrink-0 text-white/80 font-bold text-sm uppercase tracking-widest hidden lg:block">
+                                    Quick Search:
+                                </div>
+                                <div className="w-full overflow-hidden">
+                                    <Carousel
+                                        opts={{
+                                            align: "start",
+                                            loop: true,
+                                        }}
+                                        plugins={[
+                                            Autoplay({
+                                                delay: 2500,
+                                            }),
+                                        ]}
+                                        className="w-full"
+                                    >
+                                        <CarouselContent className="-ml-2">
+                                            {['Dhaka', 'Chattogram', 'Sylhet', 'Rajshahi', 'Khulna', 'Barishal', 'Rangpur', 'Mymensingh', 'Cumilla', 'Gazipur', 'Savar', 'Narayanganj'].map((city, index) => (
+                                                <CarouselItem key={index} className="pl-2 basis-auto">
+                                                    <Link
+                                                        href={`/jobs?location=${city}`}
+                                                        className="inline-flex items-center px-4 py-2 bg-white/10 hover:bg-white text-white hover:text-[#0F48A1] rounded-full text-xs font-bold transition-all duration-300 border border-white/20 whitespace-nowrap"
+                                                    >
+                                                        {city}
+                                                    </Link>
+                                                </CarouselItem>
+                                            ))}
+                                        </CarouselContent>
+                                    </Carousel>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* Tuition Types Section */}
-            <section className="py-20 bg-slate-50">
+            <section className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4">
                             Tuition Types
                         </h2>
-                        <p className="text-xl text-slate-600">
-                            Choose the learning method that suits you best
+                        <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                            Find the perfect learning format that fits your schedule and goals
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                         {displayTuitionTypes.map((type, index) => {
-                            const IconComponent = iconMap[type.icon] || Package;
+                            // Map existing titles to the specific SVG icons provided in the reference
+                            const iconUrls = {
+                                'Home Tutoring': 'https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/hometutor.svg',
+                                'Group Tutoring': 'https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/groupclass.svg',
+                                'Online Tutoring': 'https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/onlinetutor.svg',
+                                'Package Tutoring': 'https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/landing_page/package.svg'
+                            };
+
+                            const iconUrl = iconUrls[type.title] || 'https://cdn-caretutors.sgp1.cdn.digitaloceanspaces.com/assets/img/icon/shadow_tutoring.svg';
+
                             return (
-                                <div key={index} className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 border border-slate-200 group">
-                                    <div className="w-16 h-16 bg-[#0F48A1]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#0F48A1] transition-colors">
-                                        <IconComponent className="h-8 w-8 text-[#0F48A1] group-hover:text-white transition-colors" />
+                                <div key={index} className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 rounded-2xl border border-slate-200 hover:border-[#0F48A1] hover:bg-slate-50/50 transition-all duration-300 group">
+                                    <div className="shrink-0">
+                                        <img src={iconUrl} alt={type.title} className="w-24 h-24 object-contain group-hover:scale-110 transition-transform duration-300" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-slate-900 mb-3">{type.title}</h3>
-                                    <p className="text-slate-600 leading-relaxed">
-                                        {type.description}
-                                    </p>
+                                    <div className="text-center sm:text-left">
+                                        <h3 className="text-2xl font-bold text-[#0F48A1] mb-3">{type.title}</h3>
+                                        <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                                            {type.description}
+                                        </p>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -267,7 +399,7 @@ export default function Welcome({
             </section>
 
             {/* How It Works - Modern Timeline */}
-            <section className="py-20 bg-[#0F48A1] text-white">
+            {/* <section className="py-20 bg-[#0F48A1] text-white">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl lg:text-5xl font-black mb-4">
@@ -301,10 +433,10 @@ export default function Welcome({
                         })}
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* Guardian Feedback Section */}
-            <section className="py-20 bg-slate-50">
+            <section className="  py-20 bg-slate-50">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4">
@@ -358,65 +490,92 @@ export default function Welcome({
             </section>
 
             {/* Tutor Testimonials Section */}
-            <section className="py-20 bg-white">
+            <section className="py-24 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4">
+                    {/* Header */}
                     <div className="text-center mb-16">
+                        <span className="inline-block bg-[#0F48A1]/10 text-[#0F48A1] text-sm font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-4">
+                            Tutor Stories
+                        </span>
                         <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4">
-                            What Some Awesome Tutors Say About Us
+                            What Our Tutors Say
                         </h2>
-                        <p className="text-xl text-slate-600">
-                            Become a tutor and start earning!
+                        <p className="text-lg text-slate-500 max-w-xl mx-auto">
+                            Join thousands of tutors who are building their careers with us
                         </p>
+                        <div className="flex items-center justify-center gap-3 mt-6">
+                            <Link
+                                href="/tutor/signup"
+                                className="inline-flex items-center gap-2 bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white font-bold px-7 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                            >
+                                Become a Tutor
+                                <ArrowRight className="h-4 w-4" />
+                            </Link>
+                        </div>
                     </div>
 
+                    {/* Carousel */}
                     <Carousel
-                        className="w-full max-w-6xl mx-auto"
-                        plugins={[
-                            Autoplay({
-                                delay: 3000,
-                            }),
-                        ]}
+                        className="w-full"
+                        opts={{ align: 'start', loop: true }}
+                        plugins={[Autoplay({ delay: 3500 })]}
                     >
-                        <CarouselContent>
+                        <CarouselContent className="-ml-4">
                             {tutorTestimonials.map((testimonial, idx) => (
-                                <CarouselItem key={idx} className="md:basis-1/2 lg:basis-1/3">
-                                    <div className="p-2">
-                                        <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-xl transition-shadow h-full">
-                                            <div className="flex items-center gap-1 mb-4">
-                                                {[...Array(testimonial.rating)].map((_, i) => (
-                                                    <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                                                ))}
-                                            </div>
-                                            <Quote className="h-8 w-8 text-[#0F48A1]/20 mb-4" />
-                                            <p className="text-slate-700 leading-relaxed mb-6 italic">
-                                                "{testimonial.feedback}"
-                                            </p>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 bg-[#0F48A1] rounded-full flex items-center justify-center text-white font-bold">
+                                <CarouselItem key={idx} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                                    {/* Card with floating avatar */}
+                                    <div className="relative pt-14 pb-2 px-2">
+                                        {/* Floating Avatar */}
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10">
+                                            {testimonial.photo_url ? (
+                                                <img
+                                                    src={testimonial.photo_url}
+                                                    alt={testimonial.name}
+                                                    className="w-[5.5rem] h-[5.5rem] rounded-full object-cover border-4 border-white shadow-xl outline outline-[3px] outline-[#0F48A1]"
+                                                />
+                                            ) : (
+                                                <div className="w-[5.5rem] h-[5.5rem] rounded-full bg-gradient-to-br from-[#0F48A1] to-blue-400 border-4 border-white shadow-xl outline outline-[3px] outline-[#0F48A1] flex items-center justify-center text-white text-3xl font-black">
                                                     {testimonial.name.charAt(0)}
                                                 </div>
-                                                <div>
-                                                    <div className="font-bold text-slate-900">{testimonial.name}</div>
-                                                    <div className="text-sm text-slate-600">Tutor</div>
+                                            )}
+                                        </div>
+
+                                        {/* Card Body */}
+                                        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 pt-12 pb-6 px-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 min-h-[280px] flex flex-col">
+                                            {/* Name & Institution */}
+                                            <div className="text-center mb-4">
+                                                <h3 className="text-base font-bold text-[#0F48A1]">{testimonial.name}</h3>
+                                                {testimonial.institution && (
+                                                    <p className="text-xs text-slate-500 mt-0.5 font-medium">{testimonial.institution}</p>
+                                                )}
+                                                {/* Stars */}
+                                                <div className="flex items-center justify-center gap-0.5 mt-2">
+                                                    {[...Array(testimonial.rating || 5)].map((_, i) => (
+                                                        <Star key={i} className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" />
+                                                    ))}
                                                 </div>
+                                            </div>
+
+                                            {/* Divider */}
+                                            <div className="w-8 h-0.5 bg-[#0F48A1]/20 mx-auto mb-4" />
+
+                                            {/* Quote Icon + Feedback */}
+                                            <div className="flex items-start gap-3 flex-1">
+                                                <svg className="shrink-0 w-7 h-7 text-[#0F48A1]/25 mt-0.5" fill="currentColor" viewBox="0 0 512 512">
+                                                    <path d="M464 256h-80v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8c-88.4 0-160 71.6-160 160v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48zm-288 0H96v-64c0-35.3 28.7-64 64-64h8c13.3 0 24-10.7 24-24V56c0-13.3-10.7-24-24-24h-8C71.6 32 0 103.6 0 192v240c0 26.5 21.5 48 48 48h128c26.5 0 48-21.5 48-48V304c0-26.5-21.5-48-48-48z" />
+                                                </svg>
+                                                <p className="text-slate-600 text-sm leading-relaxed text-justify line-clamp-5">
+                                                    {testimonial.feedback}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
-                        <CarouselPrevious className="-left-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
-                        <CarouselNext className="-right-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90" />
+                        <CarouselPrevious className="-left-4 lg:-left-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90 border-0 shadow-lg" />
+                        <CarouselNext className="-right-4 lg:-right-12 bg-[#0F48A1] text-white hover:bg-[#0F48A1]/90 border-0 shadow-lg" />
                     </Carousel>
-
-                    <div className="text-center mt-12">
-                        <Button asChild size="lg" className="bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-10 rounded-xl">
-                            <Link href="/tutor/signup">
-                                Join as a Tutor
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                            </Link>
-                        </Button>
-                    </div>
                 </div>
             </section>
 

@@ -19,21 +19,35 @@ export default function PublicFooter() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Our Story Column */}
-                    <div className="lg:col-span-2">
-                        <Link href="/" className="inline-block mb-4">
-                            <img 
-                                src="/assets/logo.png" 
-                                alt="Tuition Barta Logo" 
+                    <div className="lg:col-span-2 flex flex-col">
+                        {/* Logo */}
+                        <Link href="/" className="inline-block mb-6">
+                            <img
+                                src="/assets/logo_white.png"
+                                alt="Tuition Barta Logo"
                                 className="h-20 w-auto"
                             />
                         </Link>
-                        <h3 className="text-white font-bold text-xl mb-4">Our Story</h3>
-                        <p className="text-sm leading-relaxed mb-4" style={{ fontFamily: 'SolaimanLipi, Arial, sans-serif' }}>
-                            'টিউশন বার্তা' হলো সমগ্র বাংলাদেশব্যাপী নির্ভরযোগ্য শিক্ষক খোঁজার একটি আধুনিক প্ল্যাটফর্ম। কুমিল্লা বিশ্ববিদ্যালয়ের (কুবি) দুইজন উদ্যোমী ছাত্রের হাত ধরে ২০২৪ সালে এটি প্রতিষ্ঠিত হয়। আমাদের মূল লক্ষ্য হলো ছাত্র-ছাত্রীদের জন্য দক্ষ ও অভিজ্ঞ শিক্ষক নিশ্চিত করা এবং যোগ্য শিক্ষকদের কাছে সহজে টিউশন পৌঁছে দেওয়া।
-                        </p>
-                        <p className="text-sm leading-relaxed">
-                            বিগত এক বছর ধরে সততা, নিষ্ঠা এবং বিশ্বাসের সাথে সেবা প্রদান করে 'টিউশন বার্তা' আজ শিক্ষার্থী ও অভিভাবকদের আস্থার এক অনন্য নাম। আমরা বিশ্বাস করি, সঠিক শিক্ষকের নির্দেশনাই পারে একজন শিক্ষার্থীর মেধার পূর্ণ বিকাশ ঘটাতে।
-                        </p>
+
+                        {/* Story Box */}
+                        <div className="flex-1 bg-gray-800/60 border border-gray-700 rounded-2xl p-5 border-l-4 border-l-[#0F48A1]">
+                            <h3 className="text-white font-bold text-lg mb-3 flex items-center gap-2">
+                                <span className="inline-block w-1.5 h-5 bg-[#0F48A1] rounded-full"></span>
+                                Our Story
+                            </h3>
+                            <p
+                                className="text-sm leading-7 text-gray-300 mb-3"
+                                style={{ fontFamily: 'SolaimanLipi, Arial, sans-serif' }}
+                            >
+                                'টিউশন বার্তা' হলো সমগ্র বাংলাদেশব্যাপী নির্ভরযোগ্য শিক্ষক খোঁজার একটি আধুনিক প্ল্যাটফর্ম। কুমিল্লা বিশ্ববিদ্যালয়ের (কুবি) দুইজন উদ্যোমী ছাত্রের হাত ধরে ২০২৪ সালে এটি প্রতিষ্ঠিত হয়। আমাদের মূল লক্ষ্য হলো ছাত্র-ছাত্রীদের জন্য দক্ষ ও অভিজ্ঞ শিক্ষক নিশ্চিত করা এবং যোগ্য শিক্ষকদের কাছে সহজে টিউশন পৌঁছে দেওয়া।
+                            </p>
+                            <p
+                                className="text-sm leading-7 text-gray-400"
+                                style={{ fontFamily: 'SolaimanLipi, Arial, sans-serif' }}
+                            >
+                                বিগত এক বছর ধরে সততা, নিষ্ঠা এবং বিশ্বাসের সাথে সেবা প্রদান করে 'টিউশন বার্তা' আজ শিক্ষার্থী ও অভিভাবকদের আস্থার এক অনন্য নাম। আমরা বিশ্বাস করি, সঠিক শিক্ষকের নির্দেশনাই পারে একজন শিক্ষার্থীর মেধার পূর্ণ বিকাশ ঘটাতে।
+                            </p>
+                        </div>
                     </div>
 
                     {/* Useful Links Column */}
