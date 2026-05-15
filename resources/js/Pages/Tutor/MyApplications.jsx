@@ -129,7 +129,7 @@ export default function MyApplications({ auth, applications, stats }) {
                             size="sm"
                             asChild
                         >
-                            <Link href={route('jobs.show', job.id)}>
+                            <Link href={route('tutor.jobs.show', job.id)}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 View Job
                             </Link>

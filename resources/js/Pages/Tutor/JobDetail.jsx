@@ -66,7 +66,7 @@ export default function JobDetail({ auth, job }) {
                     <Button 
                         variant="ghost" 
                         className="mb-4"
-                        onClick={() => router.visit(route('tutor.jobs'))}
+                        onClick={() => router.visit(route('tutor.jobs.browse'))}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Jobs
