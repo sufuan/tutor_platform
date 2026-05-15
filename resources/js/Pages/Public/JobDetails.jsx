@@ -20,6 +20,7 @@ import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-b
 export default function JobDetails({ job, auth }) {
     const isAuthenticated = auth?.user !== null;
     const isTutor = auth?.user?.role === 'tutor';
+    const isAdmin = auth?.user?.role === 'admin';
     const isVerified = auth?.tutor?.verification_status === 'verified';
     const verificationStatus = auth?.tutor?.verification_status;
     
@@ -187,7 +188,7 @@ export default function JobDetails({ job, auth }) {
                                                         {job.guardian.user?.name || `${job.guardian.first_name || ''} ${job.guardian.last_name || ''}`.trim() || 'Not specified'}
                                                     </p>
                                                 </div>
-                                                {job.guardian.phone && (
+                                                {isAdmin && job.guardian.phone && (
                                                     <div>
                                                         <p className="text-sm text-slate-500">Contact</p>
                                                         <p className="font-medium">{job.guardian.phone}</p>

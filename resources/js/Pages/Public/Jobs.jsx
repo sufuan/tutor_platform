@@ -10,10 +10,10 @@ import { MapPin, Search, Clock, BookOpen, GraduationCap, Calendar, ChevronLeft, 
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
 export default function Jobs({ jobs, divisions, subjects, filters }) {
-    const [searchTerm, setSearchTerm]         = useState(filters.search || '');
+    const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [selectedDivision, setSelectedDivision] = useState(filters.division || '');
     const [selectedDistrict, setSelectedDistrict] = useState(filters.location || '');
-    const [selectedSubject, setSelectedSubject]   = useState(filters.subject || '');
+    const [selectedSubject, setSelectedSubject] = useState(filters.subject || '');
 
     // All districts flat list (for when no division is selected)
     const allDistricts = useMemo(() => {
@@ -77,8 +77,8 @@ export default function Jobs({ jobs, divisions, subjects, filters }) {
     const getJobTypeColor = (type) => {
         const colors = {
             'one-time': 'bg-blue-100 text-blue-800',
-            'regular':  'bg-green-100 text-green-800',
-            'both':     'bg-purple-100 text-purple-800',
+            'regular': 'bg-green-100 text-green-800',
+            'both': 'bg-purple-100 text-purple-800',
         };
         return colors[type] || 'bg-gray-100 text-gray-800';
     };
@@ -146,7 +146,7 @@ export default function Jobs({ jobs, divisions, subjects, filters }) {
                                     <SelectItem value="all">All Divisions</SelectItem>
                                     {Object.keys(divisions).map((div) => (
                                         <SelectItem key={div} value={div}>
-                                            {div} Division
+                                            {div}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -260,8 +260,8 @@ export default function Jobs({ jobs, divisions, subjects, filters }) {
                                                 {job.preferred_location && job.district
                                                     ? `${job.preferred_location}, ${job.district}`
                                                     : job.district
-                                                    ? job.district
-                                                    : 'N/A'}
+                                                        ? job.district
+                                                        : 'N/A'}
                                             </span>
                                         </div>
 
