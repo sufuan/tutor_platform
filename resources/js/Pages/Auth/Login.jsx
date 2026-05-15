@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { GraduationCap, Users, Shield, CheckCircle } from 'lucide-react';
+import { GraduationCap, Users, Shield, CheckCircle, ArrowLeft } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -29,12 +29,30 @@ export default function Login({ status, canResetPassword }) {
 
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full">
+                    <div className="mb-4 flex items-center justify-between">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => {
+                                if (window.history.length > 1) {
+                                    window.history.back();
+                                } else {
+                                    window.location.href = route('home');
+                                }
+                            }}
+                            className="px-0 text-[#275AAA] hover:text-[#1F4A92] hover:bg-transparent"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                            Back
+                        </Button>
+                    </div>
+
                     {/* Logo/Header */}
                     <div className="text-center mb-8">
                         <div className="flex justify-center mb-4">
-                            <div className="h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center">
+                            <Link href={route('home')} className="h-16 w-16 bg-[#275AAA] rounded-full flex items-center justify-center">
                                 <GraduationCap className="h-10 w-10 text-white" />
-                            </div>
+                            </Link>
                         </div>
                         <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
                         <p className="mt-2 text-gray-600">Sign in to your account</p>
@@ -104,14 +122,14 @@ export default function Login({ status, canResetPassword }) {
                                     {canResetPassword && (
                                         <Link
                                             href={route('password.request')}
-                                            className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                                            className="text-sm text-[#275AAA] hover:text-[#1F4A92] hover:underline"
                                         >
                                             Forgot password?
                                         </Link>
                                     )}
                                 </div>
 
-                                <Button type="submit" className="w-full" disabled={processing}>
+                                <Button type="submit" className="w-full bg-[#275AAA] hover:bg-[#1F4A92]" disabled={processing}>
                                     {processing ? 'Signing in...' : 'Sign In'}
                                 </Button>
 
@@ -120,7 +138,7 @@ export default function Login({ status, canResetPassword }) {
                                         Don't have an account?{' '}
                                         <Link
                                             href={route('register')}
-                                            className="text-blue-600 hover:text-blue-800 font-semibold hover:underline"
+                                            className="text-[#275AAA] hover:text-[#1F4A92] font-semibold hover:underline"
                                         >
                                             Register here
                                         </Link>
@@ -133,15 +151,15 @@ export default function Login({ status, canResetPassword }) {
                     {/* Role Info */}
                     <div className="mt-6 grid grid-cols-3 gap-4 text-center">
                         <div className="p-3 bg-white rounded-lg shadow-sm">
-                            <Users className="h-6 w-6 mx-auto mb-1 text-blue-600" />
+                            <Users className="h-6 w-6 mx-auto mb-1 text-[#275AAA]" />
                             <p className="text-xs text-gray-600">Guardian</p>
                         </div>
                         <div className="p-3 bg-white rounded-lg shadow-sm">
-                            <GraduationCap className="h-6 w-6 mx-auto mb-1 text-green-600" />
+                            <GraduationCap className="h-6 w-6 mx-auto mb-1 text-[#275AAA]" />
                             <p className="text-xs text-gray-600">Tutor</p>
                         </div>
                         <div className="p-3 bg-white rounded-lg shadow-sm">
-                            <Shield className="h-6 w-6 mx-auto mb-1 text-purple-600" />
+                            <Shield className="h-6 w-6 mx-auto mb-1 text-[#275AAA]" />
                             <p className="text-xs text-gray-600">Admin</p>
                         </div>
                     </div>

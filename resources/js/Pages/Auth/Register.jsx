@@ -6,9 +6,9 @@ import { RadioGroup, RadioGroupItem } from '@/Components/ui/radio-group';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { GraduationCap, Users, CheckCircle, Mail, Lock, User, Shield } from 'lucide-react';
+import { GraduationCap, Users, CheckCircle, Mail, Lock, User, Shield, ArrowLeft } from 'lucide-react';
 
-export default function Register({ defaultRole = 'guardian', tutorOnly = false }) {
+export default function Register({ defaultRole = 'tutor', tutorOnly = false }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -27,18 +27,18 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
 
     const roles = [
         {
-            value: 'guardian',
-            label: 'Guardian',
-            description: 'Find qualified tutors for your children',
-            icon: Users,
-            color: 'bg-blue-50 border-blue-200 text-blue-900'
-        },
-        {
             value: 'tutor',
             label: 'Tutor',
             description: 'Offer your teaching services',
             icon: GraduationCap,
             color: 'bg-green-50 border-green-200 text-green-900'
+        },
+        {
+            value: 'guardian',
+            label: 'Guardian',
+            description: 'Find qualified tutors for your children',
+            icon: Users,
+            color: 'bg-blue-50 border-blue-200 text-blue-900'
         }
     ];
 
@@ -48,11 +48,11 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
 
             <div className="min-h-screen flex">
                 {/* LEFT SIDE - Branding */}
-                <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
+                <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#275AAA] via-[#1F4A92] to-[#183B73] p-12 flex-col justify-between relative overflow-hidden">
                     {/* Background Pattern */}
                     <div className="absolute inset-0 opacity-10">
                         <div className="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-                        <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#275AAA] rounded-full blur-3xl"></div>
                     </div>
 
                     <div className="relative z-10">
@@ -96,13 +96,31 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                 </div>
 
                 {/* RIGHT SIDE - Registration Form */}
-                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-slate-50">
+                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#F6F8FC]">
                     <div className="w-full max-w-md">
+                        <div className="flex items-center justify-between mb-4">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => {
+                                    if (window.history.length > 1) {
+                                        window.history.back();
+                                    } else {
+                                        window.location.href = route('home');
+                                    }
+                                }}
+                                className="px-0 text-[#275AAA] hover:text-[#1F4A92] hover:bg-transparent"
+                            >
+                                <ArrowLeft className="h-4 w-4" />
+                                Back
+                            </Button>
+                        </div>
+
                         {/* Mobile Logo */}
                         <div className="lg:hidden flex justify-center mb-8">
-                            <div className="h-14 w-14 bg-slate-900 rounded-xl flex items-center justify-center p-2">
+                            <Link href={route('home')} className="h-14 w-14 bg-[#275AAA] rounded-xl flex items-center justify-center p-2">
                                 <img src="/assets/logo.png" alt="Tuition Barta" className="h-full w-full object-contain" />
-                            </div>
+                            </Link>
                         </div>
 
                         <div className="mb-8">
@@ -139,16 +157,16 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                                                         htmlFor={role.value}
                                                         className={`flex flex-col items-center justify-center rounded-xl border-2 p-5 cursor-pointer transition-all hover:shadow-md ${
                                                             data.role === role.value
-                                                                ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
-                                                                : 'border-slate-200 bg-white hover:border-slate-300'
+                                                                    ? 'border-[#275AAA] bg-[#275AAA] text-white shadow-lg'
+                                                                    : 'border-slate-200 bg-white hover:border-[#275AAA]/40'
                                                         }`}
                                                     >
                                                         <Icon className={`h-10 w-10 mb-3 ${
-                                                            data.role === role.value ? 'text-white' : 'text-slate-600'
+                                                                data.role === role.value ? 'text-white' : 'text-[#275AAA]'
                                                         }`} />
                                                         <span className="font-semibold text-sm">{role.label}</span>
                                                         <span className={`text-xs text-center mt-1 ${
-                                                            data.role === role.value ? 'text-slate-200' : 'text-slate-500'
+                                                                data.role === role.value ? 'text-[#E4EDF9]' : 'text-slate-500'
                                                         }`}>
                                                             {role.description}
                                                         </span>
@@ -175,7 +193,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                                         autoFocus
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="John Doe"
-                                        className="pl-11 h-12 rounded-lg border-slate-300"
+                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
                                 </div>
@@ -196,7 +214,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                                         autoComplete="username"
                                         onChange={(e) => setData('email', e.target.value)}
                                         placeholder="you@example.com"
-                                        className="pl-11 h-12 rounded-lg border-slate-300"
+                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
                                 </div>
@@ -217,7 +235,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                                         autoComplete="new-password"
                                         onChange={(e) => setData('password', e.target.value)}
                                         placeholder="••••••••"
-                                        className="pl-11 h-12 rounded-lg border-slate-300"
+                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
                                 </div>
@@ -240,7 +258,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                                             setData('password_confirmation', e.target.value)
                                         }
                                         placeholder="••••••••"
-                                        className="pl-11 h-12 rounded-lg border-slate-300"
+                                        className="pl-11 h-12 rounded-lg border-slate-300 focus-visible:border-[#275AAA] focus-visible:ring-[#275AAA]/20"
                                         required
                                     />
                                 </div>
@@ -251,7 +269,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
 
                             <Button 
                                 type="submit" 
-                                className="w-full h-12 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold shadow-lg" 
+                                className="w-full h-12 rounded-lg bg-[#275AAA] hover:bg-[#1F4A92] text-white font-semibold shadow-lg" 
                                 disabled={processing}
                             >
                                 {processing ? 'Creating account...' : 'Create Account'}
@@ -262,7 +280,7 @@ export default function Register({ defaultRole = 'guardian', tutorOnly = false }
                                     Already have an account?{' '}
                                     <Link
                                         href={route('login')}
-                                        className="text-slate-900 hover:text-slate-700 font-semibold hover:underline"
+                                        className="text-[#275AAA] hover:text-[#1F4A92] font-semibold hover:underline"
                                     >
                                         Sign in
                                     </Link>
