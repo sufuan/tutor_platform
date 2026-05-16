@@ -4,13 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Button } from '@/Components/ui/button';
 import { Badge } from '@/Components/ui/badge';
 import { Input } from '@/Components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
 import { Textarea } from '@/Components/ui/textarea';
 import { Label } from '@/Components/ui/label';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
     Briefcase, 
     MapPin, 
@@ -24,17 +24,44 @@ import {
     AlertCircle,
     FileText,
     ExternalLink,
-    X
+    X,
+    Building2
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 
-export default function BrowseJobs({ auth, jobs, districts, subjects, verificationStatus, tutorCv, filters }) {
+export default function BrowseJobs({ auth, jobs, divisions, subjects, verificationStatus, tutorCv, filters }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
-    const [selectedLocation, setSelectedLocation] = useState(filters.location || '');
+    const [selectedDivision, setSelectedDivision] = useState(filters.division || '');
+    const [selectedDistrict, setSelectedDistrict] = useState(filters.location || '');
     const [selectedSubject, setSelectedSubject] = useState(filters.subject || '');
     const [showApplyModal, setShowApplyModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const { toast } = useToast();
+
+    // All districts flat list (for when no division is selected)
+    const allDistricts = useMemo(() => {
+        return Object.values(divisions).flat().sort();
+    }, [divisions]);
+
+    // Districts shown in the district dropdown — filtered by division if one is picked
+    const availableDistricts = useMemo(() => {
+        if (selectedDivision && selectedDivision !== 'all') {
+            return divisions[selectedDivision] || [];
+        }
+        return allDistricts;
+    }, [selectedDivision, divisions, allDistricts]);
+
+    // When division changes, clear district if it doesn't belong to the new division
+    const handleDivisionChange = (val) => {
+        setSelectedDivision(val);
+        const div = val === 'all' ? null : val;
+        if (div && selectedDistrict) {
+            const districtsForDiv = divisions[div] || [];
+            if (!districtsForDiv.includes(selectedDistrict)) {
+                setSelectedDistrict('');
+            }
+        }
+    };
 
     // Debounce search to avoid too many requests
     useEffect(() => {
@@ -43,13 +70,18 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [searchTerm, selectedLocation, selectedSubject]);
+    }, [searchTerm, selectedDivision, selectedDistrict, selectedSubject]);
 
     const applyFilters = () => {
         const params = {};
         if (searchTerm) params.search = searchTerm;
-        if (selectedLocation && selectedLocation !== 'all') params.location = selectedLocation;
         if (selectedSubject && selectedSubject !== 'all') params.subject = selectedSubject;
+
+        if (selectedDistrict && selectedDistrict !== 'all') {
+            params.location = selectedDistrict;
+        } else if (selectedDivision && selectedDivision !== 'all') {
+            params.districts = (divisions[selectedDivision] || []).join(',');
+        }
 
         router.get(route('tutor.jobs.browse'), params, {
             preserveState: true,
@@ -59,11 +91,15 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
 
     const clearFilters = () => {
         setSearchTerm('');
-        setSelectedLocation('');
+        setSelectedDivision('');
+        setSelectedDistrict('');
         setSelectedSubject('');
     };
 
-    const hasActiveFilters = searchTerm || (selectedLocation && selectedLocation !== 'all') || (selectedSubject && selectedSubject !== 'all');
+    const hasActiveFilters = searchTerm
+        || (selectedDivision && selectedDivision !== 'all')
+        || (selectedDistrict && selectedDistrict !== 'all')
+        || (selectedSubject && selectedSubject !== 'all');
 
     const { data, setData, post, processing, reset, errors } = useForm({
         cover_letter: '',
@@ -231,6 +267,7 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
                     <Card className="mb-6">
                         <CardContent className="pt-6">
                             <div className="space-y-4">
+                                {/* Search */}
                                 <div className="relative">
                                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                     <Input
@@ -240,25 +277,64 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
                                         className="pl-9"
                                     />
                                 </div>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>District</Label>
-                                        <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+
+                                {/* Row: Division + District + Subject */}
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    {/* Division */}
+                                    <div>
+                                        <Select value={selectedDivision} onValueChange={handleDivisionChange}>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="All Districts" />
+                                                <Building2 className="h-4 w-4 mr-2 text-gray-400 shrink-0" />
+                                                <SelectValue placeholder="All Divisions" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="all">All Districts</SelectItem>
-                                                {districts.map((district) => (
-                                                    <SelectItem key={district} value={district}>
-                                                        {district}
-                                                    </SelectItem>
+                                                <SelectItem value="all">All Divisions</SelectItem>
+                                                {Object.keys(divisions).map((div) => (
+                                                    <SelectItem key={div} value={div}>{div}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Subject</Label>
+
+                                    {/* District — filtered by selected division */}
+                                    <div>
+                                        <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+                                            <SelectTrigger>
+                                                <MapPin className="h-4 w-4 mr-2 text-gray-400 shrink-0" />
+                                                <SelectValue placeholder={
+                                                    selectedDivision && selectedDivision !== 'all'
+                                                        ? `All ${selectedDivision} Districts`
+                                                        : 'All Districts'
+                                                } />
+                                            </SelectTrigger>
+                                            <SelectContent className="max-h-72">
+                                                <SelectItem value="all">
+                                                    {selectedDivision && selectedDivision !== 'all'
+                                                        ? `All ${selectedDivision} Districts`
+                                                        : 'All Districts'}
+                                                </SelectItem>
+                                                {selectedDivision && selectedDivision !== 'all' ? (
+                                                    availableDistricts.map((district) => (
+                                                        <SelectItem key={district} value={district}>{district}</SelectItem>
+                                                    ))
+                                                ) : (
+                                                    Object.entries(divisions).map(([div, dists]) => (
+                                                        <SelectGroup key={div}>
+                                                            <SelectLabel className="text-xs font-bold text-blue-600">
+                                                                {div} Division
+                                                            </SelectLabel>
+                                                            {dists.map((district) => (
+                                                                <SelectItem key={district} value={district}>{district}</SelectItem>
+                                                            ))}
+                                                        </SelectGroup>
+                                                    ))
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Subject */}
+                                    <div>
                                         <Select value={selectedSubject} onValueChange={setSelectedSubject}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="All Subjects" />
@@ -274,6 +350,7 @@ export default function BrowseJobs({ auth, jobs, districts, subjects, verificati
                                         </Select>
                                     </div>
                                 </div>
+
                                 {hasActiveFilters && (
                                     <div className="flex justify-end">
                                         <Button onClick={clearFilters} variant="outline" size="sm">

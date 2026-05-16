@@ -274,6 +274,11 @@ class TutorController extends Controller
 
         if ($request->location) {
             $query->where('district', $request->location);
+        } elseif ($request->districts) {
+            $districtList = array_filter(array_map('trim', explode(',', $request->districts)));
+            if (!empty($districtList)) {
+                $query->whereIn('district', $districtList);
+            }
         }
 
         if ($subjectId) {
@@ -292,22 +297,25 @@ class TutorController extends Controller
             return $job;
         });
 
-        // Get unique districts from approved open jobs
-        $districts = Job::where('approval_status', 'approved')
-            ->where('status', 'open')
-            ->whereNotNull('district')
-            ->pluck('district')
-            ->unique()
-            ->sort()
-            ->values();
+        // All 64 Bangladesh districts grouped by division
+        $divisions = [
+            'Dhaka'      => ['Dhaka','Faridpur','Gazipur','Gopalganj','Kishoreganj','Madaripur','Manikganj','Munshiganj','Narayanganj','Narsingdi','Rajbari','Shariatpur','Tangail'],
+            'Chittagong' => ['Bandarban','Brahmanbaria','Chandpur','Chittagong','Comilla','Cox\'s Bazar','Feni','Khagrachhari','Lakshmipur','Noakhali','Rangamati'],
+            'Rajshahi'   => ['Bogra','Chapainawabganj','Joypurhat','Naogaon','Natore','Pabna','Rajshahi','Sirajganj'],
+            'Khulna'     => ['Bagerhat','Chuadanga','Jessore','Jhenaidah','Khulna','Kushtia','Magura','Meherpur','Narail','Satkhira'],
+            'Barisal'    => ['Barguna','Barisal','Bhola','Jhalokati','Patuakhali','Pirojpur'],
+            'Sylhet'     => ['Habiganj','Moulvibazar','Sunamganj','Sylhet'],
+            'Rangpur'    => ['Dinajpur','Gaibandha','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Rangpur','Thakurgaon'],
+            'Mymensingh' => ['Jamalpur','Mymensingh','Netrokona','Sherpur'],
+        ];
 
         return Inertia::render('Tutor/BrowseJobs', [
-            'jobs' => $jobs,
-            'districts' => $districts,
-            'subjects' => Subject::orderBy('name')->get(),
+            'jobs'               => $jobs,
+            'divisions'          => $divisions,
+            'subjects'           => Subject::orderBy('name')->get(),
             'verificationStatus' => $tutor->verification_status,
-            'tutorCv' => $tutor->cv_path,
-            'filters' => $request->only(['location', 'subject', 'search']),
+            'tutorCv'            => $tutor->cv_path,
+            'filters'            => $request->only(['location', 'subject', 'search', 'division', 'districts']),
         ]);
     }
 
