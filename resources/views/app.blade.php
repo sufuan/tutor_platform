@@ -11,7 +11,7 @@
     <meta name="theme-color" content="#0F48A1">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('assets/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/fav.jpeg') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
