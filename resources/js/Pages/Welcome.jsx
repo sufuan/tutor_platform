@@ -297,22 +297,42 @@ export default function Welcome({
                                         opts={{
                                             align: "start",
                                             loop: true,
+                                            dragFree: true,
                                         }}
                                         plugins={[
                                             Autoplay({
-                                                delay: 2500,
+                                                delay: 1200,
+                                                stopOnInteraction: false,
+                                                stopOnMouseEnter: true,
                                             }),
                                         ]}
                                         className="w-full"
                                     >
                                         <CarouselContent className="-ml-2">
-                                            {['Dhaka', 'Chattogram', 'Sylhet', 'Rajshahi', 'Khulna', 'Barishal', 'Rangpur', 'Mymensingh', 'Cumilla', 'Gazipur', 'Savar', 'Narayanganj'].map((city, index) => (
+                                            {[
+                                                // Dhaka Division
+                                                'Dhaka','Faridpur','Gazipur','Gopalganj','Kishoreganj','Madaripur','Manikganj','Munshiganj','Narayanganj','Narsingdi','Rajbari','Shariatpur','Tangail',
+                                                // Chittagong Division
+                                                'Bandarban','Brahmanbaria','Chandpur','Chittagong','Comilla',"Cox's Bazar",'Feni','Khagrachhari','Lakshmipur','Noakhali','Rangamati',
+                                                // Rajshahi Division
+                                                'Bogra','Chapainawabganj','Joypurhat','Naogaon','Natore','Pabna','Rajshahi','Sirajganj',
+                                                // Khulna Division
+                                                'Bagerhat','Chuadanga','Jessore','Jhenaidah','Khulna','Kushtia','Magura','Meherpur','Narail','Satkhira',
+                                                // Barisal Division
+                                                'Barguna','Barisal','Bhola','Jhalokati','Patuakhali','Pirojpur',
+                                                // Sylhet Division
+                                                'Habiganj','Moulvibazar','Sunamganj','Sylhet',
+                                                // Rangpur Division
+                                                'Dinajpur','Gaibandha','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Rangpur','Thakurgaon',
+                                                // Mymensingh Division
+                                                'Jamalpur','Mymensingh','Netrokona','Sherpur',
+                                            ].map((district, index) => (
                                                 <CarouselItem key={index} className="pl-2 basis-auto">
                                                     <Link
-                                                        href={`/jobs?location=${city}`}
+                                                        href={`/jobs?location=${encodeURIComponent(district)}`}
                                                         className="inline-flex items-center px-4 py-2 bg-white/10 hover:bg-white text-white hover:text-[#0F48A1] rounded-full text-xs font-bold transition-all duration-300 border border-white/20 whitespace-nowrap"
                                                     >
-                                                        {city}
+                                                        {district}
                                                     </Link>
                                                 </CarouselItem>
                                             ))}
