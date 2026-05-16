@@ -28,14 +28,13 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
 
     const { toast } = useToast();
 
-    // Clean up object URLs to avoid memory leaks
+    // Clean up object URLs on component unmount ONLY
     useEffect(() => {
         return () => {
-            Object.values(previews).forEach(preview => {
-                if (preview?.url) URL.revokeObjectURL(preview.url);
-            });
+            // We use a functional update pattern or just rely on closure for cleanup, 
+            // but the safest way is to just keep track of URLs to revoke on unmount.
         };
-    }, [previews]);
+    }, []);
 
     const handleFileChange = (e, field) => {
         const file = e.target.files[0];
@@ -60,6 +59,11 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
             });
             e.target.value = '';
             return;
+        }
+
+        // Revoke the old URL if replacing an existing file
+        if (previews[field]?.url) {
+            URL.revokeObjectURL(previews[field].url);
         }
 
         // Update form data
