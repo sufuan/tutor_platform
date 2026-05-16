@@ -38,7 +38,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Guardian Routes
-Route::middleware(['auth', 'verified'])->prefix('guardian')->name('guardian.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:guardian'])->prefix('guardian')->name('guardian.')->group(function () {
     Route::get('/dashboard', [GuardianController::class, 'dashboard'])->name('dashboard');
     
     // Profile completion route
@@ -66,7 +66,7 @@ Route::middleware(['auth', 'verified'])->prefix('guardian')->name('guardian.')->
 });
 
 // Tutor Routes
-Route::middleware(['auth', 'verified'])->prefix('tutor')->name('tutor.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:tutor'])->prefix('tutor')->name('tutor.')->group(function () {
     Route::get('/dashboard', [TutorController::class, 'dashboard'])->name('dashboard');
     
     // Profile & Verification
@@ -108,13 +108,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     // Protected Admin Routes
-    Route::middleware(['auth', 'verified'])->group(function () {
-        // Redirect /admin to dashboard if authenticated
+    Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+        // Redirect /admin to dashboard
         Route::get('/', function () {
-            if (auth()->check() && auth()->user()->role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            }
-            return redirect()->route('admin.login');
+            return redirect()->route('admin.dashboard');
         });
 
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'profile.complete' => \App\Http\Middleware\CheckProfileComplete::class,
-            'tutor.verified' => \App\Http\Middleware\EnsureVerifiedTutor::class,
+            'tutor.verified'   => \App\Http\Middleware\EnsureVerifiedTutor::class,
+            'role'             => \App\Http\Middleware\EnsureRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
