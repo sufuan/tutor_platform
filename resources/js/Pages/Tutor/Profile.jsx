@@ -17,9 +17,7 @@ import {
     Download,
     Eye,
     FileText,
-    Camera,
-    UploadCloud,
-    Image as ImageIcon
+    Camera
 } from 'lucide-react';
 import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-bangladeshi';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
@@ -28,7 +26,7 @@ import SubjectSelector from '@/Components/SubjectSelector';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl, nidCardUrl, nidCardBackUrl, studentIdCardUrl, sscCertificateUrl, hscCertificateUrl }) {
+export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl }) {
     const { toast } = useToast();
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('tuition');
@@ -61,11 +59,6 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
         district: tutor.district || '',
         photo: null,
         cv_path: null,
-        nid_card: null,
-        nid_card_back: null,
-        student_id_card: null,
-        ssc_certificate: null,
-        hsc_certificate: null,
     });
 
     const [photoPreview, setPhotoPreview] = useState(
@@ -397,7 +390,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                             <p>{tutor.education_level ? tutor.education_level.replace('_', ' ').charAt(0).toUpperCase() + tutor.education_level.replace('_', ' ').slice(1) : <span className="text-rose-500">Not Given</span>}</p>
 
                                             <p className="text-slate-500 col-span-2 mt-2">Subjects I Teach</p>
-                                            <div className="col-span-2">
+                                            <p className="col-span-2">
                                                 {tutor.subjects && Array.isArray(tutor.subjects) && tutor.subjects.length > 0 ? (
                                                     <span className="flex flex-wrap gap-1">
                                                         {subjects.filter(s => tutor.subjects.map(id => parseInt(id)).includes(s.id)).map(subject => (
@@ -406,8 +399,8 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             </Badge>
                                                         ))}
                                                     </span>
-                                                ) : <span className="text-rose-500 text-sm">Not Given</span>}
-                                            </div>
+                                                ) : <span className="text-rose-500">Not Given</span>}
+                                            </p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -737,112 +730,38 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
 
                                         {/* CREDENTIAL TAB */}
                                         {activeTab === 'credential' && (
-                                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                                <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-                                                    <div>
-                                                        <h3 className="text-xl font-bold text-slate-900 flex items-center">
-                                                            <FileText className="h-6 w-6 mr-2 text-indigo-600" />
-                                                            Professional Credentials
-                                                        </h3>
-                                                        <p className="text-sm text-slate-500 mt-1">Upload clear, legible copies of your documents to get verified faster.</p>
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-slate-900 mb-4 pb-3 border-b flex items-center">
+                                                    <FileText className="h-5 w-5 mr-2 text-slate-700" />
+                                                    Credential Information
+                                                </h3>
+                                                <div className="space-y-4">
+                                                    <div className="col-span-1 md:col-span-2">
+                                                        <Label htmlFor="cv_path" className="text-sm">
+                                                            <FileText className="inline h-4 w-4" /> Upload CV
+                                                        </Label>
+                                                        {cvUrl && (
+                                                            <p className="text-xs text-slate-500 mb-2">
+                                                                <a href={cvUrl} target="_blank" className="text-blue-600 underline">
+                                                                    View Current CV
+                                                                </a>
+                                                            </p>
+                                                        )}
+                                                        <Input
+                                                            id="cv_path"
+                                                            type="file"
+                                                            accept=".pdf"
+                                                            className="rounded-md"
+                                                            onChange={(e) => setData('cv_path', e.target.files[0])}
+                                                        />
+                                                        <p className="text-xs text-slate-500 mt-1">PDF only - Max 5MB</p>
                                                     </div>
+                                                    <Alert className="bg-slate-50 col-span-1 md:col-span-2">
+                                                        <AlertDescription className="text-sm text-slate-600">
+                                                            A well-formatted CV increases your chances of getting hired. Include your education, certifications, and teaching experience.
+                                                        </AlertDescription>
+                                                    </Alert>
                                                 </div>
-
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                    
-                                                    {/* Document Upload Helper Function */}
-                                                    {(() => {
-                                                        const FileUploadZone = ({ id, label, icon: Icon, url, accept, hint }) => {
-                                                            const file = data[id];
-                                                            return (
-                                                                <div className="group relative border-2 border-dashed border-slate-200 rounded-xl p-6 transition-all hover:border-indigo-500 hover:bg-indigo-50/50 bg-slate-50">
-                                                                    <div className="flex flex-col items-center justify-center text-center space-y-3">
-                                                                        <div className="p-3 bg-white rounded-full shadow-sm group-hover:scale-110 transition-transform duration-300">
-                                                                            <Icon className="h-6 w-6 text-indigo-500" />
-                                                                        </div>
-                                                                        <div>
-                                                                            <Label htmlFor={id} className="text-base font-semibold text-slate-700 cursor-pointer group-hover:text-indigo-600">
-                                                                                {label}
-                                                                            </Label>
-                                                                            <p className="text-xs text-slate-500 mt-1">{hint}</p>
-                                                                        </div>
-                                                                        
-                                                                        <div className="w-full mt-4">
-                                                                            {file ? (
-                                                                                <div className="flex items-center justify-between p-2 bg-indigo-100 text-indigo-800 rounded-lg text-sm border border-indigo-200">
-                                                                                    <span className="truncate max-w-[200px]">{file.name}</span>
-                                                                                    <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-                                                                                </div>
-                                                                            ) : url ? (
-                                                                                <div className="flex items-center justify-between p-2 bg-green-50 text-green-700 rounded-lg text-sm border border-green-200">
-                                                                                    <a href={url} target="_blank" className="hover:underline flex items-center">
-                                                                                        <Eye className="h-4 w-4 mr-1" /> View Uploaded
-                                                                                    </a>
-                                                                                    <span className="text-xs text-green-600 ml-2">Verified</span>
-                                                                                </div>
-                                                                            ) : (
-                                                                                <div className="p-2 border border-transparent text-sm text-slate-400">
-                                                                                    No file selected
-                                                                                </div>
-                                                                            )}
-                                                                        </div>
-                                                                        
-                                                                        {/* Hidden File Input */}
-                                                                        <input
-                                                                            id={id}
-                                                                            type="file"
-                                                                            accept={accept}
-                                                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                                            onChange={(e) => setData(id, e.target.files[0])}
-                                                                        />
-                                                                        
-                                                                        <Button type="button" variant="outline" size="sm" className="pointer-events-none mt-2 w-full bg-white hover:bg-slate-100">
-                                                                            <UploadCloud className="h-4 w-4 mr-2" />
-                                                                            {file || url ? 'Upload New File' : 'Browse File'}
-                                                                        </Button>
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        };
-
-                                                        return (
-                                                            <>
-                                                                <FileUploadZone 
-                                                                    id="cv_path" label="Curriculum Vitae (CV)" icon={FileText} 
-                                                                    url={cvUrl} accept=".pdf" hint="PDF only (Max 5MB)"
-                                                                />
-                                                                <FileUploadZone 
-                                                                    id="student_id_card" label="Student ID / University Card" icon={User} 
-                                                                    url={studentIdCardUrl} accept="image/jpeg,image/png,image/webp" hint="JPG, PNG (Max 3MB)"
-                                                                />
-                                                                <FileUploadZone 
-                                                                    id="nid_card" label="NID Card (Front Side)" icon={ImageIcon} 
-                                                                    url={nidCardUrl} accept="image/jpeg,image/png,image/webp" hint="JPG, PNG (Max 3MB)"
-                                                                />
-                                                                <FileUploadZone 
-                                                                    id="nid_card_back" label="NID Card (Back Side)" icon={ImageIcon} 
-                                                                    url={nidCardBackUrl} accept="image/jpeg,image/png,image/webp" hint="JPG, PNG (Max 3MB)"
-                                                                />
-                                                                <FileUploadZone 
-                                                                    id="ssc_certificate" label="SSC Certificate / Marksheet" icon={GraduationCap} 
-                                                                    url={sscCertificateUrl} accept="image/jpeg,image/png,image/webp" hint="JPG, PNG (Max 3MB)"
-                                                                />
-                                                                <FileUploadZone 
-                                                                    id="hsc_certificate" label="HSC Certificate / Marksheet" icon={GraduationCap} 
-                                                                    url={hscCertificateUrl} accept="image/jpeg,image/png,image/webp" hint="JPG, PNG (Max 3MB)"
-                                                                />
-                                                            </>
-                                                        );
-                                                    })()}
-
-                                                </div>
-                                                
-                                                <Alert className="mt-6 bg-indigo-50/50 border-indigo-100 text-indigo-900">
-                                                    <AlertDescription className="flex items-center text-sm">
-                                                        <CheckCircle2 className="h-5 w-5 text-indigo-500 mr-3 flex-shrink-0" />
-                                                        <span>All uploaded documents are securely stored and strictly used for profile verification purposes only. They are not visible to the public or students.</span>
-                                                    </AlertDescription>
-                                                </Alert>
                                             </div>
                                         )}
                                     </div>
