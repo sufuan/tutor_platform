@@ -26,7 +26,7 @@ import SubjectSelector from '@/Components/SubjectSelector';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl }) {
+export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl, nidCardUrl, studentIdCardUrl, sscCertificateUrl, hscCertificateUrl }) {
     const { toast } = useToast();
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('tuition');
@@ -59,6 +59,10 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
         district: tutor.district || '',
         photo: null,
         cv_path: null,
+        nid_card: null,
+        student_id_card: null,
+        ssc_certificate: null,
+        hsc_certificate: null,
     });
 
     const [photoPreview, setPhotoPreview] = useState(
@@ -755,6 +759,90 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             onChange={(e) => setData('cv_path', e.target.files[0])}
                                                         />
                                                         <p className="text-xs text-slate-500 mt-1">PDF only - Max 5MB</p>
+                                                    </div>
+
+                                                    <div className="col-span-1 md:col-span-2 border-t pt-4">
+                                                        <Label htmlFor="nid_card" className="text-sm font-semibold">
+                                                            <User className="inline h-4 w-4" /> NID Card (Front & Back)
+                                                        </Label>
+                                                        {nidCardUrl && (
+                                                            <p className="text-xs text-slate-500 mb-2">
+                                                                <a href={nidCardUrl} target="_blank" className="text-blue-600 underline">
+                                                                    View Current NID Card
+                                                                </a>
+                                                            </p>
+                                                        )}
+                                                        <Input
+                                                            id="nid_card"
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            className="rounded-md"
+                                                            onChange={(e) => setData('nid_card', e.target.files[0])}
+                                                        />
+                                                        <p className="text-xs text-slate-500 mt-1">JPG, PNG, WEBP - Max 3MB</p>
+                                                    </div>
+
+                                                    <div className="col-span-1 md:col-span-2 border-t pt-4">
+                                                        <Label htmlFor="student_id_card" className="text-sm font-semibold">
+                                                            <User className="inline h-4 w-4" /> Student ID Card
+                                                        </Label>
+                                                        {studentIdCardUrl && (
+                                                            <p className="text-xs text-slate-500 mb-2">
+                                                                <a href={studentIdCardUrl} target="_blank" className="text-blue-600 underline">
+                                                                    View Current Student ID Card
+                                                                </a>
+                                                            </p>
+                                                        )}
+                                                        <Input
+                                                            id="student_id_card"
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            className="rounded-md"
+                                                            onChange={(e) => setData('student_id_card', e.target.files[0])}
+                                                        />
+                                                        <p className="text-xs text-slate-500 mt-1">JPG, PNG, WEBP - Max 3MB</p>
+                                                    </div>
+
+                                                    <div className="col-span-1 md:col-span-2 border-t pt-4">
+                                                        <Label htmlFor="ssc_certificate" className="text-sm font-semibold">
+                                                            <GraduationCap className="inline h-4 w-4" /> SSC Certificate / Marksheet
+                                                        </Label>
+                                                        {sscCertificateUrl && (
+                                                            <p className="text-xs text-slate-500 mb-2">
+                                                                <a href={sscCertificateUrl} target="_blank" className="text-blue-600 underline">
+                                                                    View Current SSC Certificate
+                                                                </a>
+                                                            </p>
+                                                        )}
+                                                        <Input
+                                                            id="ssc_certificate"
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            className="rounded-md"
+                                                            onChange={(e) => setData('ssc_certificate', e.target.files[0])}
+                                                        />
+                                                        <p className="text-xs text-slate-500 mt-1">JPG, PNG, WEBP - Max 3MB</p>
+                                                    </div>
+
+                                                    <div className="col-span-1 md:col-span-2 border-t pt-4">
+                                                        <Label htmlFor="hsc_certificate" className="text-sm font-semibold">
+                                                            <GraduationCap className="inline h-4 w-4" /> HSC Certificate / Marksheet
+                                                        </Label>
+                                                        {hscCertificateUrl && (
+                                                            <p className="text-xs text-slate-500 mb-2">
+                                                                <a href={hscCertificateUrl} target="_blank" className="text-blue-600 underline">
+                                                                    View Current HSC Certificate
+                                                                </a>
+                                                            </p>
+                                                        )}
+                                                        <Input
+                                                            id="hsc_certificate"
+                                                            type="file"
+                                                            accept="image/jpeg,image/png,image/webp"
+                                                            className="rounded-md"
+                                                            onChange={(e) => setData('hsc_certificate', e.target.files[0])}
+                                                        />
+                                                        <p className="text-xs text-slate-500 mt-1">JPG, PNG, WEBP - Max 3MB</p>
                                                     </div>
                                                     <Alert className="bg-slate-50 col-span-1 md:col-span-2">
                                                         <AlertDescription className="text-sm text-slate-600">

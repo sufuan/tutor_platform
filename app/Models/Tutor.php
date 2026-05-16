@@ -17,6 +17,7 @@ class Tutor extends Model
         'available_days', 'available_time_from', 'available_time_to', 'preferred_locations',
         'tutoring_styles', 'tutoring_method', 'preferred_categories', 'preferred_classes',
         'place_of_tutoring', 'division', 'district', 'cv_path',
+        'nid_card', 'student_id_card', 'ssc_certificate', 'hsc_certificate',
     ];
 
     protected $casts = [
