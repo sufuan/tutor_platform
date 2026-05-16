@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
@@ -7,105 +7,149 @@ import { Input } from '@/Components/ui/input';
 import { Label } from '@/Components/ui/label';
 import { Textarea } from '@/Components/ui/textarea';
 import { Alert, AlertDescription } from '@/Components/ui/alert';
-import { Upload, FileText, CheckCircle, Clock, XCircle, AlertCircle, X } from 'lucide-react';
+import { Upload, FileText, CheckCircle, Clock, XCircle, AlertCircle, X, ShieldCheck, GraduationCap, IdCard, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Verification({ auth, tutor, verificationStatus, verificationNotes, rejectionReason }) {
     const { data, setData, post, processing, errors } = useForm({
-        documents: null,
+        nid_card: null,
+        student_id_front: null,
+        student_id_back: null,
+        certificate: null,
         notes: '',
     });
 
-    const [uploadedFiles, setUploadedFiles] = useState([]);
+    const [previews, setPreviews] = useState({
+        nid_card: null,
+        student_id_front: null,
+        student_id_back: null,
+        certificate: null,
+    });
+
     const { toast } = useToast();
-    const MAX_FILES = 3;
 
-    const handleFileChange = (e) => {
-        const newFiles = Array.from(e.target.files);
-
-        // Get existing files
-        const existingFiles = data.documents ? Array.from(data.documents) : [];
-
-        // Combine existing and new files
-        const allFiles = [...existingFiles, ...newFiles];
-
-        // Check if total files exceed max limit
-        if (allFiles.length > MAX_FILES) {
-            toast({
-                title: "Too many files",
-                description: `You can only upload a maximum of ${MAX_FILES} files. You currently have ${existingFiles.length} file(s).`,
-                variant: "destructive",
+    // Clean up object URLs to avoid memory leaks
+    useEffect(() => {
+        return () => {
+            Object.values(previews).forEach(preview => {
+                if (preview?.url) URL.revokeObjectURL(preview.url);
             });
-            e.target.value = ''; // Reset input
-            return;
-        }
+        };
+    }, [previews]);
 
-        // Validate file types for new files only
+    const handleFileChange = (e, field) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
         const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-        const invalidFiles = newFiles.filter(file => !validTypes.includes(file.type));
-
-        if (invalidFiles.length > 0) {
+        if (!validTypes.includes(file.type)) {
             toast({
                 title: "Invalid file type",
                 description: "Only PDF, JPG, JPEG, and PNG files are allowed.",
                 variant: "destructive",
             });
-            e.target.value = ''; // Reset input
+            e.target.value = '';
             return;
         }
 
-        // Update with all files
-        setData('documents', allFiles);
-        setUploadedFiles(allFiles.map(f => ({ name: f.name, size: f.size })));
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            toast({
+                title: "File too large",
+                description: "Maximum file size is 5MB.",
+                variant: "destructive",
+            });
+            e.target.value = '';
+            return;
+        }
 
-        // Reset input so same file can be selected again if needed
-        e.target.value = '';
+        // Update form data
+        setData(field, file);
+
+        // Generate preview
+        const isImage = file.type.startsWith('image/');
+        const url = URL.createObjectURL(file);
+        
+        setPreviews(prev => ({
+            ...prev,
+            [field]: {
+                name: file.name,
+                size: (file.size / 1024).toFixed(2) + ' KB',
+                isImage,
+                url
+            }
+        }));
     };
 
-    const removeFile = (index) => {
-        const newFiles = Array.from(data.documents).filter((_, i) => i !== index);
-        setData('documents', newFiles.length > 0 ? newFiles : null);
-        setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
+    const removeFile = (field) => {
+        setData(field, null);
+        
+        setPreviews(prev => {
+            const newPreviews = { ...prev };
+            if (newPreviews[field]?.url) {
+                URL.revokeObjectURL(newPreviews[field].url);
+            }
+            newPreviews[field] = null;
+            return newPreviews;
+        });
+        
+        // Reset the input element if it exists
+        const input = document.getElementById(field);
+        if (input) input.value = '';
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        // Check if all required files are present
+        if (!data.nid_card || !data.student_id_front || !data.student_id_back || !data.certificate) {
+            toast({
+                title: "Missing documents",
+                description: "Please upload all required documents before submitting.",
+                variant: "destructive",
+            });
+            return;
+        }
+
         post(route('tutor.verification.submit'));
     };
 
     const getStatusConfig = () => {
         const configs = {
             unverified: {
-                icon: AlertCircle,
-                title: 'Complete Verification',
-                description: 'Submit your documents to get verified and start applying for jobs.',
-                color: 'text-blue-600',
+                icon: ShieldCheck,
+                title: 'Get Verified & Build Trust',
+                description: 'Complete your profile verification to unlock premium jobs and increase your chances of being hired by 3x.',
+                color: 'text-[#0F48A1]',
                 bgColor: 'bg-blue-50',
-                borderColor: 'border-blue-200',
+                borderColor: 'border-[#0F48A1]/20',
+                gradient: 'from-[#0F48A1]/10 to-blue-500/10'
             },
             pending: {
                 icon: Clock,
-                title: 'Verification Pending',
-                description: 'Your documents are under review. We\'ll notify you once the verification is complete.',
-                color: 'text-yellow-600',
-                bgColor: 'bg-yellow-50',
-                borderColor: 'border-yellow-200',
+                title: 'Verification in Progress',
+                description: 'Our team is carefully reviewing your submitted documents. This usually takes 1-2 business days.',
+                color: 'text-amber-600',
+                bgColor: 'bg-amber-50',
+                borderColor: 'border-amber-200',
+                gradient: 'from-amber-500/10 to-orange-500/10'
             },
             verified: {
                 icon: CheckCircle,
-                title: 'Verified',
-                description: 'Congratulations! Your profile has been verified. You can now apply for jobs.',
-                color: 'text-green-600',
-                bgColor: 'bg-green-50',
-                borderColor: 'border-green-200',
+                title: 'Officially Verified Tutor',
+                description: 'Your identity and credentials have been verified. You now have full access to all platform features.',
+                color: 'text-emerald-600',
+                bgColor: 'bg-emerald-50',
+                borderColor: 'border-emerald-200',
+                gradient: 'from-emerald-500/10 to-teal-500/10'
             },
             rejected: {
                 icon: XCircle,
-                title: 'Verification Rejected',
-                description: 'Your verification was rejected. Please review the feedback and resubmit your documents.',
-                color: 'text-red-600',
-                bgColor: 'bg-red-50',
-                borderColor: 'border-red-200',
+                title: 'Verification Requires Attention',
+                description: 'We could not verify your profile. Please review the feedback below and upload valid documents.',
+                color: 'text-rose-600',
+                bgColor: 'bg-rose-50',
+                borderColor: 'border-rose-200',
+                gradient: 'from-rose-500/10 to-red-500/10'
             },
         };
 
@@ -115,46 +159,107 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
     const config = getStatusConfig();
     const Icon = config.icon;
 
+    // Custom File Upload Component
+    const DocumentUpload = ({ id, label, icon: UploadIcon, description, preview, error }) => (
+        <div className="relative flex flex-col group">
+            <Label className="text-sm font-semibold text-slate-700 mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                    <UploadIcon className="h-4 w-4 text-[#0F48A1]" />
+                    {label} <span className="text-rose-500">*</span>
+                </span>
+                {preview && <span className="text-xs font-medium text-emerald-600 flex items-center gap-1"><Check className="h-3 w-3"/> Uploaded</span>}
+            </Label>
+            
+            {!preview ? (
+                <div className={`
+                    relative flex-1 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl transition-all duration-300
+                    ${error ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-slate-50/50 hover:border-[#0F48A1]/50 hover:bg-blue-50/30'}
+                `}>
+                    <Input
+                        id={id}
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => handleFileChange(e, id)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-12 h-12 bg-white shadow-sm rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <Upload className="h-5 w-5 text-slate-400 group-hover:text-[#0F48A1] transition-colors" />
+                    </div>
+                    <p className="text-sm font-medium text-slate-700 text-center">{description}</p>
+                    <p className="text-xs text-slate-500 mt-1">PDF, JPG, PNG up to 5MB</p>
+                </div>
+            ) : (
+                <div className="relative flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-white group/preview shadow-sm hover:shadow-md transition-shadow">
+                    {preview.isImage ? (
+                        <div className="absolute inset-0 bg-slate-100">
+                            <img src={preview.url} alt={label} className="w-full h-full object-cover opacity-90 transition-opacity" />
+                        </div>
+                    ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50">
+                            <FileText className="h-12 w-12 text-blue-500 mb-2" />
+                            <span className="text-xs font-medium text-slate-600 px-4 truncate w-full text-center">{preview.name}</span>
+                        </div>
+                    )}
+                    
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center backdrop-blur-sm z-20">
+                        <button
+                            type="button"
+                            onClick={() => removeFile(id)}
+                            className="bg-white/20 hover:bg-rose-500 text-white p-3 rounded-full backdrop-blur-md transition-colors shadow-lg"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                        <p className="text-white text-xs font-medium mt-3">{preview.size}</p>
+                    </div>
+                </div>
+            )}
+            {error && <p className="text-xs text-rose-500 mt-1.5 font-medium">{error}</p>}
+        </div>
+    );
+
     return (
         <AuthenticatedLayout
             user={auth}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Tutor Verification
+                    Identity Verification
                 </h2>
             }
         >
             <Head title="Tutor Verification" />
 
-            <div className="py-12">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    {/* Current Status */}
-                    <Card className={`${config.bgColor} ${config.borderColor} border-2`}>
-                        <CardHeader>
-                            <div className="flex items-center space-x-3">
-                                <div className={`p-3 ${config.bgColor} rounded-lg`}>
-                                    <Icon className={`h-6 w-6 ${config.color}`} />
-                                </div>
-                                <div>
-                                    <CardTitle className="text-xl">{config.title}</CardTitle>
-                                    <CardDescription className="text-gray-600 mt-1">
-                                        {config.description}
-                                    </CardDescription>
-                                </div>
+            <div className="py-8">
+                <div className="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-8">
+                    
+                    {/* Status Banner */}
+                    <div className={`relative overflow-hidden rounded-3xl border ${config.borderColor} bg-white shadow-sm`}>
+                        <div className={`absolute inset-0 bg-gradient-to-r ${config.gradient} opacity-50`} />
+                        <div className="relative p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
+                            <div className={`w-16 h-16 shrink-0 rounded-2xl ${config.bgColor} flex items-center justify-center shadow-inner`}>
+                                <Icon className={`h-8 w-8 ${config.color}`} />
                             </div>
-                        </CardHeader>
-                    </Card>
+                            <div className="text-center sm:text-left flex-1">
+                                <h3 className="text-2xl font-bold text-slate-800 tracking-tight">{config.title}</h3>
+                                <p className="text-slate-600 mt-1.5 max-w-2xl leading-relaxed">
+                                    {config.description}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Admin Feedback */}
                     {(rejectionReason || (verificationStatus === 'verified' && verificationNotes)) && (
-                        <Alert className={verificationStatus === 'rejected' ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}>
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertDescription>
-                                <div className="space-y-2">
-                                    <p className="font-semibold">
-                                        {verificationStatus === 'rejected' ? 'Rejection Reason:' : 'Admin Notes:'}
+                        <Alert className={`${verificationStatus === 'rejected' ? 'border-rose-200 bg-rose-50/50' : 'border-emerald-200 bg-emerald-50/50'} rounded-2xl`}>
+                            <AlertCircle className={`h-5 w-5 ${verificationStatus === 'rejected' ? 'text-rose-600' : 'text-emerald-600'}`} />
+                            <AlertDescription className="ml-2">
+                                <div className="space-y-1">
+                                    <p className={`font-bold ${verificationStatus === 'rejected' ? 'text-rose-800' : 'text-emerald-800'}`}>
+                                        {verificationStatus === 'rejected' ? 'Action Required:' : 'Reviewer Note:'}
                                     </p>
-                                    <p className="text-sm">{verificationStatus === 'rejected' ? rejectionReason : verificationNotes}</p>
+                                    <p className={`text-sm ${verificationStatus === 'rejected' ? 'text-rose-700' : 'text-emerald-700'} leading-relaxed`}>
+                                        {verificationStatus === 'rejected' ? rejectionReason : verificationNotes}
+                                    </p>
                                 </div>
                             </AlertDescription>
                         </Alert>
@@ -162,137 +267,89 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
 
                     {/* Verification Form */}
                     {verificationStatus !== 'verified' && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Submit Verification Documents</CardTitle>
-                                <CardDescription>
-                                    Upload your educational certificates, ID proof, and other relevant documents
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <Alert>
-                                        <AlertCircle className="h-4 w-4" />
-                                        <AlertDescription>
-                                            Please upload clear, readable copies of your documents. Maximum {MAX_FILES} files. Supported formats: PDF, JPG, JPEG, PNG (Max 5MB each)
-                                        </AlertDescription>
-                                    </Alert>
+                        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div className="border-b border-slate-100 p-6 sm:p-8">
+                                <h3 className="text-xl font-bold text-slate-800">Required Documents</h3>
+                                <p className="text-slate-500 mt-1 text-sm">Please provide high-quality, readable images or PDFs for all 4 items below.</p>
+                            </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="documents">
-                                            Upload Documents *
-                                            <span className="text-xs text-gray-500 ml-2">
-                                                ({uploadedFiles.length}/{MAX_FILES} files)
-                                            </span>
-                                        </Label>
-                                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                                            <Input
-                                                id="documents"
-                                                type="file"
-                                                multiple
-                                                accept=".pdf,.jpg,.jpeg,.png"
-                                                onChange={handleFileChange}
-                                                className="hidden"
-                                                disabled={uploadedFiles.length >= MAX_FILES}
-                                            />
-                                            <label
-                                                htmlFor="documents"
-                                                className={`cursor-pointer ${uploadedFiles.length >= MAX_FILES ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                            >
-                                                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                                                <p className="text-sm text-gray-600 mb-1">
-                                                    {uploadedFiles.length >= MAX_FILES
-                                                        ? `Maximum ${MAX_FILES} files reached`
-                                                        : 'Click to upload or drag and drop'}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                    PDF, JPG, JPEG, PNG up to 5MB each
-                                                </p>
-                                            </label>
-                                        </div>
-                                        {uploadedFiles.length > 0 && (
-                                            <div className="mt-3 space-y-2">
-                                                {uploadedFiles.map((file, idx) => (
-                                                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                                        <div className="flex items-center space-x-3 flex-1">
-                                                            <FileText className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                                                            <div className="flex-1 min-w-0">
-                                                                <p className="text-sm text-gray-700 font-medium truncate">{file.name}</p>
-                                                                <p className="text-xs text-gray-500">
-                                                                    {(file.size / 1024).toFixed(2)} KB
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeFile(idx)}
-                                                            className="ml-2 p-1 hover:bg-red-100 rounded-full transition-colors"
-                                                            title="Remove file"
-                                                        >
-                                                            <X className="h-4 w-4 text-red-600" />
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {errors.documents && (
-                                            <p className="text-sm text-red-600">{errors.documents}</p>
-                                        )}
-                                    </div>
+                            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
+                                
+                                {/* Document Upload Grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[220px]">
+                                    
+                                    <DocumentUpload 
+                                        id="nid_card" 
+                                        label="NID / Smart Card" 
+                                        icon={IdCard}
+                                        description="Upload front side of NID"
+                                        preview={previews.nid_card}
+                                        error={errors.nid_card}
+                                    />
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="notes">Additional Notes (Optional)</Label>
-                                        <Textarea
-                                            id="notes"
-                                            placeholder="Add any additional information that might help with verification..."
-                                            value={data.notes}
-                                            onChange={(e) => setData('notes', e.target.value)}
-                                            rows={4}
-                                        />
-                                    </div>
+                                    <DocumentUpload 
+                                        id="student_id_front" 
+                                        label="Student ID (Front)" 
+                                        icon={IdCard}
+                                        description="Front side of University ID"
+                                        preview={previews.student_id_front}
+                                        error={errors.student_id_front}
+                                    />
 
+                                    <DocumentUpload 
+                                        id="student_id_back" 
+                                        label="Student ID (Back)" 
+                                        icon={IdCard}
+                                        description="Back side of University ID"
+                                        preview={previews.student_id_back}
+                                        error={errors.student_id_back}
+                                    />
+
+                                    <DocumentUpload 
+                                        id="certificate" 
+                                        label="Latest Certificate" 
+                                        icon={GraduationCap}
+                                        description="SSC / HSC / Undergrad cert."
+                                        preview={previews.certificate}
+                                        error={errors.certificate}
+                                    />
+
+                                </div>
+
+                                {/* Additional Notes */}
+                                <div className="pt-4 border-t border-slate-100">
+                                    <Label htmlFor="notes" className="text-sm font-semibold text-slate-700 mb-2 block">
+                                        Additional Context (Optional)
+                                    </Label>
+                                    <Textarea
+                                        id="notes"
+                                        placeholder="E.g., My student ID is expired because I recently graduated, I've attached my provisional certificate..."
+                                        value={data.notes}
+                                        onChange={(e) => setData('notes', e.target.value)}
+                                        rows={3}
+                                        className="resize-none rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                                    />
+                                </div>
+
+                                {/* Submit Section */}
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
+                                    <p className="text-sm text-slate-500 flex items-center gap-2">
+                                        <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                                        Your documents are securely stored and encrypted.
+                                    </p>
                                     <Button 
                                         type="submit" 
-                                        disabled={processing || !data.documents}
-                                        className="w-full bg-blue-600 hover:bg-blue-700"
+                                        disabled={processing || !data.nid_card || !data.student_id_front || !data.student_id_back || !data.certificate}
+                                        className="w-full sm:w-auto bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-8 py-6 rounded-xl font-bold text-base shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5"
                                     >
-                                        {processing ? 'Submitting...' : verificationStatus === 'rejected' ? 'Resubmit Documents' : 'Submit for Verification'}
+                                        {processing ? 'Uploading Documents...' : verificationStatus === 'rejected' ? 'Resubmit For Review' : 'Submit Application'}
                                     </Button>
-                                </form>
-                            </CardContent>
-                        </Card>
+                                </div>
+                            </form>
+                        </div>
                     )}
-
-                    {/* Requirements */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Verification Requirements</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <ul className="space-y-3 text-sm text-gray-600">
-                                <li className="flex items-start">
-                                    <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                                    <span>Valid government-issued ID (National ID, Passport, or Driving License)</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                                    <span>Educational certificates (Degree, Diploma, or relevant qualifications)</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                                    <span>Recent photograph (passport size)</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <CheckCircle className="h-5 w-5 text-green-600 mr-2 flex-shrink-0 mt-0.5" />
-                                    <span>Any teaching certifications (if applicable)</span>
-                                </li>
-                            </ul>
-                        </CardContent>
-                    </Card>
                 </div>
             </div>
         </AuthenticatedLayout>
     );
 }
-
-
