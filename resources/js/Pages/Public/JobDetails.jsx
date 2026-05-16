@@ -1,4 +1,4 @@
-import GuestLayout from '@/Layouts/GuestLayout';
+import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
@@ -43,8 +43,11 @@ export default function JobDetails({ job, auth }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title={job.title} />
+        <PublicLayout
+            title={job.title}
+            description={`Tuition job available in ${job.district || job.location?.city || 'Bangladesh'}. Salary: ৳${job.salary}/month. Required subjects: ${Array.isArray(job.subject_names) ? job.subject_names.join(', ') : 'Not specified'}. Apply now on Tuition Barta.`}
+            url={`https://tuitionbarta.com/jobs/${job.id}`}
+        >
 
             <div className="py-12">
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
@@ -313,7 +316,7 @@ export default function JobDetails({ job, auth }) {
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </PublicLayout>
     );
 }
 

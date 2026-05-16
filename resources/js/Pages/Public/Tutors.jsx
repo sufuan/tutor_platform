@@ -47,8 +47,10 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
     };
 
     return (
-        <PublicLayout>
-            <Head title="Browse Tutors" />
+        <PublicLayout 
+            title="Browse Verified Tutors" 
+            description="Find and hire the best verified tutors in Bangladesh. Compare profiles, ratings, and experience to find the perfect match for your educational needs."
+        >
 
             {/* Hero Section */}
             <div className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white py-16">

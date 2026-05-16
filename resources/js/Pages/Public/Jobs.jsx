@@ -84,8 +84,10 @@ export default function Jobs({ jobs, divisions, subjects, filters }) {
     };
 
     return (
-        <PublicLayout>
-            <Head title="Browse Jobs" />
+        <PublicLayout 
+            title="Browse Tutoring Jobs" 
+            description="Browse available tutoring opportunities in Bangladesh and connect with families looking for qualified home and online tutors."
+        >
 
             {/* Hero Section */}
             <div className="bg-gradient-to-br from-primary-blue to-indigo-700 text-white py-16">

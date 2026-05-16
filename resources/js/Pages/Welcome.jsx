@@ -157,7 +157,10 @@ export default function Welcome({
     };
 
     return (
-        <PublicLayout title="Welcome">
+        <PublicLayout 
+            title="Home - Find the Perfect Tutor" 
+            description={heroSubtitle}
+        >
             {/* Promotional Modal */}
             <PromotionalModal
                 imageUrl={promoBannerImage}

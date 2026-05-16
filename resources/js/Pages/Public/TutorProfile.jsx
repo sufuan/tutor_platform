@@ -1,4 +1,4 @@
-import GuestLayout from '@/Layouts/GuestLayout';
+import PublicLayout from '@/Layouts/PublicLayout';
 import { Head, Link } from '@inertiajs/react';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
@@ -12,29 +12,13 @@ import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-b
 
 export default function TutorProfile({ tutor, subjectNames = [] }) {
     return (
-        <GuestLayout>
-            <Head title={`${tutor.user?.name || 'Tutor'} - Profile`} />
-
+        <PublicLayout
+            title={`${tutor.user?.name || 'Tutor'} - Profile`}
+            description={`View the tutoring profile of ${tutor.user?.name || 'this tutor'}. Expertise in ${subjectNames.join(', ') || 'various subjects'}. Book a session now on Tuition Barta.`}
+            image={tutor.photo ? `https://tuitionbarta.com/storage/${tutor.photo}` : 'https://tuitionbarta.com/assets/logo.png'}
+            url={`https://tuitionbarta.com/tutors/${tutor.id}`}
+        >
             <div className="min-h-screen bg-slate-50">
-                {/* Header */}
-                <header className="bg-white border-b shadow-sm">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                        <div className="flex items-center justify-between">
-                            <Link href="/" className="flex items-center gap-2">
-                                <GraduationCap className="h-8 w-8 text-slate-900" />
-                                <span className="text-xl font-bold text-slate-900">Tuition Barta</span>
-                            </Link>
-                            <div className="flex gap-3">
-                                <Button variant="outline" asChild>
-                                    <Link href={route('login')}>Login</Link>
-                                </Button>
-                                <Button asChild className="bg-slate-900 hover:bg-slate-800">
-                                    <Link href={route('register')}>Register</Link>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </header>
 
                 {/* Main Content */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -290,7 +274,7 @@ export default function TutorProfile({ tutor, subjectNames = [] }) {
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </PublicLayout>
     );
 }
 

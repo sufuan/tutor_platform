@@ -11,8 +11,12 @@ export default function BlogShow({ blog, relatedBlogs }) {
     };
 
     return (
-        <PublicLayout>
-            <Head title={blog.title} />
+        <PublicLayout
+            title={blog.title}
+            description={blog.excerpt || `Read ${blog.title} on Tuition Barta's blog.`}
+            image={blog.image ? `https://tuitionbarta.com${blog.image}` : 'https://tuitionbarta.com/assets/logo.png'}
+            url={`https://tuitionbarta.com/blog/${blog.id}`}
+        >
 
             {/* Hero Section with Image */}
             <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white overflow-hidden">

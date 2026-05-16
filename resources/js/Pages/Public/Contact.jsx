@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import GuestLayout from '@/Layouts/GuestLayout';
+import PublicLayout from '@/Layouts/PublicLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Input } from '@/Components/ui/input';
 import { Textarea } from '@/Components/ui/textarea';
@@ -25,8 +25,10 @@ export default function Contact({ auth }) {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Contact Us" />
+        <PublicLayout 
+            title="Contact Us"
+            description="Get in touch with Tuition Barta. Have questions about finding a tutor or becoming one? We're here to help."
+        >
 
             {/* Hero Section */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20">
@@ -248,7 +250,7 @@ export default function Contact({ auth }) {
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </PublicLayout>
     );
 }
 

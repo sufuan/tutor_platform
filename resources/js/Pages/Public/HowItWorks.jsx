@@ -58,8 +58,10 @@ export default function HowItWorks({ blogs, popularBlogs, latestBlogs, filters }
     };
 
     return (
-        <PublicLayout>
-            <Head title="Blog" />
+        <PublicLayout 
+            title="Blog & Resources"
+            description="Expert insights, study tips, and career guidance to help you excel in your academic journey."
+        >
 
             {/* Hero Section */}
             <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-24 overflow-hidden">
