@@ -14,8 +14,8 @@ export default function PromotionalModal({ imageUrl, enabled }) {
         // Only show modal if:
         // 1. Feature is enabled
         // 2. Image URL exists
-        // 3. User hasn't seen it yet (localStorage check)
-        if (enabled && imageUrl && !localStorage.getItem(STORAGE_KEY)) {
+        // 3. User hasn't seen it yet in this session
+        if (enabled && imageUrl && !sessionStorage.getItem(STORAGE_KEY)) {
             // Small delay for better UX
             const timer = setTimeout(() => {
                 setOpen(true);
@@ -27,8 +27,8 @@ export default function PromotionalModal({ imageUrl, enabled }) {
 
     const handleClose = () => {
         setOpen(false);
-        // Mark as shown in localStorage
-        localStorage.setItem(STORAGE_KEY, 'true');
+        // Mark as shown in sessionStorage
+        sessionStorage.setItem(STORAGE_KEY, 'true');
     };
 
     // Don't render if not enabled or no image
