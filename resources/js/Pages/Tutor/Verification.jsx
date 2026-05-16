@@ -15,7 +15,6 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
         nid_card_front: null,
         nid_card_back: null,
         student_id_front: null,
-        student_id_back: null,
         certificate: null,
         notes: '',
     });
@@ -24,7 +23,6 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
         nid_card_front: null,
         nid_card_back: null,
         student_id_front: null,
-        student_id_back: null,
         certificate: null,
     });
 
@@ -103,7 +101,7 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
         e.preventDefault();
         
         // Check if all required files are present
-        if (!data.nid_card_front || !data.nid_card_back || !data.student_id_front || !data.student_id_back || !data.certificate) {
+        if (!data.nid_card_front || !data.nid_card_back || !data.student_id_front || !data.certificate) {
             toast({
                 title: "Missing documents",
                 description: "Please upload all required documents before submitting.",
@@ -278,7 +276,7 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
                             <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-8">
                                 
                                 {/* Document Upload Grid */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 auto-rows-[220px]">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[220px]">
                                     
                                     <DocumentUpload 
                                         id="nid_card_front" 
@@ -300,20 +298,11 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
 
                                     <DocumentUpload 
                                         id="student_id_front" 
-                                        label="Student ID (Front)" 
+                                        label="Student ID" 
                                         icon={IdCard}
-                                        description="Front side of University ID"
+                                        description="University ID Card"
                                         preview={previews.student_id_front}
                                         error={errors.student_id_front}
-                                    />
-
-                                    <DocumentUpload 
-                                        id="student_id_back" 
-                                        label="Student ID (Back)" 
-                                        icon={IdCard}
-                                        description="Back side of University ID"
-                                        preview={previews.student_id_back}
-                                        error={errors.student_id_back}
                                     />
 
                                     <DocumentUpload 
@@ -350,7 +339,7 @@ export default function Verification({ auth, tutor, verificationStatus, verifica
                                     </p>
                                     <Button 
                                         type="submit" 
-                                        disabled={processing || !data.nid_card_front || !data.nid_card_back || !data.student_id_front || !data.student_id_back || !data.certificate}
+                                        disabled={processing || !data.nid_card_front || !data.nid_card_back || !data.student_id_front || !data.certificate}
                                         className="w-full sm:w-auto bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-8 py-6 rounded-xl font-bold text-base shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5"
                                     >
                                         {processing ? 'Uploading Documents...' : verificationStatus === 'rejected' ? 'Resubmit For Review' : 'Submit Application'}
