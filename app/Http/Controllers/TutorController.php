@@ -427,7 +427,8 @@ class TutorController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
-            'nid_card' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'nid_card_front' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'nid_card_back' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'student_id_front' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'student_id_back' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'certificate' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
@@ -447,7 +448,8 @@ class TutorController extends Controller
 
         // Store new documents
         $documentTypes = [
-            'nid_card' => 'nid_card',
+            'nid_card_front' => 'nid_card_front',
+            'nid_card_back' => 'nid_card_back',
             'student_id_front' => 'student_id_front',
             'student_id_back' => 'student_id_back',
             'certificate' => 'certificate'
