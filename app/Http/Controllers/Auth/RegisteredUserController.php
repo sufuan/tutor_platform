@@ -70,10 +70,24 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        event(new Registered($user));
+        // Generate 6-digit OTP
+        $otp = sprintf('%06d', mt_rand(100000, 999999));
+        
+        // Store OTP in database
+        \App\Models\EmailOtp::create([
+            'email' => $user->email,
+            'otp' => \Illuminate\Support\Facades\Hash::make($otp),
+            'expires_at' => now()->addMinutes(10),
+        ]);
 
-        Auth::login($user);
+        // Send OTP email
+        $user->notify(new \App\Notifications\EmailOtpNotification($otp, $user->name));
 
-        return redirect(route('dashboard', absolute: false));
+        // Notify admins of new registration (Skipped as per user feedback)
+
+        // Store email in session for OTP verification page
+        $request->session()->put('verification_email', $user->email);
+
+        return redirect()->route('verification.otp');
     }
 }

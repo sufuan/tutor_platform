@@ -22,7 +22,24 @@ class JobRejected extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail', 'database'];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('Update on Your Job Post — Tuition Barta')
+            ->view('emails.notification', [
+                'title' => 'Job Post Not Approved',
+                'lines' => [
+                    'We reviewed your job posting "<strong>' . $this->job->title . '</strong>", but unfortunately, it could not be approved at this time.',
+                    '<strong>Reason for rejection:</strong>',
+                    nl2br(e($this->reason)),
+                    'You can review and update your job details to submit it again.'
+                ],
+                'actionText' => 'View Your Jobs',
+                'actionUrl' => url('/guardian/jobs')
+            ]);
     }
 
     public function toArray($notifiable)

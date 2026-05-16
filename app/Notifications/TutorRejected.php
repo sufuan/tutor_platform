@@ -19,7 +19,24 @@ class TutorRejected extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail', 'database'];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('Action Required: Your Profile Verification — Tuition Barta')
+            ->view('emails.notification', [
+                'title' => 'Profile Verification Update',
+                'lines' => [
+                    'We reviewed your tutor profile, but unfortunately, it could not be verified at this time.',
+                    '<strong>Reason for rejection:</strong>',
+                    nl2br(e($this->reason)),
+                    'Please update your profile with the required information and submit it again for verification.'
+                ],
+                'actionText' => 'Update Profile',
+                'actionUrl' => url('/tutor/profile')
+            ]);
     }
 
     public function toArray($notifiable)

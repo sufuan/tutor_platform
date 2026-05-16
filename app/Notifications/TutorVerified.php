@@ -12,7 +12,22 @@ class TutorVerified extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail', 'database'];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('🎉 Your Profile Has Been Verified — Tuition Barta')
+            ->view('emails.notification', [
+                'title' => 'Congratulations!',
+                'lines' => [
+                    'Your tutor profile has been successfully verified.',
+                    'You can now apply for jobs and start teaching.'
+                ],
+                'actionText' => 'Browse Jobs',
+                'actionUrl' => url('/jobs')
+            ]);
     }
 
     public function toArray($notifiable)

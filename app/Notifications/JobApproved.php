@@ -20,7 +20,23 @@ class JobApproved extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];
+        return ['mail', 'database'];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('✅ Your Job Post Is Now Live — Tuition Barta')
+            ->view('emails.notification', [
+                'title' => 'Job Approved!',
+                'lines' => [
+                    'Great news! Your job posting "<strong>' . $this->job->title . '</strong>" has been approved by our team.',
+                    'It is now live on our platform and visible to all verified tutors.',
+                    'We will notify you as soon as tutors start applying for this job.'
+                ],
+                'actionText' => 'View Your Job',
+                'actionUrl' => url('/guardian/jobs/' . $this->job->id)
+            ]);
     }
 
     public function toArray($notifiable)

@@ -250,6 +250,8 @@ class GuardianController extends Controller
             'status_updated_at' => now(),
         ]);
 
+        $application->tutor->user->notify(new \App\Notifications\ApplicationShortlisted($application));
+
         return back()->with('success', 'Application shortlisted successfully.');
     }
 
@@ -291,6 +293,12 @@ class GuardianController extends Controller
 
             DB::commit();
 
+            // Notify tutor and guardian that application was accepted
+            $application->tutor->user->notify(new \App\Notifications\ApplicationAccepted($application));
+            if ($application->job->guardian) {
+                $application->job->guardian->user->notify(new \App\Notifications\ApplicationAccepted($application));
+            }
+
             return back()->with('success', 'Tutor hired successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -306,6 +314,8 @@ class GuardianController extends Controller
             'status' => 'rejected',
             'status_updated_at' => now(),
         ]);
+
+        $application->tutor->user->notify(new \App\Notifications\ApplicationRejected($application));
 
         return back()->with('success', 'Application rejected.');
     }

@@ -334,6 +334,8 @@ class AdminController extends Controller
             'approved_at' => now(),
         ]);
 
+        $jobRequest->tutor->user->notify(new \App\Notifications\TutorJobRequestApproved($jobRequest));
+
         return back()->with('success', 'Job request approved successfully.');
     }
 
@@ -348,6 +350,8 @@ class AdminController extends Controller
             'status' => 'inactive',
             'rejection_reason' => $request->rejection_reason,
         ]);
+
+        $jobRequest->tutor->user->notify(new \App\Notifications\TutorJobRequestRejected($jobRequest, $request->rejection_reason));
 
         return back()->with('success', 'Job request rejected.');
     }
@@ -407,6 +411,15 @@ class AdminController extends Controller
                         'status' => 'rejected',
                         'status_updated_at' => now(),
                     ]);
+                    
+                $application->tutor->user->notify(new \App\Notifications\ApplicationAccepted($application));
+                if ($application->job->guardian) {
+                    $application->job->guardian->user->notify(new \App\Notifications\ApplicationAccepted($application));
+                }
+            } elseif ($request->status === 'rejected') {
+                $application->tutor->user->notify(new \App\Notifications\ApplicationRejected($application));
+            } elseif ($request->status === 'shortlisted') {
+                $application->tutor->user->notify(new \App\Notifications\ApplicationShortlisted($application));
             }
 
             DB::commit();
