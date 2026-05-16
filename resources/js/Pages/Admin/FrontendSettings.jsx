@@ -269,29 +269,29 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
         >
             <div className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col lg:flex-row gap-8">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
                     
-                    {/* Vertical Sidebar Navigation */}
-                    <div className="w-full lg:w-64 shrink-0">
-                        <div className="sticky top-8 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
-                            <TabsList className="flex flex-col h-auto bg-transparent p-0 w-full">
-                                <TabsTrigger value="general" className="w-full justify-start gap-3 rounded-xl px-4 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors">
+                    {/* Horizontal Navigation */}
+                    <div className="w-full overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300">
+                        <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm min-w-max inline-flex w-full">
+                            <TabsList className="flex flex-row h-auto bg-transparent p-0 w-full gap-2">
+                                <TabsTrigger value="general" className="flex-1 justify-center gap-2 rounded-xl px-5 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <Settings className="h-4 w-4" /> General & Hero
                                 </TabsTrigger>
-                                <TabsTrigger value="stats" className="w-full justify-start gap-3 rounded-xl px-4 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors">
+                                <TabsTrigger value="stats" className="flex-1 justify-center gap-2 rounded-xl px-5 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <BarChart3 className="h-4 w-4" /> Homepage Stats
                                 </TabsTrigger>
-                                <TabsTrigger value="services" className="w-full justify-start gap-3 rounded-xl px-4 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors">
+                                <TabsTrigger value="services" className="flex-1 justify-center gap-2 rounded-xl px-5 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <Briefcase className="h-4 w-4" /> Platform Services
                                 </TabsTrigger>
-                                <TabsTrigger value="instructions" className="w-full justify-start gap-3 rounded-xl px-4 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors">
+                                <TabsTrigger value="instructions" className="flex-1 justify-center gap-2 rounded-xl px-5 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <Info className="h-4 w-4" /> How It Works
                                 </TabsTrigger>
-                                <TabsTrigger value="footer" className="w-full justify-start gap-3 rounded-xl px-4 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors">
+                                <TabsTrigger value="footer" className="flex-1 justify-center gap-2 rounded-xl px-5 py-3 data-[state=active]:bg-[#0F48A1]/5 data-[state=active]:text-[#0F48A1] data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <Mail className="h-4 w-4" /> Contact & Socials
                                 </TabsTrigger>
-                                <Separator className="my-2" />
-                                <TabsTrigger value="subjects" className="w-full justify-start gap-3 rounded-xl px-4 py-3 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors">
+                                <Separator orientation="vertical" className="h-8 my-auto mx-1" />
+                                <TabsTrigger value="subjects" className="flex-1 justify-center gap-2 rounded-xl px-5 py-3 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 data-[state=active]:shadow-none text-slate-600 hover:bg-slate-50 transition-colors whitespace-nowrap">
                                     <BookOpen className="h-4 w-4" /> Subject Database
                                 </TabsTrigger>
                             </TabsList>
