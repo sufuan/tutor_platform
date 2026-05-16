@@ -25,6 +25,7 @@ class TutorController extends Controller
         $cvUrl = $tutor->cv_path ? \Storage::url($tutor->cv_path) : null;
         $photoUrl = $tutor->photo ? \Storage::url($tutor->photo) : null;
         $nidCardUrl = $tutor->nid_card ? \Storage::url($tutor->nid_card) : null;
+        $nidCardBackUrl = $tutor->nid_card_back ? \Storage::url($tutor->nid_card_back) : null;
         $studentIdCardUrl = $tutor->student_id_card ? \Storage::url($tutor->student_id_card) : null;
         $sscCertificateUrl = $tutor->ssc_certificate ? \Storage::url($tutor->ssc_certificate) : null;
         $hscCertificateUrl = $tutor->hsc_certificate ? \Storage::url($tutor->hsc_certificate) : null;
@@ -36,6 +37,7 @@ class TutorController extends Controller
             'cvUrl' => $cvUrl,
             'photoUrl' => $photoUrl,
             'nidCardUrl' => $nidCardUrl,
+            'nidCardBackUrl' => $nidCardBackUrl,
             'studentIdCardUrl' => $studentIdCardUrl,
             'sscCertificateUrl' => $sscCertificateUrl,
             'hscCertificateUrl' => $hscCertificateUrl,
@@ -84,6 +86,7 @@ class TutorController extends Controller
                 'district'             => 'nullable|string|max:255',
                 'cv_path'              => 'nullable|file|mimes:pdf|max:5120',
                 'nid_card'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+                'nid_card_back'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
                 'student_id_card'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
                 'ssc_certificate'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
                 'hsc_certificate'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
@@ -97,7 +100,7 @@ class TutorController extends Controller
             
             // Remove file fields from validated data initially
             unset($validated['photo'], $validated['cv_path'],
-                  $validated['nid_card'], $validated['student_id_card'],
+                  $validated['nid_card'], $validated['nid_card_back'], $validated['student_id_card'],
                   $validated['ssc_certificate'], $validated['hsc_certificate']);
 
             // Handle photo upload
@@ -113,7 +116,7 @@ class TutorController extends Controller
             }
 
             // Handle document uploads
-            foreach (['nid_card', 'student_id_card', 'ssc_certificate', 'hsc_certificate'] as $doc) {
+            foreach (['nid_card', 'nid_card_back', 'student_id_card', 'ssc_certificate', 'hsc_certificate'] as $doc) {
                 if ($request->hasFile($doc)) {
                     $path = $request->file($doc)->store('tutors/docs', 'public');
                     $validated[$doc] = $path;
