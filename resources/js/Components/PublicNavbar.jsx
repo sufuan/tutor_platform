@@ -44,11 +44,11 @@ export default function PublicNavbar() {
                     <div className="flex items-center gap-4 text-sm">
                         <a href={`tel:${phoneLink}`} className="flex items-center gap-1 hover:text-yellow-300 transition">
                             <Phone className="h-4 w-4" />
-                            <span className="hidden md:inline">{phoneDisplay}</span>
+                            <span>{phoneDisplay}</span>
                         </a>
-                        <a href="mailto:support@caretutors.com" className="flex items-center gap-1 hover:text-yellow-300 transition">
+                        <a href="mailto:support@caretutors.com" className="hidden md:flex items-center gap-1 hover:text-yellow-300 transition">
                             <Mail className="h-4 w-4" />
-                            <span className="hidden md:inline">Support</span>
+                            <span>Support</span>
                         </a>
                     </div>
                 </div>
