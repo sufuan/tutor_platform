@@ -28,7 +28,7 @@ import SubjectSelector from '@/Components/SubjectSelector';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl, nidCardUrl, studentIdCardUrl, sscCertificateUrl, hscCertificateUrl }) {
+export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl, nidCardUrl, nidCardBackUrl, studentIdCardUrl, sscCertificateUrl, hscCertificateUrl }) {
     const { toast } = useToast();
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('tuition');
@@ -397,7 +397,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                             <p>{tutor.education_level ? tutor.education_level.replace('_', ' ').charAt(0).toUpperCase() + tutor.education_level.replace('_', ' ').slice(1) : <span className="text-rose-500">Not Given</span>}</p>
 
                                             <p className="text-slate-500 col-span-2 mt-2">Subjects I Teach</p>
-                                            <p className="col-span-2">
+                                            <div className="col-span-2">
                                                 {tutor.subjects && Array.isArray(tutor.subjects) && tutor.subjects.length > 0 ? (
                                                     <span className="flex flex-wrap gap-1">
                                                         {subjects.filter(s => tutor.subjects.map(id => parseInt(id)).includes(s.id)).map(subject => (
@@ -406,8 +406,8 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             </Badge>
                                                         ))}
                                                     </span>
-                                                ) : <span className="text-rose-500">Not Given</span>}
-                                            </p>
+                                                ) : <span className="text-rose-500 text-sm">Not Given</span>}
+                                            </div>
                                         </div>
                                     </CardContent>
                                 </Card>
