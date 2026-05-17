@@ -29,7 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl, photoUrl }) {
     const { toast } = useToast();
     const [isEditing, setIsEditing] = useState(false);
-    const [activeTab, setActiveTab] = useState('tuition');
+    const [activeTab, setActiveTab] = useState('personal');
 
 
 
@@ -52,13 +52,13 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
         available_time_from: tutor.available_time_from || '',
         available_time_to: tutor.available_time_to || '',
         preferred_locations: tutor.preferred_locations || '',
-        tutoring_styles: tutor.tutoring_styles || '',
         tutoring_method: tutor.tutoring_method || '',
         place_of_tutoring: tutor.place_of_tutoring || '',
         division: tutor.division || '',
         district: tutor.district || '',
         photo: null,
         cv_path: null,
+        activeTab: 'personal',
     });
 
     const [photoPreview, setPhotoPreview] = useState(
@@ -74,6 +74,11 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
             setData('subjects', tutor.subjects || []);
         }
     }, [isEditing, tutor.subjects]);
+
+    // Sync activeTab with form data whenever activeTab changes
+    useEffect(() => {
+        setData('activeTab', activeTab);
+    }, [activeTab]);
 
     // Update photo preview when photoUrl prop changes (after upload)
     useEffect(() => {
@@ -134,11 +139,15 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Transform data to ensure arrays are properly formatted
+        // Ensure activeTab is included - data should have it from useEffect sync
+        // But we explicitly set it again to be sure
         const formData = {
             ...data,
-            subjects: data.subjects || [],
+            activeTab: activeTab,
         };
+
+        // Log to verify activeTab is being sent
+        console.log('Submitting with activeTab:', activeTab);
 
         post(route('tutor.profile.update'), {
             data: formData,
@@ -156,7 +165,6 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                     variant: "destructive",
                 });
             },
-            forceFormData: true,
         });
     };
 
@@ -369,9 +377,6 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                             <p className="text-slate-500">Expected Salary (Monthly)</p>
                                             <p>{tutor.hourly_rate ? `${tutor.hourly_rate}/month` : <span className="text-rose-500">Not Given</span>}</p>
 
-                                            <p className="text-slate-500">Tutoring Styles</p>
-                                            <p>{tutor.tutoring_styles || <span className="text-rose-500">Not Given</span>}</p>
-
                                             <p className="text-slate-500">Tutoring Method</p>
                                             <p>{tutor.tutoring_method || <span className="text-rose-500">Not Given</span>}</p>
                                         </div>
@@ -509,16 +514,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             onChange={(e) => setData('available_time_to', e.target.value)}
                                                         />
                                                     </div>
-                                                    <div>
-                                                        <Label htmlFor="tutoring_styles" className="text-sm">Tutoring Styles</Label>
-                                                        <Input
-                                                            id="tutoring_styles"
-                                                            className="rounded-md"
-                                                            placeholder="Tutoring Styles"
-                                                            value={data.tutoring_styles}
-                                                            onChange={(e) => setData('tutoring_styles', e.target.value)}
-                                                        />
-                                                    </div>
+
                                                     <div>
                                                         <Label htmlFor="tutoring_method" className="text-sm">Tutoring Method</Label>
                                                         <Select
@@ -538,7 +534,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                     <div className="md:col-span-2 space-y-4 p-4 border rounded-lg bg-slate-50">
                                                         <h4 className="text-sm font-semibold text-slate-700">Location Preferences</h4>
                                                         <div>
-                                                            <Label className="text-sm">Place of Tutoring (Division & District)</Label>
+                                                            <Label className="text-sm">Place of Tutoring (Division & District) <span className="text-red-500">*</span></Label>
                                                             <LocationDropdown
                                                                 divisionValue={data.division}
                                                                 districtValue={data.district}
@@ -548,6 +544,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                                 districtLabel="District"
                                                                 showLabels={true}
                                                             />
+                                                            {errors.district && (
+                                                                <p className="text-sm text-red-500 mt-1">{errors.district}</p>
+                                                            )}
                                                         </div>
                                                         <div>
                                                             <Label htmlFor="preferred_locations" className="text-sm">Preferred Locations/Areas</Label>
@@ -574,7 +573,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                 </h3>
                                                 <div className="space-y-4">
                                                     <div className="col-span-1 md:col-span-2">
-                                                        <Label htmlFor="institution" className="text-sm">Institution/University</Label>
+                                                        <Label htmlFor="institution" className="text-sm">Institution/University <span className="text-red-500">*</span></Label>
                                                         <Input
                                                             id="institution"
                                                             className="rounded-md"
@@ -582,6 +581,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             value={data.institution}
                                                             onChange={(e) => setData('institution', e.target.value)}
                                                         />
+                                                        {errors.institution && (
+                                                            <p className="text-sm text-red-500 mt-1">{errors.institution}</p>
+                                                        )}
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
                                                         <Label htmlFor="education_level" className="text-sm">Education Level</Label>
@@ -602,7 +604,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                         </Select>
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
-                                                        <Label htmlFor="department" className="text-sm">Department</Label>
+                                                        <Label htmlFor="department" className="text-sm">Department <span className="text-red-500">*</span></Label>
                                                         <Input
                                                             id="department"
                                                             className="rounded-md"
@@ -610,6 +612,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             value={data.department}
                                                             onChange={(e) => setData('department', e.target.value)}
                                                         />
+                                                        {errors.department && (
+                                                            <p className="text-sm text-red-500 mt-1">{errors.department}</p>
+                                                        )}
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
                                                         <Label htmlFor="cgpa" className="text-sm">Result (CGPA) <span className="text-gray-400 text-xs">(Optional)</span></Label>
@@ -657,7 +662,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                         />
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
-                                                        <Label htmlFor="phone" className="text-sm">Phone Number</Label>
+                                                        <Label htmlFor="phone" className="text-sm">Phone Number <span className="text-red-500">*</span></Label>
                                                         <Input
                                                             id="phone"
                                                             className="rounded-md"
@@ -665,6 +670,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             value={data.phone}
                                                             onChange={(e) => setData('phone', e.target.value)}
                                                         />
+                                                        {errors.phone && (
+                                                            <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+                                                        )}
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
                                                         <Label htmlFor="gender" className="text-sm">Gender <span className="text-red-500">*</span></Label>
@@ -683,7 +691,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                         )}
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
-                                                        <Label htmlFor="address" className="text-sm">Address</Label>
+                                                        <Label htmlFor="address" className="text-sm">Address <span className="text-red-500">*</span></Label>
                                                         <Textarea
                                                             id="address"
                                                             rows={3}
@@ -692,6 +700,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             value={data.address}
                                                             onChange={(e) => setData('address', e.target.value)}
                                                         />
+                                                        {errors.address && (
+                                                            <p className="text-sm text-red-500 mt-1">{errors.address}</p>
+                                                        )}
                                                     </div>
                                                     <div className="col-span-1 md:col-span-2">
                                                         <Label htmlFor="bio" className="text-sm">About Me</Label>
@@ -738,7 +749,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                 <div className="space-y-4">
                                                     <div className="col-span-1 md:col-span-2">
                                                         <Label htmlFor="cv_path" className="text-sm">
-                                                            <FileText className="inline h-4 w-4" /> Upload CV
+                                                            <FileText className="inline h-4 w-4" /> Upload CV <span className="text-red-500">*</span>
                                                         </Label>
                                                         {cvUrl && (
                                                             <p className="text-xs text-slate-500 mb-2">
@@ -755,6 +766,9 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                             onChange={(e) => setData('cv_path', e.target.files[0])}
                                                         />
                                                         <p className="text-xs text-slate-500 mt-1">PDF only - Max 5MB</p>
+                                                        {errors.cv_path && (
+                                                            <p className="text-sm text-red-500 mt-1">{errors.cv_path}</p>
+                                                        )}
                                                     </div>
                                                     <Alert className="bg-slate-50 col-span-1 md:col-span-2">
                                                         <AlertDescription className="text-sm text-slate-600">

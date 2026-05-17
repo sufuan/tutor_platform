@@ -41,41 +41,64 @@ class TutorController extends Controller
         try {
             \Log::info('Profile update request', [
                 'tutor_id' => $tutor->id,
-                'request_data' => $request->except(['photo', 'cv_path']),
-                'has_photo' => $request->hasFile('photo'),
-                'has_cv' => $request->hasFile('cv_path'),
+                'activeTab' => $request->input('activeTab'),
+                'request_all' => $request->all(),
             ]);
 
-            $validated = $request->validate([
-                'name'                 => 'nullable|string|max:255',
-                'phone'                => 'nullable|string|max:20',
-                'gender'               => 'nullable|in:male,female,other',
-                'address'              => 'nullable|string|max:500',
-                'institution'          => 'nullable|string|max:255',
-                'education_level'      => 'nullable|string|max:50',
-                'department'           => 'nullable|string|max:255',
-                'cgpa'                 => 'nullable|numeric|min:0|max:4',
-                'subjects'             => 'nullable',
-                'experience_years'     => 'nullable|integer|min:0',
-                'experience_details'   => 'nullable|string|max:1000',
-                'hourly_rate'          => 'nullable|numeric|min:0',
-                'bio'                  => 'nullable|string|max:1000',
-                'location_id'          => 'nullable|exists:locations,id',
-                'photo'                => 'nullable|image|max:2048',
-                'available_days'       => 'nullable|array',
-                'available_days.*'     => 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
-                'available_time_from'  => 'nullable|string|max:10',
-                'available_time_to'    => 'nullable|string|max:10',
-                'preferred_locations'  => 'nullable|string|max:500',
-                'tutoring_styles'      => 'nullable|string|max:255',
-                'tutoring_method'      => 'nullable|string|max:255',
-                'preferred_categories' => 'nullable|array',
-                'preferred_classes'    => 'nullable|array',
-                'place_of_tutoring'    => 'nullable|string|max:255',
-                'division'             => 'nullable|string|max:255',
-                'district'             => 'nullable|string|max:255',
-                'cv_path'              => 'nullable|file|mimes:pdf|max:5120',
-            ]);
+            // Get the active tab to determine which fields should be required
+            $activeTab = $request->input('activeTab', 'personal');
+            
+            \Log::info('Active tab for validation', ['activeTab' => $activeTab]);
+
+            // Build validation rules ONLY for the active tab
+            // This ensures complete independence - only validate fields for the tab being edited
+            $rules = ['activeTab' => 'nullable|string|in:personal,education,tuition,credential'];
+
+            // Default to personal if activeTab is not set or empty
+            if (empty($activeTab)) {
+                $activeTab = 'personal';
+            }
+
+            switch ($activeTab) {
+                case 'education':
+                    // Education Tab: institution and department are required, others are optional
+                    $rules['institution'] = 'required|string|max:255';
+                    $rules['education_level'] = 'nullable|string|max:50';
+                    $rules['department'] = 'required|string|max:255';
+                    $rules['cgpa'] = 'nullable|numeric|min:0|max:4';
+                    $rules['subjects'] = 'nullable';
+                    break;
+                case 'tuition':
+                    // Tuition Tab: district is required, others are optional
+                    $rules['available_days'] = 'nullable|array';
+                    $rules['available_days.*'] = 'in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday';
+                    $rules['available_time_from'] = 'nullable|string|max:10';
+                    $rules['available_time_to'] = 'nullable|string|max:10';
+                    $rules['hourly_rate'] = 'nullable|numeric|min:0';
+                    $rules['tutoring_method'] = 'nullable|string|max:255';
+                    $rules['division'] = 'nullable|string|max:255';
+                    $rules['district'] = 'required|string|max:255';
+                    $rules['preferred_locations'] = 'nullable|string|max:500';
+                    break;
+                case 'credential':
+                    // Credential Tab: cv_path is required
+                    $rules['cv_path'] = 'required|file|mimes:pdf|max:5120';
+                    break;
+                case 'personal':
+                default:
+                    // Personal Tab: phone and address are required, others are optional
+                    $rules['name'] = 'nullable|string|max:255';
+                    $rules['phone'] = 'required|string|max:20';
+                    $rules['gender'] = 'nullable|in:male,female,other';
+                    $rules['address'] = 'required|string|max:500';
+                    $rules['bio'] = 'nullable|string|max:1000';
+                    $rules['experience_years'] = 'nullable|integer|min:0';
+                    $rules['experience_details'] = 'nullable|string|max:1000';
+                    $rules['photo'] = 'nullable|image|max:2048';
+                    break;
+            }
+
+            $validated = $request->validate($rules);
 
             // Update user's name if provided
             if (isset($validated['name'])) {
@@ -83,45 +106,51 @@ class TutorController extends Controller
                 unset($validated['name']); // Remove from tutor update
             }
             
-            // Remove file fields from validated data initially
-            unset($validated['photo'], $validated['cv_path']);
+            // Remove activeTab from validated data (not a database field)
+            unset($validated['activeTab']);
             
-            // Handle photo upload
+            // Handle photo upload (only for personal tab)
             if ($request->hasFile('photo')) {
                 $path = $request->file('photo')->store('tutors', 'public');
                 $validated['photo'] = $path;
             }
 
-            // Handle CV upload
+            // Handle CV upload (only for credential tab)
             if ($request->hasFile('cv_path')) {
                 $path = $request->file('cv_path')->store('tutors/cvs', 'public');
                 $validated['cv_path'] = $path;
             }
             
-            // Ensure subjects is an array, even if empty (model cast will handle JSON encoding)
-            if (!isset($validated['subjects'])) {
-                $validated['subjects'] = [];
-            } elseif (is_string($validated['subjects'])) {
-                // If subjects comes as JSON string, convert to array
-                $validated['subjects'] = json_decode($validated['subjects'], true) ?? [];
+            // Handle subjects array (only for education tab)
+            if (isset($validated['subjects'])) {
+                if (is_string($validated['subjects'])) {
+                    $validated['subjects'] = json_decode($validated['subjects'], true) ?? [];
+                }
+                if (is_array($validated['subjects'])) {
+                    $validated['subjects'] = array_values(array_unique($validated['subjects']));
+                }
             }
             
-            // Remove duplicate subject IDs and ensure they're unique
-            if (is_array($validated['subjects'])) {
-                $validated['subjects'] = array_values(array_unique($validated['subjects']));
+            // Handle available_days array (only for tuition tab)
+            if (isset($validated['available_days'])) {
+                if (is_string($validated['available_days'])) {
+                    $validated['available_days'] = json_decode($validated['available_days'], true) ?? [];
+                }
             }
             
-            // Note: Don't manually json_encode subjects - the model cast handles it
-            
-            // Ensure other array fields are arrays (model casts will handle JSON encoding)
+            // Ensure other array fields are handled properly if they exist
             if (!isset($validated['preferred_categories'])) {
-                $validated['preferred_categories'] = [];
+                if ($activeTab === 'tuition') {
+                    $validated['preferred_categories'] = [];
+                }
             } elseif (is_string($validated['preferred_categories'])) {
                 $validated['preferred_categories'] = json_decode($validated['preferred_categories'], true) ?? [];
             }
             
             if (!isset($validated['preferred_classes'])) {
-                $validated['preferred_classes'] = [];
+                if ($activeTab === 'tuition') {
+                    $validated['preferred_classes'] = [];
+                }
             } elseif (is_string($validated['preferred_classes'])) {
                 $validated['preferred_classes'] = json_decode($validated['preferred_classes'], true) ?? [];
             }
@@ -138,9 +167,9 @@ class TutorController extends Controller
             // Calculate profile completion percentage based on 4 tabs
             // Tuition Related Tab: 7 fields
             $tuitionFields = ['hourly_rate', 'available_days', 'available_time_from', 'available_time_to', 'tutoring_method', 'division', 'district'];
-            // Educational Tab: 3 fields
-            $educationFields = ['institution', 'education_level', 'subjects'];
-            // Personal Tab: 6 fields (removed photo as it's optional)
+            // Educational Tab: 4 fields (institution, education_level, department, subjects)
+            $educationFields = ['institution', 'education_level', 'department', 'subjects'];
+            // Personal Tab: 6 fields (phone, gender, address, bio, experience_years, experience_details)
             $personalFields = ['phone', 'gender', 'address', 'bio', 'experience_years', 'experience_details'];
             // Credential Tab: 1 field
             $credentialFields = ['cv_path'];

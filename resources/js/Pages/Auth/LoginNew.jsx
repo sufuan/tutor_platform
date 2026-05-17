@@ -11,7 +11,7 @@ export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        role: 'guardian',
+        role: 'tutor',
         email: '',
         password: '',
         remember: false,
@@ -115,7 +115,7 @@ export default function Login({ status, canResetPassword }) {
 
                         {/* Mobile Logo */}
                         <div className="lg:hidden flex justify-center mb-8">
-                            <Link href={route('home')} className="h-14 w-14 bg-[#275AAA] rounded-xl flex items-center justify-center p-2">
+                            <Link href={route('home')} className="h-20 w-auto flex items-center justify-center">
                                 <img src="/assets/logo.png" alt="Tuition Barta" className="h-full w-full object-contain" />
                             </Link>
                         </div>
