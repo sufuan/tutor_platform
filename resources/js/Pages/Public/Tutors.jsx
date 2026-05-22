@@ -133,7 +133,7 @@ export default function Tutors({ tutors, locations, subjects, filters }) {
                                     <CardHeader className="text-center">
                                         <div className="flex justify-center mb-4">
                                             <Avatar className="h-24 w-24">
-                                                <AvatarImage src={tutor.photo} alt={`${tutor.first_name} ${tutor.last_name}`} />
+                                                <AvatarImage src={tutor.photo_url || tutor.photo} alt={`${tutor.first_name} ${tutor.last_name}`} />
                                                 <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-2xl">
                                                     {getTutorInitials(tutor)}
                                                 </AvatarFallback>

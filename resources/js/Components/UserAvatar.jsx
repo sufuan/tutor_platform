@@ -18,7 +18,7 @@ export default function UserAvatar({ user, size = 'default', className = '' }) {
         '2xl': 'h-24 w-24 text-2xl',
     };
 
-    const photoUrl = user?.guardian?.photo || user?.tutor?.photo || user?.photo;
+    const photoUrl = user?.guardian?.photo_url || user?.tutor?.photo_url || user?.guardian?.photo || user?.tutor?.photo || user?.photo;
 
     return (
         <Avatar className={`${sizeClasses[size]} ${className}`}>

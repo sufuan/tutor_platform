@@ -15,7 +15,7 @@ export default function TutorProfile({ tutor, subjectNames = [] }) {
         <PublicLayout
             title={`${tutor.user?.name || 'Tutor'} - Profile`}
             description={`View the tutoring profile of ${tutor.user?.name || 'this tutor'}. Expertise in ${subjectNames.join(', ') || 'various subjects'}. Book a session now on Tuition Barta.`}
-            image={tutor.photo ? `https://tuitionbarta.com/storage/${tutor.photo}` : 'https://tuitionbarta.com/assets/logo.png'}
+            image={tutor.photo_url || (tutor.photo ? `https://tuitionbarta.com/storage/${tutor.photo}` : 'https://tuitionbarta.com/assets/logo.png')}
             url={`https://tuitionbarta.com/tutors/${tutor.id}`}
         >
             <div className="min-h-screen bg-slate-50">
@@ -31,7 +31,7 @@ export default function TutorProfile({ tutor, subjectNames = [] }) {
                                     <div className="text-center mb-6">
                                         {tutor.photo ? (
                                             <img
-                                                src={`/storage/${tutor.photo}`}
+                                                src={tutor.photo_url || `/storage/${tutor.photo}`}
                                                 alt={tutor.user?.name}
                                                 className="mx-auto h-32 w-32 rounded-full object-cover border-4 border-slate-200"
                                             />

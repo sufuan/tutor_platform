@@ -94,7 +94,7 @@ class AdminController extends Controller
         // Add photo URLs for each tutor
         $tutors->each(function ($tutor) {
             if ($tutor->photo) {
-                $tutor->photo_url = Storage::url($tutor->photo);
+                $tutor->photo_url = route('tutors.photo', $tutor);
             }
         });
 
@@ -153,8 +153,8 @@ class AdminController extends Controller
                     $tutor->subject_names = [];
                 }
                 
-                // Set photo URL using Storage facade with full URL
-                $tutor->photo_url = $tutor->photo ? url(Storage::url($tutor->photo)) : null;
+                // Set photo URL using the application route so it works without a storage symlink
+                $tutor->photo_url = $tutor->photo ? route('tutors.photo', $tutor) : null;
                 
                 return $tutor;
             });
@@ -206,6 +206,7 @@ class AdminController extends Controller
     public function viewTutor(Tutor $tutor)
     {
         $tutor->load(['user.documents', 'location']);
+        $tutor->photo_url = $tutor->photo ? route('tutors.photo', $tutor) : null;
         
         // Load subject names
         $subjectNames = [];

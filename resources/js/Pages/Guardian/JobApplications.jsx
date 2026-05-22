@@ -81,7 +81,7 @@ export default function JobApplications({ auth, job, applications }) {
                 <CardContent className="pt-6">
                     <div className="flex gap-4">
                         <Avatar className="h-16 w-16">
-                            <AvatarImage src={tutor.photo} />
+                            <AvatarImage src={tutor.photo_url || tutor.photo} />
                             <AvatarFallback>
                                 {tutor.first_name?.[0]}{tutor.last_name?.[0]}
                             </AvatarFallback>

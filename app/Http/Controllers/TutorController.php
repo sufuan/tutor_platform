@@ -23,7 +23,7 @@ class TutorController extends Controller
         
         // Add storage URLs for CV and photo
         $cvUrl = $tutor->cv_path ? \Storage::url($tutor->cv_path) : null;
-        $photoUrl = $tutor->photo ? \Storage::url($tutor->photo) : null;
+        $photoUrl = $tutor->photo ? route('tutors.photo', $tutor) : null;
         
         return Inertia::render('Tutor/Profile', [
             'tutor' => $tutor,
@@ -757,7 +757,7 @@ class TutorController extends Controller
     public function feedbackCreate()
     {
         $tutor    = auth()->user()->tutor;
-        $photoUrl = $tutor->photo ? \Storage::url($tutor->photo) : null;
+        $photoUrl = $tutor->photo ? route('tutors.photo', $tutor) : null;
 
         return Inertia::render('Tutor/FeedbackCreate', [
             'tutorInstitution' => $tutor->institution,
@@ -774,7 +774,7 @@ class TutorController extends Controller
 
         // Pull institution & photo from the tutor's own profile — not from the form
         $tutor    = auth()->user()->tutor;
-        $photoUrl = $tutor->photo ? \Storage::url($tutor->photo) : null;
+        $photoUrl = $tutor->photo ? route('tutors.photo', $tutor) : null;
 
         // Guard: institution required
         if (empty($tutor->institution)) {

@@ -13,6 +13,7 @@ use App\Models\GuardianFeedback;
 use App\Models\TutorFeedback;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class PublicController extends Controller
@@ -246,6 +247,17 @@ class PublicController extends Controller
         ]);
     }
 
+    public function tutorPhoto(Tutor $tutor)
+    {
+        abort_unless($tutor->photo, 404);
+
+        $photoPath = ltrim(str_replace('/storage/', '', $tutor->photo), '/');
+
+        abort_unless(Storage::disk('public')->exists($photoPath), 404);
+
+        return Storage::disk('public')->response($photoPath);
+    }
+
     public function tutors(Request $request)
     {
         $query = Tutor::with(['location', 'user'])
@@ -268,6 +280,11 @@ class PublicController extends Controller
         }
 
         $tutors = $query->latest()->paginate(12);
+
+        $tutors->getCollection()->transform(function ($tutor) {
+            $tutor->photo_url = $tutor->photo ? route('tutors.photo', $tutor) : null;
+            return $tutor;
+        });
         
         // Transform tutors to include subject names
         $tutors->getCollection()->transform(function ($tutor) {
@@ -293,6 +310,7 @@ class PublicController extends Controller
     public function tutorShow(Tutor $tutor)
     {
         $tutor->load(['location', 'user']);
+        $tutor->photo_url = $tutor->photo ? route('tutors.photo', $tutor) : null;
         
         // Get subject names for the subject IDs
         $subjectIds = $tutor->subjects ?? [];

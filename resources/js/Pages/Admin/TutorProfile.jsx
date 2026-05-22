@@ -57,7 +57,7 @@ export default function TutorProfile({ auth, tutor, subjectNames = [], documents
                                 <div className="text-center mb-6">
                                     <Avatar className="h-32 w-32 mx-auto mb-4">
                                         {tutor.photo ? (
-                                            <AvatarImage src={`/storage/${tutor.photo}`} />
+                                            <AvatarImage src={tutor.photo_url || `/storage/${tutor.photo}`} />
                                         ) : null}
                                         <AvatarFallback className="text-2xl">
                                             {tutor.user?.name?.[0] || 'T'}
