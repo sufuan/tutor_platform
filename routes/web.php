@@ -72,6 +72,7 @@ Route::middleware(['auth', 'verified', 'role:tutor'])->prefix('tutor')->name('tu
     // Profile & Verification
     Route::get('/profile', [TutorController::class, 'profile'])->name('profile');
     Route::post('/profile', [TutorController::class, 'profileUpdate'])->name('profile.update');
+    Route::post('/profile/photo', [TutorController::class, 'updateProfilePhoto'])->name('profile.photo.update');
     Route::get('/verification', [TutorController::class, 'verification'])->name('verification');
     Route::post('/verification', [TutorController::class, 'submitVerification'])->name('verification.submit');
     

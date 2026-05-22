@@ -102,13 +102,12 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
 
         setUploadingPhoto(true);
 
-        // Use Inertia router to post with file and required gender field
-        router.post(route('tutor.profile.update'), {
+        router.post(route('tutor.profile.photo.update'), {
             photo: photoFile,
-            gender: tutor.gender, // Required field
         }, {
+            forceFormData: true,
             preserveScroll: true,
-            onSuccess: (page) => {
+            onSuccess: () => {
                 toast({
                     title: "Success",
                     description: "Profile photo updated successfully",

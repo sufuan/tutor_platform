@@ -34,6 +34,30 @@ class TutorController extends Controller
         ]);
     }
 
+    public function updateProfilePhoto(Request $request)
+    {
+        $tutor = auth()->user()->tutor;
+
+        $validated = $request->validate([
+            'photo' => 'required|image|max:2048',
+        ]);
+
+        if ($tutor->photo && 
+            !str_starts_with($tutor->photo, 'http') &&
+            
+            
+            
+            \Storage::disk('public')->exists($tutor->photo)) {
+            \Storage::disk('public')->delete($tutor->photo);
+        }
+
+        $path = $request->file('photo')->store('tutors', 'public');
+        $tutor->update(['photo' => $path]);
+
+        return redirect()->route('tutor.profile')
+            ->with('success', 'Profile photo updated successfully!');
+    }
+
     public function profileUpdate(Request $request)
     {
         $tutor = auth()->user()->tutor;
@@ -111,6 +135,9 @@ class TutorController extends Controller
             
             // Handle photo upload (only for personal tab)
             if ($request->hasFile('photo')) {
+                if ($tutor->photo && !str_starts_with($tutor->photo, 'http')) {
+                    \Storage::disk('public')->delete($tutor->photo);
+                }
                 $path = $request->file('photo')->store('tutors', 'public');
                 $validated['photo'] = $path;
             }
