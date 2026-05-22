@@ -354,7 +354,8 @@ export default function TutorProfile({ auth, tutor, subjectNames = [], documents
                                             const docTypeLabels = {
                                                 'id_card': 'ID Card / NID / Passport',
                                                 'certificate': 'Certificate / Credential',
-                                                'photo': 'Photo / Image'
+                                                'photo': 'Photo / Image',
+                                                'cv': 'Curriculum Vitae (CV)'
                                             };
                                             
                                             const isPdf = doc.file_path.toLowerCase().endsWith('.pdf');

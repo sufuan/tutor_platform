@@ -216,7 +216,7 @@ class AdminController extends Controller
         }
 
         // Add document URLs
-        $documents = [];
+        $documents = collect();
         if ($tutor->user && $tutor->user->documents) {
             $documents = $tutor->user->documents->map(function ($doc) {
                 return [
@@ -228,6 +228,17 @@ class AdminController extends Controller
                     'created_at' => $doc->created_at,
                 ];
             });
+        }
+
+        if ($tutor->cv_path) {
+            $documents->push([
+                'id' => 'cv-' . $tutor->id,
+                'type' => 'cv',
+                'file_path' => $tutor->cv_path,
+                'document_url' => route('tutors.cv', $tutor),
+                'verified' => true,
+                'created_at' => $tutor->updated_at,
+            ]);
         }
 
         return Inertia::render('Admin/TutorProfile', [
