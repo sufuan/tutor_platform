@@ -16,6 +16,40 @@ import { Badge } from '@/Components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
 
+const SaveButton = ({ processing, label = "Save Changes" }) => (
+    <Button type="submit" disabled={processing} className="bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-8 rounded-xl font-semibold shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
+        {processing ? (
+            <><div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>Saving...</>
+        ) : (
+            <><Check className="mr-2 h-4 w-4" />{label}</>
+        )}
+    </Button>
+);
+
+const FormCard = ({ title, description, icon: Icon, children, footer }) => (
+    <Card className="border-slate-200 shadow-sm overflow-hidden rounded-2xl bg-white">
+        <CardHeader className="bg-slate-50/80 border-b border-slate-100 pb-5">
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-white rounded-lg shadow-sm border border-slate-100 text-[#0F48A1]">
+                    <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                    <CardTitle className="text-lg font-bold text-slate-800">{title}</CardTitle>
+                    {description && <CardDescription className="text-sm mt-1">{description}</CardDescription>}
+                </div>
+            </div>
+        </CardHeader>
+        <CardContent className="p-6">
+            {children}
+        </CardContent>
+        {footer && (
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                {footer}
+            </div>
+        )}
+    </Card>
+);
+
 export default function FrontendSettings({ auth, settings, subjects, categories }) {
     // Forms setup remains identical
     const heroForm = useForm({
@@ -208,41 +242,6 @@ export default function FrontendSettings({ auth, settings, subjects, categories 
         acc[categoryName].push(subject);
         return acc;
     }, {});
-
-    // Utility components for clean UI
-    const SaveButton = ({ processing, label = "Save Changes" }) => (
-        <Button type="submit" disabled={processing} className="bg-[#0F48A1] hover:bg-[#0F48A1]/90 text-white px-8 rounded-xl font-semibold shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
-            {processing ? (
-                <><div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>Saving...</>
-            ) : (
-                <><Check className="mr-2 h-4 w-4" />{label}</>
-            )}
-        </Button>
-    );
-
-    const FormCard = ({ title, description, icon: Icon, children, footer }) => (
-        <Card className="border-slate-200 shadow-sm overflow-hidden rounded-2xl bg-white">
-            <CardHeader className="bg-slate-50/80 border-b border-slate-100 pb-5">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white rounded-lg shadow-sm border border-slate-100 text-[#0F48A1]">
-                        <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                        <CardTitle className="text-lg font-bold text-slate-800">{title}</CardTitle>
-                        {description && <CardDescription className="text-sm mt-1">{description}</CardDescription>}
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent className="p-6">
-                {children}
-            </CardContent>
-            {footer && (
-                <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-                    {footer}
-                </div>
-            )}
-        </Card>
-    );
 
     return (
         <AuthenticatedLayout
