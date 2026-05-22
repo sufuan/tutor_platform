@@ -70,6 +70,7 @@ class HandleInertiaRequests extends Middleware
                     'phone' => $user->tutor->phone,
                     'photo' => $user->tutor->photo,
                     'photo_url' => $user->tutor->photo ? route('tutors.photo', $user->tutor) : null,
+                    'cv_url' => $user->tutor->cv_path ? route('tutors.cv', $user->tutor) : null,
                     'verification_status' => $user->tutor->verification_status,
                     'verified_at' => $user->tutor->verified_at,
                     'profile_completion_percentage' => $user->tutor->profile_completion_percentage,

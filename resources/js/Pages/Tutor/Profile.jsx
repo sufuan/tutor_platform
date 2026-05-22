@@ -311,7 +311,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                             className="w-full rounded-md bg-slate-900 text-white"
                                             asChild
                                         >
-                                            <a href={cvUrl} download>
+                                            <a href={cvUrl} target="_blank" rel="noreferrer">
                                                 <Download className="mr-2 h-4 w-4" />
                                                 Download CV
                                             </a>
@@ -752,7 +752,7 @@ export default function Profile({ auth, tutor, subjects, locations, flash, cvUrl
                                                         </Label>
                                                         {cvUrl && (
                                                             <p className="text-xs text-slate-500 mb-2">
-                                                                <a href={cvUrl} target="_blank" className="text-blue-600 underline">
+                                                                <a href={cvUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline">
                                                                     View Current CV
                                                                 </a>
                                                             </p>

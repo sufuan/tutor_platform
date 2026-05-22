@@ -437,7 +437,7 @@ export default function BrowseJobs({ auth, jobs, divisions, subjects, verificati
                                             type="button"
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => window.open(`/storage/${tutorCv}`, '_blank')}
+                                            onClick={() => window.open(tutorCv, '_blank')}
                                         >
                                             <ExternalLink className="h-4 w-4 mr-1" />
                                             View CV

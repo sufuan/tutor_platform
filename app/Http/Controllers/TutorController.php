@@ -22,7 +22,7 @@ class TutorController extends Controller
         $locations = Location::orderBy('city')->get();
         
         // Add storage URLs for CV and photo
-        $cvUrl = $tutor->cv_path ? \Storage::url($tutor->cv_path) : null;
+        $cvUrl = $tutor->cv_path ? route('tutors.cv', $tutor) : null;
         $photoUrl = $tutor->photo ? route('tutors.photo', $tutor) : null;
         
         return Inertia::render('Tutor/Profile', [
@@ -370,7 +370,7 @@ class TutorController extends Controller
             'divisions'          => $divisions,
             'subjects'           => Subject::orderBy('name')->get(),
             'verificationStatus' => $tutor->verification_status,
-            'tutorCv'            => $tutor->cv_path,
+            'tutorCv'            => $tutor->cv_path ? route('tutors.cv', $tutor) : null,
             'filters'            => $request->only(['location', 'subject', 'search', 'division', 'districts']),
         ]);
     }

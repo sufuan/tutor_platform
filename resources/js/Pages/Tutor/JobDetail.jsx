@@ -20,7 +20,7 @@ import { CurrencyBangladeshiIcon } from '@/Components/icons/heroicons-currency-b
 export default function JobDetail({ auth, job }) {
     const [showApplyModal, setShowApplyModal] = useState(false);
     const tutor = auth.tutor;
-    const tutorCv = tutor?.cv_path;
+    const tutorCv = tutor?.cv_url || tutor?.cv_path;
     const verificationStatus = tutor?.verification_status;
     const { toast } = useToast();
 
@@ -296,7 +296,7 @@ export default function JobDetail({ auth, job }) {
                                             type="button"
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => window.open(`/storage/${tutorCv}`, '_blank')}
+                                            onClick={() => window.open(tutorCv, '_blank')}
                                         >
                                             <ExternalLink className="h-4 w-4 mr-1" />
                                             View CV

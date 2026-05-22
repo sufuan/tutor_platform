@@ -383,6 +383,19 @@ class AdminController extends Controller
         ]);
     }
 
+    public function applicationCv(Application $application)
+    {
+        abort_unless($application->cv_path, 404);
+
+        $cvPath = ltrim(str_replace('/storage/', '', $application->cv_path), '/');
+
+        abort_unless(Storage::disk('public')->exists($cvPath), 404);
+
+        return Storage::disk('public')->response($cvPath, null, [
+            'Content-Disposition' => 'inline; filename="' . basename($cvPath) . '"',
+        ]);
+    }
+
     public function updateApplicationStatus(Request $request, Application $application)
     {
         $request->validate([

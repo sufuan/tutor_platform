@@ -258,6 +258,19 @@ class PublicController extends Controller
         return Storage::disk('public')->response($photoPath);
     }
 
+    public function tutorCv(Tutor $tutor)
+    {
+        abort_unless($tutor->cv_path, 404);
+
+        $cvPath = ltrim(str_replace('/storage/', '', $tutor->cv_path), '/');
+
+        abort_unless(Storage::disk('public')->exists($cvPath), 404);
+
+        return Storage::disk('public')->response($cvPath, null, [
+            'Content-Disposition' => 'inline; filename="' . basename($cvPath) . '"',
+        ]);
+    }
+
     public function tutors(Request $request)
     {
         $query = Tutor::with(['location', 'user'])
@@ -311,6 +324,7 @@ class PublicController extends Controller
     {
         $tutor->load(['location', 'user']);
         $tutor->photo_url = $tutor->photo ? route('tutors.photo', $tutor) : null;
+        $tutor->cv_url = $tutor->cv_path ? route('tutors.cv', $tutor) : null;
         
         // Get subject names for the subject IDs
         $subjectIds = $tutor->subjects ?? [];

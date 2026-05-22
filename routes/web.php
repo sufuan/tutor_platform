@@ -16,6 +16,7 @@ Route::get('/jobs/{job}', [PublicController::class, 'jobShow'])->name('jobs.show
 Route::get('/tutor-jobs/{jobRequest}', [PublicController::class, 'tutorJobShow'])->name('tutor-jobs.show');
 Route::get('/tutors', [PublicController::class, 'tutors'])->name('tutors.index');
 Route::get('/tutors/{tutor}/photo', [PublicController::class, 'tutorPhoto'])->name('tutors.photo');
+Route::get('/tutors/{tutor}/cv', [PublicController::class, 'tutorCv'])->name('tutors.cv');
 Route::get('/tutors/{tutor}', [PublicController::class, 'tutorShow'])->name('tutors.show');
 Route::get('/blog', [PublicController::class, 'howItWorks'])->name('blog');
 Route::get('/blog/{blog}', [PublicController::class, 'blogShow'])->name('blog.show');
@@ -152,6 +153,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Job Applications Management
         Route::get('/job-applications', [AdminController::class, 'jobApplications'])->name('job-applications.index');
+        Route::get('/job-applications/{application}/cv', [AdminController::class, 'applicationCv'])->name('job-applications.cv');
         Route::post('/applications/{application}/update-status', [AdminController::class, 'updateApplicationStatus'])->name('applications.update-status');
 
         // Blog Management

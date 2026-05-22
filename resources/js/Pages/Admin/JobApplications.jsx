@@ -304,7 +304,7 @@ export default function JobApplications({ auth, applications, stats }) {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => window.open(`/storage/${application.cv_path}`, '_blank')}
+                                onClick={() => window.open(route('admin.job-applications.cv', application.id), '_blank')}
                             >
                                 <FileText className="h-4 w-4 mr-2" />
                                 View CV
