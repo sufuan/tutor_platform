@@ -223,7 +223,7 @@ class AdminController extends Controller
                     'id' => $doc->id,
                     'type' => $doc->type,
                     'file_path' => $doc->file_path,
-                    'document_url' => \Storage::url($doc->file_path),
+                    'document_url' => route('admin.verification-documents.show', $doc),
                     'verified' => $doc->verified,
                     'created_at' => $doc->created_at,
                 ];
@@ -380,6 +380,17 @@ class AdminController extends Controller
         return Inertia::render('Admin/JobApplications', [
             'applications' => $applications,
             'stats' => $stats,
+        ]);
+    }
+
+    public function verificationDocument(\App\Models\Document $document)
+    {
+        $filePath = ltrim(str_replace('/storage/', '', $document->file_path), '/');
+
+        abort_unless(\Storage::disk('public')->exists($filePath), 404);
+
+        return \Storage::disk('public')->response($filePath, null, [
+            'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
         ]);
     }
 

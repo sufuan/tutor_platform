@@ -182,6 +182,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/tutor-feedbacks/{tutorFeedback}/reject', [AdminController::class, 'tutorFeedbacksReject'])->name('tutor-feedbacks.reject');
         Route::delete('/tutor-feedbacks/{tutorFeedback}', [AdminController::class, 'tutorFeedbacksDestroy'])->name('tutor-feedbacks.destroy');
 
+        // Verification Documents
+        Route::get('/verification-documents/{document}', [AdminController::class, 'verificationDocument'])->name('verification-documents.show');
+
         // Frontend Settings Management
         Route::get('/frontend-settings', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'index'])->name('frontend-settings.index');
         Route::post('/frontend-settings', [\App\Http\Controllers\AdminFrontendSettingsController::class, 'update'])->name('frontend-settings.update');
